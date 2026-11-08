@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Regenerate index.html (gallery) and the case list in README.md from cases/*/."""
+import hashlib
 import html
 from pathlib import Path
 
@@ -19,7 +20,9 @@ def title(name):
 
 cards = []
 for c in cases:
-    thumb = f'<img src="cases/{c}/thumb.png" alt="" loading="lazy">' if (ROOT / "cases" / c / "thumb.png").is_file() else '<div class="ph"></div>'
+    thumb_path = ROOT / "cases" / c / "thumb.png"
+    # Content hash in the URL: Pages serves max-age=600, so a reshot thumb would otherwise stay stale.
+    thumb = f'<img src="cases/{c}/thumb.png?v={hashlib.sha1(thumb_path.read_bytes()).hexdigest()[:8]}" alt="" loading="lazy">' if thumb_path.is_file() else '<div class="ph"></div>'
     cards.append(f"""    <div class="card">
       <a href="cases/{c}/">{thumb}</a>
       <div class="meta"><a href="cases/{c}/">{html.escape(title(c))}</a><a class="p" href="cases/{c}/prompt.md">prompt</a></div>
