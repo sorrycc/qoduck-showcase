@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#092b35">
+<title>The Mariner’s Reverie — A Voxel World Within</title>
+<style>
+:root{--bg:#071f28;--panel:#0c2c35;--ink:#ecf0e5;--muted:#8caeb1;--line:#ffffff16;--mint:#93d9c5;--amber:#efb76b;--coral:#ed8066;--blue:#70bfd6;--success:#9cdbb1;--warning:#efb76b;--danger:#ed8066;--info:#70bfd6}
+*{box-sizing:border-box}html{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;scrollbar-width:thin;scrollbar-color:#426c70 #09252e}body{margin:0}button,input,select{font:inherit}button,select,input{accent-color:var(--mint)}button{cursor:pointer}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:4px}::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:#09252e}::-webkit-scrollbar-thumb{background:#426c70;border-radius:8px}::-webkit-scrollbar-thumb:hover{background:var(--mint)}
+.app{min-height:100svh;display:grid;grid-template-rows:76px 1fr 43px}.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 30px;border-bottom:1px solid var(--line);background:#09252df0;z-index:3}.brand{display:flex;align-items:center;gap:13px}.brand-mark{width:34px;height:38px;color:var(--mint)}.brand-name{font-size:13px;font-weight:700;letter-spacing:3px}.brand-sub{font-size:9px;color:var(--muted);letter-spacing:2.1px;margin-top:5px}.top-right{display:flex;align-items:center;gap:25px}.edition{font-size:10px;letter-spacing:1.7px;color:var(--muted)}.live{font-size:10px;letter-spacing:1.4px;display:flex;align-items:center;gap:8px}.live-dot{height:6px;width:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px #93d9c570;animation:breathe 3s infinite}.live.paused .live-dot{background:var(--amber);animation:none}.top-icon{display:grid;place-items:center;border:1px solid #ffffff24;background:transparent;color:var(--ink);height:33px;width:33px;border-radius:50%;transition:.2s}.top-icon:hover{background:#93d9c51a;border-color:var(--mint)}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 294px;min-height:0}.stage{position:relative;min-height:680px;overflow:hidden;background:radial-gradient(ellipse at 48% 44%,#164d57,#092b35 65%,#071f28)}#scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}#scene:active{cursor:grabbing}.stage:after{content:'';position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 100px #03182055;background:linear-gradient(180deg,#061e2825,transparent 25%,transparent 76%,#061e28aa)}.intro{position:absolute;left:34px;top:31px;z-index:1;pointer-events:none}.eyebrow{font-size:9px;letter-spacing:2.6px;color:var(--mint);display:flex;align-items:center;gap:9px}.eyebrow:before{content:'';width:19px;height:1px;background:var(--mint)}h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(35px,3.6vw,57px);line-height:1.05;margin:15px 0 11px;letter-spacing:-1.5px}h1 em{font-style:normal;color:var(--mint)}.intro p{font-size:11px;line-height:1.7;color:#a4bfc0;margin:0;max-width:225px}.specimen{position:absolute;right:28px;top:30px;z-index:1;text-align:right;pointer-events:none}.specimen-number{font-family:Georgia,'Times New Roman',serif;font-size:32px;color:#c6ded5}.specimen small{display:block;font-size:8px;letter-spacing:2px;color:var(--muted);margin-top:3px}.compass{width:54px;height:54px;margin-top:18px;opacity:.6}.stage-bottom{position:absolute;bottom:26px;left:32px;right:29px;z-index:2;display:flex;justify-content:space-between;align-items:end;pointer-events:none}.caption{border-left:2px solid var(--amber);padding-left:12px}.caption strong{font-size:10px;letter-spacing:2px;font-weight:500}.caption p{font-size:10px;color:var(--muted);margin:6px 0 0}.telemetry{display:flex;gap:24px}.metric span{display:block;font-size:8px;color:var(--muted);letter-spacing:1.6px;margin-bottom:6px}.metric b{font-size:15px;font-weight:400;font-variant-numeric:tabular-nums}.metric b small{font-size:9px;color:var(--muted);margin-left:3px}.interaction-hint{position:absolute;bottom:91px;left:50%;transform:translateX(-50%);z-index:2;color:#a7c6c6;font-size:9px;letter-spacing:1px;white-space:nowrap;pointer-events:none;display:flex;gap:15px;align-items:center}.interaction-hint svg{width:13px;height:13px;vertical-align:-3px;margin-right:5px}.hint-dot{color:#517e82}.loading{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:17px;background:#092b35;transition:opacity .6s}.loading.hidden{opacity:0;pointer-events:none}.loading-bottle{width:55px;height:55px;color:var(--mint);animation:breathe 1.6s infinite}.loading p{font-size:10px;letter-spacing:2px;color:var(--muted)}.loading.error{padding:35px;text-align:center}.loading.error p{line-height:1.8;letter-spacing:.4px;max-width:380px}.toast{position:absolute;left:50%;top:24px;transform:translate(-50%,-15px);opacity:0;z-index:6;background:#123d43ed;border:1px solid #93d9c555;color:var(--ink);padding:11px 18px;border-radius:5px;font-size:11px;pointer-events:none;transition:.25s;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
+.panel{background:linear-gradient(155deg,#10343d,#0a2832 70%);border-left:1px solid #b2e2d51c;padding:25px 23px 20px;overflow-y:auto;max-height:calc(100svh - 119px);min-height:680px;scrollbar-gutter:stable}.panel-heading{display:flex;justify-content:space-between;align-items:center}.panel-heading h2{font-size:12px;font-weight:600;letter-spacing:.3px;margin:0}.panel-heading svg{color:var(--mint);width:16px;height:16px}.panel-description{font-size:10px;line-height:1.65;color:var(--muted);margin:8px 0 21px}.section-label{font-size:8px;letter-spacing:2px;color:var(--mint);display:flex;align-items:center;gap:10px;margin:20px 0 16px}.section-label:after{content:'';height:1px;background:var(--line);flex:1}.control{margin-bottom:17px}.control-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.control label{font-size:10px;color:#d1dfda}.control output{font-size:10px;color:var(--amber);font-variant-numeric:tabular-nums}.control input[type=range]{display:block;width:100%;height:3px;margin:0;appearance:none;background:linear-gradient(to right,var(--mint) 0%,var(--mint) var(--fill,50%),#31515a var(--fill,50%),#31515a 100%);border-radius:3px;cursor:pointer}.control input[type=range]::-webkit-slider-thumb{appearance:none;width:10px;height:10px;border:2px solid #10343d;border-radius:50%;background:var(--mint);box-shadow:0 0 0 1px #93d9c570;transition:box-shadow .2s}.control input[type=range]:hover::-webkit-slider-thumb{box-shadow:0 0 0 4px #93d9c525}.control input[type=range]::-moz-range-thumb{width:8px;height:8px;border:2px solid #10343d;border-radius:50%;background:var(--mint)}.range-ends{display:flex;justify-content:space-between;font-size:8px;color:#658c93;margin-top:7px}.select-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:13px 0}.select-row label{font-size:10px;color:#d1dfda}.select-row select{width:126px;background:#153b44;color:var(--ink);border:1px solid #ffffff1c;border-radius:4px;padding:7px 8px;font-size:10px;cursor:pointer}.toggle-row{display:flex;align-items:center;justify-content:space-between;margin:13px 0;font-size:10px;color:#d1dfda}.switch{position:relative;width:28px;height:16px;flex-shrink:0}.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:1}.switch span{position:absolute;inset:0;background:#31515a;border-radius:10px;transition:.2s}.switch span:after{content:'';position:absolute;width:10px;height:10px;left:3px;top:3px;border-radius:50%;background:#9bb6b8;transition:.2s}.switch input:checked+span{background:#477d70}.switch input:checked+span:after{transform:translateX(12px);background:#c0efda}.switch input:focus-visible+span{outline:2px solid var(--amber);outline-offset:3px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:19px}.btn{border:1px solid #ffffff26;border-radius:4px;background:#153b44;color:var(--ink);font-size:10px;padding:10px 7px;display:flex;align-items:center;justify-content:center;gap:7px;transition:.2s}.btn svg{width:13px;height:13px}.btn:hover{background:#24515a;border-color:#93d9c570;transform:translateY(-1px)}.btn.primary{background:var(--mint);border-color:var(--mint);color:#10352f;font-weight:600}.btn.primary:hover{background:#b4ead7}.btn.wide{grid-column:1/-1}.panel-note{font-size:8px;line-height:1.7;color:#769ba0;margin:15px 0 0;display:flex;gap:7px}.panel-note svg{width:12px;height:12px;flex-shrink:0;margin-top:1px}.footer{border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;font-size:8px;letter-spacing:1.3px;color:#779ba1;background:#08232c}.footer-left{display:flex;align-items:center;gap:9px}.footer-left i{width:4px;height:4px;background:var(--amber);border-radius:50%}.footer-right{display:flex;gap:22px}.footer-right span:last-child{color:var(--mint)}
+@keyframes breathe{50%{opacity:.45}}@media(min-width:1500px){.panel{padding:30px 27px}.workspace{grid-template-columns:minmax(0,1fr) 320px}.control{margin-bottom:22px}.intro{left:44px;top:39px}}@media(max-width:1050px){.workspace{grid-template-columns:minmax(0,1fr) 264px}.panel{padding:23px 18px}.telemetry{gap:14px}.stage-bottom{left:23px;right:23px}.intro{left:25px}.intro p{max-width:180px}.specimen{right:22px}.edition{display:none}}@media(max-width:900px){.app{grid-template-rows:66px 1fr 43px}.topbar{padding:0 18px}.brand-name{font-size:11px;letter-spacing:2px}.brand-sub{font-size:8px;letter-spacing:1.3px}.top-right{gap:13px}.live{font-size:8px;letter-spacing:.7px}.workspace{display:block}.stage{height:65svh;min-height:470px;max-height:760px}.panel{max-height:none;min-height:0;border-left:0;border-top:1px solid #b2e2d52a;padding:24px;display:grid;grid-template-columns:1fr 1fr;column-gap:25px;overflow:visible}.panel-heading,.panel-description,.section-label,.actions,.panel-note{grid-column:1/-1}.panel-description{margin-bottom:0}.section-label{margin:20px 0 17px}.control{margin-bottom:22px}.select-row{margin:5px 0 18px;align-items:start;flex-direction:column;gap:8px}.select-row select{width:100%}.toggle-row{margin:7px 0 17px}.actions{grid-template-columns:1fr 1fr 1fr;margin-top:8px}.btn.wide{grid-column:auto}.intro{top:23px;left:22px}h1{font-size:38px;margin-top:12px}.intro p{font-size:10px;max-width:175px}.eyebrow{font-size:8px;letter-spacing:1.8px}.specimen{top:22px;right:20px}.specimen-number{font-size:26px}.compass{width:42px;height:42px;margin-top:12px}.stage-bottom{bottom:20px;left:22px;right:22px}.caption strong{font-size:8px;letter-spacing:1.5px}.caption p{font-size:8px}.metric span{font-size:7px;letter-spacing:1px}.metric b{font-size:12px}.telemetry{gap:13px}.metric:last-child{display:none}.interaction-hint{bottom:76px;font-size:8px;gap:8px}.footer{padding:0 18px;font-size:7px;letter-spacing:.7px}.footer-right{gap:10px}.footer-right span:first-child{display:none}.toast{top:12px;font-size:10px;max-width:90%;white-space:normal;text-align:center}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><svg class="brand-mark" viewBox="0 0 36 42" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M14 3h8v9l7 7v18H7V19l7-7V3Z"/><path d="M13 3h10M7 26c4-4 7 4 11 0s7 0 11 0M12 31l6 3 6-3M18 17v15M16 20l-5 7h5M20 20l5 7h-5"/></svg><div><div class="brand-name">SMALL WORLDS</div><div class="brand-sub">AN EXERCISE IN WONDER</div></div></div>
+  <div class="top-right"><span class="edition">THE CABINET OF CURIOSITIES &nbsp; / &nbsp; VOL. 01</span><div class="live" id="liveStatus"><span class="live-dot"></span><span id="liveText">LIVE SIMULATION</span></div><button class="top-icon" id="infoButton" aria-label="About this world" title="About this world"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v1"/></svg></button></div>
+</header>
+<main class="workspace">
+<section class="stage" id="stage" aria-label="Interactive 3D voxel ship inside a glass bottle">
+  <canvas id="scene" aria-label="Drag to orbit the bottled ocean; scroll or pinch to zoom"></canvas>
+  <div class="intro"><div class="eyebrow">A VOXEL SEASCAPE</div><h1>The Mariner’s<br><em>Reverie.</em></h1><p>An impossible ocean.<br>A thousand little adventures.</p></div>
+  <div class="specimen"><div class="specimen-number">008</div><small>SPECIMEN</small><svg class="compass" viewBox="0 0 60 60" fill="none" stroke="currentColor"><circle cx="30" cy="30" r="20" stroke-opacity=".3"/><circle cx="30" cy="30" r="15" stroke-opacity=".15"/><path d="M30 5v8m0 34v8M5 30h8m34 0h8" stroke-opacity=".6"/><path d="m30 17 4 13-4 13-4-13Z" fill="#93d9c5" fill-opacity=".3"/><path d="m17 30 13-4 13 4-13 4Z" stroke-opacity=".5"/><text x="30" y="4" text-anchor="middle" fill="currentColor" stroke="none" font-size="5">N</text></svg></div>
+  <div class="interaction-hint"><span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M6 9V5a4 4 0 0 1 8 0v4M4 9h12v5a6 6 0 0 1-12 0V9ZM10 3v6"/></svg>DRAG TO ORBIT</span><span class="hint-dot">·</span><span>SCROLL TO EXPLORE</span></div>
+  <div class="stage-bottom"><div class="caption"><strong>THE WAYFARER</strong><p>Three masts. One bottled horizon.</p></div><div class="telemetry"><div class="metric"><span>SWELL</span><b id="swellMetric">0.42<small>m</small></b></div><div class="metric"><span>HEEL</span><b id="heelMetric">0.0<small>°</small></b></div><div class="metric"><span>SEA STATE</span><b id="seaMetric">Gentle</b></div></div></div>
+  <div class="loading" id="loading"><svg class="loading-bottle" viewBox="0 0 36 42" fill="none" stroke="currentColor"><path d="M14 3h8v9l7 7v18H7V19l7-7V3ZM7 26c4-4 7 4 11 0s7 0 11 0M18 17v15M16 20l-5 7h5M20 20l5 7h-5"/></svg><p id="loadingText">FOLDING AN OCEAN INTO GLASS</p></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</section>
+<aside class="panel" aria-label="Live scene controls">
+  <div class="panel-heading"><h2>Make waves.</h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#10343d"/><circle cx="15" cy="17" r="3" fill="#10343d"/></svg></div>
+  <p class="panel-description">A little wind. A different world.<br>Every change flows through the glass.</p>
+  <div class="section-label">01 &nbsp; THE ELEMENTS</div>
+  <div class="control"><div class="control-head"><label for="swell">Swell height</label><output id="swellOut" for="swell">0.42 m</output></div><input id="swell" type="range" min="0.05" max="0.85" step="0.01" value="0.42"><div class="range-ends"><span>Glassy</span><span>Stormy</span></div></div>
+  <div class="control"><div class="control-head"><label for="wind">Wind speed</label><output id="windOut" for="wind">1.0×</output></div><input id="wind" type="range" min="0" max="2.5" step="0.05" value="1"><div class="range-ends"><span>Becalmed</span><span>Full sail</span></div></div>
+  <div class="control"><div class="control-head"><label for="direction">Current direction</label><output id="directionOut" for="direction">25°</output></div><input id="direction" type="range" min="0" max="360" step="1" value="25"></div>
+  <div class="control"><div class="control-head"><label for="speed">Passage of time</label><output id="speedOut" for="speed">1.0×</output></div><input id="speed" type="range" min="0.1" max="2" step="0.1" value="1"></div>
+  <div class="section-label">02 &nbsp; THE ATMOSPHERE</div>
+  <div class="select-row"><label for="atmosphere">Hour of the day</label><select id="atmosphere"><option value="day">Lagoon daylight</option><option value="sunset" selected>Golden hour</option><option value="night">Moonlit voyage</option></select></div>
+  <div class="control"><div class="control-head"><label for="light">Light intensity</label><output id="lightOut" for="light">1.1×</output></div><input id="light" type="range" min="0.3" max="2" step="0.05" value="1.1"></div>
+  <div class="select-row"><label for="detail">Ocean voxels</label><select id="detail"><option value="0.22">Fine · 22 cm</option><option value="0.3" selected>Classic · 30 cm</option><option value="0.42">Chunky · 42 cm</option></select></div>
+  <div class="section-label">03 &nbsp; THE OBSERVATORY</div>
+  <div class="control"><div class="control-head"><label for="distance">Camera distance</label><output id="distanceOut" for="distance">100%</output></div><input id="distance" type="range" min="65" max="150" step="1" value="100"></div>
+  <div class="toggle-row"><label for="orbit">Slow camera orbit</label><label class="switch"><input type="checkbox" id="orbit"><span></span></label></div>
+  <div class="toggle-row"><label for="glass">Glass & reflections</label><label class="switch"><input type="checkbox" id="glass" checked><span></span></label></div>
+  <div class="toggle-row"><label for="xray">See beneath the waves</label><label class="switch"><input type="checkbox" id="xray"><span></span></label></div>
+  <div class="actions"><button class="btn" id="pause"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 4h3v12H5zm7 0h3v12h-3z"/></svg><span>Pause</span></button><button class="btn" id="reset"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8a6 6 0 1 1 0 5M4 3v5h5"/></svg>Reset</button><button class="btn primary wide" id="export"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3v9m-3-3 3 3 3-3M4 12v4h12v-4"/></svg>Capture this moment</button></div>
+  <p class="panel-note"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="m10 2 2 5 5 3-5 2-2 6-2-6-5-2 5-3Z"/></svg>Dispersive waves meet spring-damped buoyancy. A small world with a life of its own.</p>
+</aside>
+</main>
+<footer class="footer"><div class="footer-left"><i></i>HAND-BUILT FROM LITTLE THINGS</div><div class="footer-right"><span>WEBGL · REAL-TIME · NO TWO MOMENTS ALIKE</span><span id="voxelCount">A WORLD WITHIN A WORLD</span></div></footer>
+</div>
+<script type="module">
+const $ = id => document.getElementById(id);
+const loading = $('loading');
+let toastTimer;
+function notify(message) { $('toast').textContent = message; $('toast').classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').classList.remove('show'), 3600); }
+$('infoButton').addEventListener('click', () => notify('The Wayfarer · A procedural voxel world. Drag to orbit, scroll to zoom, and make the ocean your own.'));
+async function init() {
+const THREE = await import('three');
+const [{ OrbitControls }, { RoomEnvironment }, { EffectComposer }, { RenderPass }, { UnrealBloomPass }, { OutputPass }] = await Promise.all([
+  import('three/addons/controls/OrbitControls.js'), import('three/addons/environments/RoomEnvironment.js'), import('three/addons/postprocessing/EffectComposer.js'), import('three/addons/postprocessing/RenderPass.js'), import('three/addons/postprocessing/UnrealBloomPass.js'), import('three/addons/postprocessing/OutputPass.js')
+]);
+const canvas = $('scene'), stage = $('stage');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.12;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.autoUpdate = false;
+renderer.transmissionResolutionScale = 0.5;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#0a303b');
+scene.fog = new THREE.FogExp2('#0a303b', 0.012);
+const camera = new THREE.PerspectiveCamera(39, 1, 0.1, 100);
+const homePosition = new THREE.Vector3(7.7, 5.1, 18.6);
+const homeTarget = new THREE.Vector3(0.25, -0.25, 0);
+camera.position.copy(homePosition);
+const controls = new OrbitControls(camera, canvas);
+controls.target.copy(homeTarget);
+controls.enableDamping = true;
+controls.dampingFactor = 0.065;
+controls.enablePan = false;
+controls.minDistance = 12;
+controls.maxDistance = 30;
+controls.minPolarAngle = 0.38;
+controls.maxPolarAngle = Math.PI * 0.57;
+controls.autoRotateSpeed = 0.32;
+controls.rotateSpeed = 0.65;
+controls.zoomSpeed = 0.7;
+controls.update();
+const pmrem = new THREE.PMREMGenerator(renderer);
+const room = new RoomEnvironment();
+const environment = pmrem.fromScene(room, 0.04);
+scene.environment = environment.texture;
+room.dispose(); pmrem.dispose();
+const hemi = new THREE.HemisphereLight('#bcebe4', '#164658', 2.0); scene.add(hemi);
+const key = new THREE.DirectionalLight('#ffe0aa', 4.0); key.position.set(-3, 9, 7); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); key.shadow.camera.left = -9; key.shadow.camera.right = 9; key.shadow.camera.top = 7; key.shadow.camera.bottom = -7; key.shadow.normalBias = 0.04; key.shadow.bias = -0.0002; scene.add(key);
+const rim = new THREE.DirectionalLight('#79dcf2', 3.2); rim.position.set(2, 5, -7); scene.add(rim);
+const fill = new THREE.DirectionalLight('#ee9675', 0.9); fill.position.set(-7, 1, 4); scene.add(fill);
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.24, 0.5, 1.2); composer.addPass(bloom); composer.addPass(new OutputPass());
+const box = new THREE.BoxGeometry(1, 1, 1);
+const dummy = new THREE.Object3D();
+const tempColor = new THREE.Color();
+const voxelMaterial = new THREE.MeshStandardMaterial({ roughness: 0.78, metalness: 0.04, envMapIntensity: 0.35 });
+const goldMaterial = new THREE.MeshStandardMaterial({ roughness: 0.34, metalness: 0.65 });
+const glowMaterial = new THREE.MeshStandardMaterial({ roughness: 0.4, emissive: '#ffb64c', emissiveIntensity: 3.2 });
+let totalVoxels = 0;
+let seed = 80421;
+function random() { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; }
+function pick(array) { return array[Math.floor(random() * array.length)]; }
+class Batch {
+  constructor(parent = scene, material = voxelMaterial) { this.parent = parent; this.material = material; this.items = []; }
+  add(x, y, z, sx, sy, sz, color, rotation = 0) { this.items.push({ x,y,z,sx,sy,sz,color,rotation }); return this; }
+  build(shadow = true) {
+    const mesh = new THREE.InstancedMesh(box, this.material, this.items.length);
+    this.items.forEach((v,i) => { dummy.position.set(v.x,v.y,v.z); dummy.scale.set(v.sx,v.sy,v.sz); dummy.rotation.set(0,v.rotation,0); dummy.updateMatrix(); mesh.setMatrixAt(i,dummy.matrix); mesh.setColorAt(i,tempColor.set(v.color)); });
+    mesh.castShadow = shadow; mesh.receiveShadow = true; mesh.instanceMatrix.needsUpdate = true; this.parent.add(mesh); this.mesh = mesh; totalVoxels += this.items.length; return mesh;
+  }
+}
+function rope(batch, a, b, color = '#705442', size = 0.032) {
+  const start = new THREE.Vector3(...a), end = new THREE.Vector3(...b), n = Math.ceil(start.distanceTo(end) / (size * 1.3));
+  for(let i=0;i<=n;i++){ const p = start.clone().lerp(end,i/n); batch.add(p.x,p.y,p.z,size,size,size,color); }
+}
+const wood = ['#70422e','#885137','#9b6240','#aa7448','#61402e'];
+const gold = ['#dba857','#ecc579','#bd8741'];
+const stone = ['#42666a','#52777a','#648785','#36565e'];
+const foliage = ['#3c8063','#4b9870','#69ad78','#83b978'];
+const world = new Batch();
+const brass = new Batch(scene, goldMaterial);
+const lanterns = new Batch(scene, glowMaterial);
+// The exhibition cradle stays outside; the entire seascape stays inside.
+const cradle = new Batch();
+for(let x=-5.3;x<=5.3;x+=0.32) cradle.add(x,-4.02,0,0.305,0.30,3.4,pick(wood));
+for(const x of [-3.8,3.15]) {
+  for(let z=-1.8;z<=1.8;z+=0.24){ const y=-3.83+0.24*Math.pow(Math.abs(z)/1.8,2); cradle.add(x,y,z,0.56,0.30,0.23,pick(wood)); }
+  for(const z of [-1.65,1.65]) { cradle.add(x,-3.61,z,0.55,0.55,0.35,'#694730'); brass.add(x,-3.34,z,0.58,0.07,0.38,pick(gold)); }
+}
+for(const x of [-5.25,5.25]) for(const z of [-1.5,1.5]) brass.add(x,-3.83,z,0.35,0.06,0.35,pick(gold));
+cradle.build(); brass.build();
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(200,200), new THREE.ShadowMaterial({color:'#02151d',opacity:0.22})); floor.rotation.x=-Math.PI/2; floor.position.y=-4.2; floor.receiveShadow=true; scene.add(floor);
+const shadowCanvas=document.createElement('canvas'); shadowCanvas.width=128;shadowCanvas.height=128;
+const shadowCtx=shadowCanvas.getContext('2d');const grad=shadowCtx.createRadialGradient(64,64,4,64,64,64);grad.addColorStop(0,'rgba(0,10,16,.7)');grad.addColorStop(1,'rgba(0,10,16,0)');shadowCtx.fillStyle=grad;shadowCtx.fillRect(0,0,128,128);
+const contact=new THREE.Mesh(new THREE.PlaneGeometry(17,8),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(shadowCanvas),transparent:true,depthWrite:false}));contact.rotation.x=-Math.PI/2;contact.position.y=-4.18;scene.add(contact);
+const plaqueCanvas=document.createElement('canvas');plaqueCanvas.width=512;plaqueCanvas.height=96;const pc=plaqueCanvas.getContext('2d');pc.fillStyle='#b58b50';pc.fillRect(0,0,512,96);pc.strokeStyle='#634b30';pc.lineWidth=4;pc.strokeRect(8,8,496,80);pc.fillStyle='#302e27';pc.textAlign='center';pc.font='22px Georgia';pc.fillText('THE MARINER’S REVERIE',256,42);pc.font='12px sans-serif';pc.fillText('S M A L L   W O R L D S     ·     N o .  0 0 8',256,69);
+const plaque=new THREE.Mesh(new THREE.BoxGeometry(2.8,0.46,0.06),new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(plaqueCanvas),roughness:0.45,metalness:0.35}));plaque.position.set(0,-3.99,1.73);scene.add(plaque);
+const profile=[[-6.15,0],[-6.08,1.35],[-5.9,2.45],[-5.62,3.18],[-5.22,3.52],[-4.8,3.62],[2.95,3.62],[3.5,3.46],[4.05,2.91],[4.6,1.83],[5.03,1.12],[6.35,1.12],[6.43,1.30],[6.80,1.30],[6.91,1.10],[7.04,1.10],[7.04,0]];
+function radiusAt(x) { if(x<profile[0][0]||x>7.04)return 0; for(let i=1;i<profile.length-1;i++){if(x<=profile[i][0]){const a=profile[i-1],b=profile[i];return THREE.MathUtils.lerp(a[1],b[1],(x-a[0])/(b[0]-a[0]));}}return 0; }
+const bottleGroup=new THREE.Group();scene.add(bottleGroup);
+const glassMaterial=new THREE.MeshPhysicalMaterial({color:'#d0fff3',metalness:0,roughness:0.045,transmission:0.98,thickness:0.12,ior:1.46,transparent:true,opacity:0.16,depthWrite:false,envMapIntensity:1.1,clearcoat:1,clearcoatRoughness:0.06,side:THREE.DoubleSide});
+const bottleGeometry=new THREE.LatheGeometry(profile.map(p=>new THREE.Vector2(p[1],p[0])),96);bottleGeometry.rotateZ(-Math.PI/2);
+const bottle=new THREE.Mesh(bottleGeometry,glassMaterial);bottle.renderOrder=8;bottleGroup.add(bottle);
+const glassEdgeMaterial=new THREE.MeshPhysicalMaterial({color:'#a5ded5',roughness:0.12,metalness:0.15,transparent:true,opacity:0.32,depthWrite:false,envMapIntensity:1.4});
+for(const [x,r,t] of [[-5.91,2.43,0.035],[6.57,1.31,0.065],[6.88,1.18,0.045],[5.08,1.13,0.025]]){const ring=new THREE.Mesh(new THREE.TorusGeometry(r,t,8,96),glassEdgeMaterial);ring.rotation.y=Math.PI/2;ring.position.x=x;ring.renderOrder=9;bottleGroup.add(ring);}
+const highlightMaterial=new THREE.MeshBasicMaterial({color:'#d4fff1',transparent:true,opacity:0.28,depthWrite:false});
+for(const [angle,start,end,width] of [[0.82,-5.1,3.2,0.035],[2.22,-4.8,2.8,0.022],[0.87,5.12,6.3,0.025]]){
+  const points=[];for(let i=0;i<=24;i++){const x=THREE.MathUtils.lerp(start,end,i/24),r=radiusAt(x)+0.018;points.push(new THREE.Vector3(x,Math.cos(angle)*r,Math.sin(angle)*r));}
+  const streak=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),40,width,5,false),highlightMaterial);streak.renderOrder=10;bottleGroup.add(streak);
+}
+const cork=new Batch();
+for(let x=6.25;x<7.24;x+=0.16)for(let a=0;a<Math.PI*2;a+=0.21){const z=Math.sin(a)*0.93,yy=Math.cos(a)*0.93;cork.add(x,yy,z,0.16,0.18,0.18,pick(['#ad8050','#bf9461','#987046','#c49b68','#b18a58']));}
+for(let x=6.3;x<7.2;x+=0.17)cork.add(x,0.96,0,0.16,0.06,1.25,'#c39a65');cork.build();
+const neckRope=new Batch();for(let x=5.5;x<5.85;x+=0.055)for(let a=0;a<Math.PI*2;a+=0.12)neckRope.add(x,Math.cos(a)*1.145,Math.sin(a)*1.145,0.055,0.055,0.055,'#a88756');neckRope.build();
+const droplets=new THREE.InstancedMesh(box,new THREE.MeshPhysicalMaterial({color:'#c9f8ec',transparent:true,opacity:0.38,roughness:0.1,metalness:0.15,depthWrite:false}),95);
+for(let i=0;i<95;i++){const x=-4.9+random()*8,a=0.25+random()*2.5,r=radiusAt(x)-0.08,s=0.025+random()*0.045;dummy.position.set(x,Math.cos(a)*r,Math.sin(a)*r);dummy.rotation.set(0,0,0);dummy.scale.set(s,s*1.5,s);dummy.updateMatrix();droplets.setMatrixAt(i,dummy.matrix);}droplets.renderOrder=9;bottleGroup.add(droplets);
+// An archipelago, a lighthouse, and a tiny forgotten ruin.
+function island(cx,cz,size) {
+  for(let x=-size;x<=size;x+=0.27)for(let z=-size;z<=size;z+=0.27){const d=Math.sqrt(x*x+z*z)/size;if(d>1||Math.abs(cz+z)+0.3>radiusAt(cx+x))continue;const h=0.25+(1-d)*0.75+random()*0.18;world.add(cx+x,-0.83+h/2,cz+z,0.28,h,0.28,pick(stone));if(d<0.78)world.add(cx+x,-0.83+h+0.06,cz+z,0.28,0.12,0.28,pick(foliage));else if(d<0.95)world.add(cx+x,-0.72,cz+z,0.28,0.15,0.28,pick(['#d4bc83','#baaa72','#e1c991']));}
+}
+island(-3.65,-1.45,1.35);island(2.65,-1.65,1.05);island(-4.65,0.65,0.56);
+const lx=-3.7,lz=-1.5,ly=-0.12;
+for(let y=0;y<2.15;y+=0.18){const r=0.36-y*0.047;for(let x=-r;x<=r;x+=0.16)for(let z=-r;z<=r;z+=0.16){if(x*x+z*z>r*r||x*x+z*z<(r-0.17)*(r-0.17))continue;const band=Math.floor(y/0.43)%2;world.add(lx+x,ly+y,lz+z,0.165,0.18,0.165,band?'#db7255':'#e9dfba');}}
+for(let x=-0.4;x<=0.4;x+=0.16)for(let z=-0.4;z<=0.4;z+=0.16)world.add(lx+x,ly+2.17,lz+z,0.17,0.12,0.17,'#34545a');
+for(const x of [-0.25,0.25])for(const z of [-0.25,0.25])world.add(lx+x,ly+2.42,lz+z,0.065,0.45,0.065,'#38545a');
+lanterns.add(lx,ly+2.42,lz,0.29,0.31,0.29,'#ffe4a0');
+for(let layer=0;layer<4;layer++){const r=0.48-layer*0.11;world.add(lx,ly+2.68+layer*0.105,lz,r*2,0.11,r*2,'#31545b');}world.add(lx,ly+3.08,lz,0.06,0.25,0.06,'#ddb56c');
+world.add(lx,ly+0.32,lz+0.34,0.20,0.43,0.06,'#254751');world.add(lx+0.02,ly+1.25,lz+0.29,0.13,0.21,0.06,'#ffc978');
+const lighthouseLight=new THREE.PointLight('#ffd18a',3,5,2);lighthouseLight.position.set(lx,ly+2.45,lz);scene.add(lighthouseLight);
+function palm(x,y,z,height=1.3) {for(let i=0;i<height/0.15;i++)world.add(x+Math.sin(i*0.19)*0.14,y+i*0.15,z,0.14,0.16,0.14,pick(wood));const tx=x+Math.sin(height/0.15*0.19)*0.14,ty=y+height;for(let arm=0;arm<6;arm++){const a=arm*Math.PI/3;for(let j=0;j<6;j++){const d=j*0.14;world.add(tx+Math.cos(a)*d,ty+Math.sin(j/5*Math.PI)*0.18-j*0.045,z+Math.sin(a)*d,0.19,0.09,0.19,pick(foliage));}}world.add(tx,ty-0.12,z,0.18,0.18,0.18,'#9c7043');}
+palm(2.65,-0.13,-1.75,1.45);palm(3.25,-0.35,-1.35,0.94);palm(-4.65,-0.32,0.6,0.9);
+for(let i=0;i<6;i++)world.add(-2.55+i*0.18,-0.54,-1.0,0.16,0.10,0.56,pick(wood));for(const x of [-2.5,-1.75])world.add(x,-0.79,-0.78,0.08,0.6,0.08,'#725138');
+world.add(2.25,-0.23,-1.04,0.42,0.26,0.30,'#875132');world.add(2.25,-0.06,-1.04,0.44,0.10,0.32,'#a46a36');brass.add(2.25,-0.1,-0.87,0.08,0.25,0.04,'#efc56c');lanterns.add(2.25,0.02,-1.04,0.30,0.05,0.20,'#ffd273');
+for(let i=0;i<4;i++){world.add(1.85+i*0.27,-0.32,-2.25,0.20,0.65+i%2*0.25,0.22,'#8aa49a');world.add(1.85+i*0.27,0.05+i%2*0.12,-2.25,0.28,0.12,0.29,'#aec0a7');}
+// Seabed life, revealed by the observatory's underwater view.
+for(let i=0;i<155;i++){const x=-5.1+random()*8.4,z=(random()-.5)*4.6,r=radiusAt(x);if(z*z+2.9*2.9>r*r)continue;const y=-Math.sqrt(Math.max(0.1,r*r-z*z))+0.25;const h=0.15+random()*0.5;world.add(x,y,z,0.25,0.15,0.25,pick(['#8b9c83','#a9ad88','#647f78']));if(i%3===0){const color=pick(['#e88378','#e8ac69','#bf789b','#62bbaa']);world.add(x,y+h/2,z,0.10,h,0.10,color);for(let j=0;j<3;j++)world.add(x+(j%2?1:-1)*0.12,y+h*(0.4+j*0.18),z,0.18,0.09,0.09,color);}}
+for(let i=0;i<14;i++){const x=-4.6+random()*7,z=(random()-.5)*3;world.add(x,-2.8,z,0.3,0.22,0.3,pick(stone));}
+world.build();lanterns.build(false);
+const ship=new THREE.Group();ship.position.set(-0.35,-0.65,0.65);scene.add(ship);
+const hull=new Batch(ship), shipGold=new Batch(ship,goldMaterial), shipLights=new Batch(ship,glowMaterial), sailBatch=new Batch(ship);
+const hullWidth=x=>0.73*Math.sqrt(Math.max(0,1-Math.pow((x+0.05)/2.45,4)))+0.05;
+for(let layer=0;layer<6;layer++){const y=-0.48+layer*0.135;const inset=layer*0.016;for(let x=-2.25;x<=2.25;x+=0.18){const w=hullWidth(x)-inset;if(w<0.10)continue;for(const side of [-1,1])hull.add(x,y,side*w,0.185,0.13,0.16,layer===3?'#d6a35a':pick(wood));}}
+for(let x=-2.15;x<=2.15;x+=0.18){const w=hullWidth(x);for(let z=-w;z<=w;z+=0.16)hull.add(x,0.24,z,0.18,0.10,0.16,pick(['#bc8d57','#caa26a','#ae7e4c']));}
+for(let x=-2.1;x<=2.1;x+=0.21){const w=hullWidth(x);for(const side of [-1,1]){hull.add(x,0.42,side*w,0.07,0.31,0.07,'#654632');hull.add(x,0.58,side*w,0.22,0.07,0.08,'#d5ac68');}}
+for(let layer=0;layer<4;layer++)for(let x=-2.05;x<-1.15;x+=0.17)for(let z=-0.48;z<=0.48;z+=0.16){if(Math.abs(z)<0.34&&x>-1.93&&layer<3)continue;hull.add(x,0.34+layer*0.14,z,0.17,0.14,0.16,pick(wood));}
+hull.add(-1.62,0.91,0,1.16,0.14,1.19,'#3c6263');for(let x=-2.15;x<-1.05;x+=0.16)hull.add(x,1.0,0,0.15,0.08,1.23,'#497775');
+for(const x of [-1.88,-1.48])for(const z of [-0.57,0.57]){shipLights.add(x,0.61,z,0.20,0.22,0.04,'#ffd391');shipGold.add(x,0.61,z*1.04,0.24,0.035,0.045,'#e1b766');}
+for(const z of [-0.32,0,0.32]){shipLights.add(-2.17,0.61,z,0.04,0.22,0.18,'#ffd391');shipGold.add(-2.2,0.61,z,0.045,0.27,0.035,'#d6ad65');}
+for(const x of [-0.8,0.1,0.9])for(const side of [-1,1]){const z=side*(hullWidth(x)+0.035);hull.add(x,0.12,z,0.26,0.22,0.23,'#263e42');hull.add(x,0.12,z+side*0.17,0.17,0.15,0.18,'#344b4c');shipGold.add(x,0.12,z+side*0.27,0.11,0.10,0.035,'#b99555');}
+for(let i=0;i<8;i++)hull.add(2.12+i*0.15,0.32+i*0.047,0,0.17,0.10,0.10,'#986d43');
+shipGold.add(2.37,0.63,0,0.13,0.20,0.13,'#e7bd68');
+for(const z of [-0.43,0.43]){rope(hull,[2.9,0.66,0],[1.25,0.34,z],'#857354',0.025);rope(hull,[2.9,0.66,0],[0.9,2.5,z],'#857354',0.025);}
+rope(hull,[2.4,0.23,0.28],[2.28,-0.36,0.35],'#394d4e',0.055);rope(hull,[2.08,-0.29,0.35],[2.28,-0.40,0.35],'#394d4e',0.055);rope(hull,[2.28,-0.4,0.35],[2.47,-0.27,0.35],'#394d4e',0.055);
+function barrel(x,y,z){for(let yy=0;yy<0.32;yy+=0.08)for(let a=0;a<6.28;a+=0.63)hull.add(x+Math.cos(a)*0.13,y+yy,z+Math.sin(a)*0.13,0.10,0.08,0.10,pick(wood));for(const yy of [0.05,0.24])for(let a=0;a<6.28;a+=0.63)shipGold.add(x+Math.cos(a)*0.145,y+yy,z+Math.sin(a)*0.145,0.07,0.035,0.07,'#677b73');hull.add(x,y+0.32,z,0.21,0.04,0.21,'#ba8d56');}
+barrel(-0.75,0.31,-0.28);barrel(-0.43,0.31,-0.38);barrel(1.35,0.31,0.15);
+hull.add(0.4,0.44,0.35,0.34,0.30,0.30,'#a57847');shipGold.add(0.4,0.45,0.51,0.33,0.04,0.025,'#d9b77b');shipGold.add(0.4,0.45,0.52,0.04,0.29,0.025,'#d9b77b');
+for(let i=0;i<5;i++)hull.add(-1.02+i*0.10,0.30+i*0.11,0.45,0.13,0.07,0.27,'#b78a52');
+for(let z=-0.25;z<=0.25;z+=0.12)hull.add(-0.25,0.48,z,0.75,0.13,0.11,'#765039');for(const x of [-0.53,0.03])hull.add(x,0.38,0,0.09,0.20,0.4,'#654532');
+const mastData=[{x:-1.25,h:2.75,w:0.83},{x:0,h:3.56,w:1.03},{x:1.2,h:2.93,w:0.79}];
+for(const m of mastData){
+  hull.add(m.x,m.h/2+0.28,0,0.12,m.h,0.12,'#805a37');shipGold.add(m.x,0.48,0,0.18,0.10,0.18,'#d3a55d');
+  const yardY=m.h-0.38;hull.add(m.x,yardY,0,m.w*2+0.28,0.075,0.075,'#765537');
+  const bottom=m.x===0?1.20:1.05,top=m.h-0.43,step=0.115;
+  for(let y=bottom;y<top;y+=step){const f=(y-bottom)/(top-bottom);const half=m.w*(0.78+0.22*Math.sin(f*Math.PI));for(let x=-half;x<=half;x+=step){const ix=Math.round(x/step),iy=Math.round((y-bottom)/step);const belly=0.19*Math.sin((x/half+1)*Math.PI/2)*Math.sin(f*Math.PI);let color=(ix%5===0?'#e2d6b4':'#f4e8c9');if(Math.abs(x)<0.12&&m.x===0)color='#d78052';if(m.x===0&&Math.abs(x)+Math.abs(y-2.04)*0.85<0.31)color=(Math.abs(x)+Math.abs(y-2.04)*0.85<0.15?'#f6d18b':'#d78150');if(m.x===1.2&&iy<2)color='#db8c62';sailBatch.add(m.x+x,y,0.055+belly,step*0.98,step*0.98,0.045,color);}}
+  for(const side of [-1,1]){rope(hull,[m.x,m.h-0.15,0],[m.x+side*0.65,0.4,side*0.54],'#8c7857',0.024);rope(hull,[m.x+side*m.w,yardY,0],[m.x+side*0.48,0.43,0.5],'#8c7857',0.024);}
+  for(let y=0.6;y<m.h-0.4;y+=0.15){const f=(y-0.6)/(m.h-1);rope(hull,[m.x-0.28*(1-f),y,0.36],[m.x+0.28*(1-f),y,0.36],'#9c8560',0.021);}
+}
+hull.add(0,3.35,0,0.44,0.10,0.42,'#765438');for(const x of [-0.21,0.21])for(const z of [-0.2,0.2])hull.add(x,3.48,z,0.045,0.22,0.045,'#ad8451');hull.add(0,3.60,0,0.48,0.045,0.46,'#ba9259');
+const flag=new Batch(ship);for(let x=0;x<0.62;x+=0.09)for(let y=0;y<0.25;y+=0.08)flag.add(0.08+x,3.82-y,-0.01,0.09,0.08,0.035,x>0.44?'#e9bc73':'#d96e51');
+rope(hull,[-2.1,1.02,0],[-1.25,2.85,0],'#8c7857',0.026);rope(hull,[0,3.8,0],[1.2,2.96,0],'#8c7857',0.026);rope(hull,[-1.25,2.85,0],[0,3.8,0],'#8c7857',0.026);
+hull.build();shipGold.build();shipLights.build(false);sailBatch.build();const flagMesh=flag.build(false);
+const captain=new Batch(ship);captain.add(-1.13,1.20,0.15,0.13,0.22,0.12,'#355d6a');captain.add(-1.13,1.37,0.15,0.12,0.12,0.12,'#dca77b');captain.add(-1.13,1.45,0.15,0.20,0.06,0.17,'#344c54');captain.build();
+const gullBatch=new Batch();for(let i=0;i<5;i++){const x=-3+random()*5,y=2.3+random()*0.55,z=-0.9+random()*1.1;gullBatch.add(x,y,z,0.10,0.07,0.09,'#e7e8d4');gullBatch.add(x-0.10,y+0.025,z,0.12,0.035,0.07,'#d4e1d6');gullBatch.add(x+0.10,y+0.025,z,0.12,0.035,0.07,'#d4e1d6');}const gulls=gullBatch.build(false);
+const fishBatch=new Batch();for(let i=0;i<24;i++){const x=-4.5+random()*7,z=(random()-.5)*3.2,y=-1.6-random()*1.1;if(x*x>25)continue;const c=pick(['#efb65e','#e7866c','#91d4c2']);fishBatch.add(x,y,z,0.18,0.09,0.07,c);fishBatch.add(x-0.13,y,z,0.07,0.14,0.045,c);}const fish=fishBatch.build(false);
+const buoyBatch=new Batch();for(const [x,z] of [[1.8,1.7],[-2.9,1.8],[3.9,0.2]]){buoyBatch.add(x,0,z,0.20,0.18,0.20,'#df7959');buoyBatch.add(x,0.14,z,0.13,0.12,0.13,'#eee0b6');buoyBatch.add(x,0.30,z,0.035,0.22,0.035,'#567776');}const buoyMesh=buoyBatch.build(false);const buoyData=buoyBatch.items.filter((v,i)=>i%3===0).map(v=>[v.x,v.z]);
+const settings={swell:0.42,wind:1,direction:25,speed:1,light:1.1,atmosphere:'sunset',detail:0.3,distance:100,orbit:false,glass:true,xray:false,paused:false};
+const waterLevel=-0.76;
+let water=null,waterData=[],foam=null,foamData=[];
+const waterMaterial=new THREE.MeshStandardMaterial({roughness:0.28,metalness:0.24,transparent:false,opacity:1});
+const foamMaterial=new THREE.MeshStandardMaterial({roughness:0.55,metalness:0.02});
+const seaColors=['#0b647c','#117b8b','#168b95','#1a7189','#0d5973','#248e96','#299b9e'];
+function wave(x,z,t,amp=settings.swell){const a=settings.direction*Math.PI/180;let h=0;for(const [lambda,weight,offset] of [[3.8,0.52,0],[2.1,0.29,1.7],[1.15,0.19,4.1]]){const k=2*Math.PI/lambda,omega=Math.sqrt(9.81*k),dir=a+offset*0.22;h+=Math.sin(k*(x*Math.cos(dir)+z*Math.sin(dir))-omega*t*settings.wind+offset)*amp*weight;}return h;}
+function makeWater(){
+  if(water){scene.remove(water);water.dispose();}waterData=[];const step=settings.detail;
+  for(let x=-5.85;x<=6.05;x+=step){const r=radiusAt(x)-0.14;const maxZ=Math.sqrt(Math.max(0,r*r-waterLevel*waterLevel));for(let z=-maxZ;z<=maxZ;z+=step){const bottom=-Math.sqrt(Math.max(0.025,r*r-z*z))+0.07;if(bottom>waterLevel-0.12)continue;waterData.push({x,z,bottom,color:pick(seaColors),phase:random()*6.28});}}
+  water=new THREE.InstancedMesh(box,waterMaterial,waterData.length);water.instanceMatrix.setUsage(THREE.DynamicDrawUsage);water.receiveShadow=true;water.frustumCulled=false;water.renderOrder=2;scene.add(water);totalVoxels+=waterData.length;
+}
+makeWater();
+const sprayCount=140;
+foam=new THREE.InstancedMesh(box,foamMaterial,sprayCount);foam.instanceMatrix.setUsage(THREE.DynamicDrawUsage);foam.frustumCulled=false;foam.renderOrder=3;scene.add(foam);
+for(let i=0;i<sprayCount;i++){foamData.push({u:random(),v:random(),phase:random(),size:0.035+random()*0.065});foam.setColorAt(i,tempColor.set(pick(['#bce8d9','#e5f1dc','#8ed6d2'])));}totalVoxels+=sprayCount;
+$('voxelCount').textContent=totalVoxels.toLocaleString()+' VOXELS · ONE OCEAN';
+let simTime=0,heel=0,heelVelocity=0,pitch=0,pitchVelocity=0,heave=0,heaveVelocity=0,frame=0;
+function updateWater(t){
+  dummy.rotation.set(0,0,0);
+  for(let i=0;i<waterData.length;i++){const v=waterData[i],h=wave(v.x,v.z,t),top=waterLevel+h,height=Math.max(0.06,top-v.bottom);dummy.position.set(v.x,v.bottom+height/2,v.z);dummy.scale.set(settings.detail*0.97,height,settings.detail*0.97);dummy.updateMatrix();water.setMatrixAt(i,dummy.matrix);const crest=h/Math.max(settings.swell,0.05);tempColor.set(crest>0.78?'#8ed4c7':crest>0.60?'#45aeb2':v.color);water.setColorAt(i,tempColor);}
+  water.instanceMatrix.needsUpdate=true;water.instanceColor.needsUpdate=true;
+  for(let i=0;i<sprayCount;i++){const p=foamData[i];let x,z,y,s=p.size;if(i<95){const age=(p.phase+t*0.16*settings.wind)%1;x=ship.position.x-1.6-age*3.2;z=ship.position.z+(p.u-.5)*(0.9+age*1.4);y=waterLevel+wave(x,z,t)+0.045;s*=Math.sin(age*Math.PI);if(x<-5.3)s=0;}else{x=-4.8+p.u*9.2;z=(p.v-.5)*4.7;const h=wave(x,z,t);const lift=Math.max(0,h/settings.swell-0.48);y=waterLevel+h+lift*(0.15+0.2*Math.sin(t*2+p.phase*20));s*=lift*2;if(z*z+(y*y)>Math.pow(radiusAt(x)-0.2,2))s=0;}dummy.position.set(x,y,z);dummy.scale.set(s*1.7,s*0.65,s);dummy.updateMatrix();foam.setMatrixAt(i,dummy.matrix);}foam.instanceMatrix.needsUpdate=true;
+}
+function integrate(value,velocity,target,stiffness,damping,dt){velocity+=(target-value)*stiffness*dt;velocity*=Math.exp(-damping*dt);value+=velocity*dt;return [value,velocity];}
+function physics(dt){const t=simTime,x=ship.position.x,z=ship.position.z;const bow=wave(x+1.7,z,t),stern=wave(x-1.7,z,t),port=wave(x,z-0.6,t),starboard=wave(x,z+0.6,t);// Cap heave so the tallest mast clears the bottle's inner shoulder.
+  [heave,heaveVelocity]=integrate(heave,heaveVelocity,Math.min((bow+stern+port+starboard)/4,0.22),16,4,dt);[pitch,pitchVelocity]=integrate(pitch,pitchVelocity,Math.atan2(bow-stern,3.4)*0.72,12,3.5,dt);[heel,heelVelocity]=integrate(heel,heelVelocity,Math.atan2(starboard-port,1.2)*0.62,10,3.2,dt);ship.position.y=-0.65+heave;ship.rotation.set(heel,Math.sin(t*0.16)*0.025,pitch);ship.position.x=-0.35+Math.sin(t*0.18)*0.10;flagMesh.position.z=Math.sin(t*3)*0.035;gulls.position.y=Math.sin(t*0.7)*0.06;gulls.position.x=Math.sin(t*0.23)*0.18;fish.position.x=Math.sin(t*0.24)*0.35;fish.position.z=Math.sin(t*0.17)*0.12;for(let i=0;i<buoyData.length;i++){const [bx,bz]=buoyData[i],h=wave(bx,bz,t);for(let j=0;j<3;j++){const v=buoyBatch.items[i*3+j];dummy.position.set(bx,h+0.06+v.y,bz);dummy.rotation.set(heel*0.3,0,pitch*0.4);dummy.scale.set(v.sx,v.sy,v.sz);dummy.updateMatrix();buoyMesh.setMatrixAt(i*3+j,dummy.matrix);}}buoyMesh.instanceMatrix.needsUpdate=true;}
+const atmospheres={day:{bg:'#104653',key:'#fff1d1',rim:'#8ee8ef',hemi:'#c5f2eb',ground:'#225969',keyPower:2.8,rimPower:1.8,exposure:1.05},sunset:{bg:'#0a303b',key:'#ffd39b',rim:'#6ad7ed',hemi:'#bcebe4',ground:'#164658',keyPower:2.6,rimPower:2.0,exposure:1.0},night:{bg:'#091d32',key:'#a7c8ff',rim:'#65b9dc',hemi:'#779ec7',ground:'#122d49',keyPower:1.3,rimPower:1.8,exposure:0.9}};
+function applyLighting(){const a=atmospheres[settings.atmosphere];scene.background.set(a.bg);scene.fog.color.set(a.bg);key.color.set(a.key);rim.color.set(a.rim);hemi.color.set(a.hemi);hemi.groundColor.set(a.ground);key.intensity=a.keyPower*settings.light;rim.intensity=a.rimPower*settings.light;fill.intensity=(settings.atmosphere==='sunset'?0.9:0.35)*settings.light;hemi.intensity=1.05*Math.max(0.5,settings.light);renderer.toneMappingExposure=a.exposure;lighthouseLight.intensity=settings.atmosphere==='night'?6:3;renderer.shadowMap.needsUpdate=true;}
+function applyXray(){waterMaterial.transparent=settings.xray;waterMaterial.opacity=settings.xray?0.30:1;waterMaterial.depthWrite=!settings.xray;waterMaterial.needsUpdate=true;foam.visible=!settings.xray;}
+function setRangeFill(input){input.style.setProperty('--fill',((input.value-input.min)/(input.max-input.min)*100)+'%');}
+for(const input of document.querySelectorAll('input[type=range]')){setRangeFill(input);input.addEventListener('input',()=>setRangeFill(input));}
+let cameraTween=null;
+function bindRange(id,format,onChange){$(id).addEventListener('input',()=>{settings[id]=Number($(id).value);$(id+'Out').textContent=format(settings[id]);setRangeFill($(id));onChange?.(settings[id]);});}
+bindRange('swell',v=>v.toFixed(2)+' m');bindRange('wind',v=>v.toFixed(1)+'×');bindRange('direction',v=>v+'°');bindRange('speed',v=>v.toFixed(1)+'×');bindRange('light',v=>v.toFixed(1)+'×',applyLighting);
+bindRange('distance',v=>v+'%',v=>{cameraTween=null;const dir=camera.position.clone().sub(controls.target).normalize();camera.position.copy(controls.target).addScaledVector(dir,homePosition.distanceTo(homeTarget)*v/100);controls.update();});
+$('atmosphere').addEventListener('change',()=>{settings.atmosphere=$('atmosphere').value;applyLighting();notify({day:'Lagoon daylight · clear skies, turquoise water',sunset:'Golden hour · the warm side of the world',night:'Moonlit voyage · the lighthouse keeps watch'}[settings.atmosphere]);});
+$('detail').addEventListener('change',()=>{settings.detail=Number($('detail').value);makeWater();applyXray();updateWater(simTime);notify('Ocean rebuilt · '+waterData.length.toLocaleString()+' living water voxels');});
+$('orbit').addEventListener('change',()=>{settings.orbit=$('orbit').checked;controls.autoRotate=settings.orbit;});
+$('glass').addEventListener('change',()=>{settings.glass=$('glass').checked;bottleGroup.visible=settings.glass;renderer.shadowMap.needsUpdate=true;});
+$('xray').addEventListener('change',()=>{settings.xray=$('xray').checked;applyXray();notify(settings.xray?'Beneath the surface · coral gardens and little travellers':'The ocean’s surface restored');});
+function setPaused(value){settings.paused=value;$('pause').querySelector('span').textContent=value?'Resume':'Pause';$('pause').querySelector('svg').innerHTML=value?'<path d="m6 3 10 7-10 7z"/>':'<path d="M5 4h3v12H5zm7 0h3v12h-3z"/>';$('liveText').textContent=value?'MOMENT SUSPENDED':'LIVE SIMULATION';$('liveStatus').classList.toggle('paused',value);}
+$('pause').addEventListener('click',()=>{setPaused(!settings.paused);notify(settings.paused?'A moment, held in glass. Camera controls remain live.':'The voyage continues.');});
+function syncUI(){for(const id of ['swell','wind','direction','speed','light','distance']){$(id).value=settings[id];$(id).dispatchEvent(new Event('input'));} $('atmosphere').value=settings.atmosphere;$('detail').value=String(settings.detail);for(const id of ['orbit','glass','xray'])$(id).checked=settings[id];}
+$('reset').addEventListener('click',()=>{Object.assign(settings,{swell:0.42,wind:1,direction:25,speed:1,light:1.1,atmosphere:'sunset',detail:0.3,distance:100,orbit:false,glass:true,xray:false});syncUI();makeWater();applyLighting();applyXray();bottleGroup.visible=true;controls.autoRotate=false;simTime=0;heave=heaveVelocity=pitch=pitchVelocity=heel=heelVelocity=0;setPaused(false);cameraTween=null;controls.enableDamping=false;controls.update();camera.position.copy(homePosition);controls.target.copy(homeTarget);controls.update();controls.enableDamping=true;notify('Back to the beginning. A fresh breeze awaits.');});
+$('export').addEventListener('click',()=>{try{composer.render();const link=document.createElement('a');link.download='the-mariners-reverie-'+settings.atmosphere+'.png';link.href=canvas.toDataURL('image/png');link.click();notify('A little world, to keep. Your PNG is ready.');}catch(error){notify('Capture unavailable in this browser. Try a browser screenshot.');}});
+let syncingDistance=false;
+controls.addEventListener('change',()=>{if(syncingDistance)return;syncingDistance=true;const value=Math.round(camera.position.distanceTo(controls.target)/homePosition.distanceTo(homeTarget)*100);settings.distance=value;$('distance').value=value;$('distanceOut').textContent=value+'%';setRangeFill($('distance'));syncingDistance=false;});
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);composer.setSize(w,h);camera.aspect=w/h;camera.fov=w/h<1.15?THREE.MathUtils.radToDeg(2*Math.atan(Math.tan(THREE.MathUtils.degToRad(22.5))/(w/h))):39;camera.updateProjectionMatrix();}
+const observer=new ResizeObserver(resize);observer.observe(stage);resize();applyLighting();updateWater(0);physics(0.016);renderer.shadowMap.needsUpdate=true;
+let last=performance.now(),metricTime=0,raf=0,disposed=false;
+function animate(now){if(disposed)return;raf=requestAnimationFrame(animate);const dt=Math.max(0,Math.min((now-last)/1000,0.1));last=now;if(!settings.paused){simTime+=dt*settings.speed;const steps=Math.max(1,Math.ceil(dt*settings.speed/0.016));for(let i=0;i<steps;i++)physics(dt*settings.speed/steps);if(frame%2===0||settings.paused)updateWater(simTime);}
+  if(cameraTween){cameraTween.elapsed+=dt;const f=Math.min(1,cameraTween.elapsed/0.85),ease=1-Math.pow(1-f,3);camera.position.lerpVectors(cameraTween.start,cameraTween.target,ease);if(f===1)cameraTween=null;}
+  controls.update(dt);composer.render();frame++;metricTime+=dt;if(metricTime>0.18){metricTime=0;$('swellMetric').innerHTML=(settings.swell*(1+Math.sin(simTime)*0.08)).toFixed(2)+'<small>m</small>';$('heelMetric').innerHTML=(heel*180/Math.PI).toFixed(1)+'<small>°</small>';$('seaMetric').textContent=settings.swell<0.2?'Glassy':settings.swell<0.5?'Gentle':settings.swell<0.7?'Rolling':'Stormy';}
+}
+canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();setPaused(true);loading.classList.remove('hidden');loading.classList.add('error');$('loadingText').textContent='The graphics context was interrupted. Reload this page to reopen your little world.';});
+document.addEventListener('visibilitychange',()=>{last=performance.now();});
+window.addEventListener('pagehide',event=>{if(event.persisted)return;disposed=true;cancelAnimationFrame(raf);observer.disconnect();controls.dispose();composer.dispose();environment.dispose();scene.traverse(object=>{if(object.isInstancedMesh)object.dispose();if(object.geometry&&object.geometry!==box)object.geometry.dispose();});box.dispose();renderer.dispose();},{once:true});
+composer.render();loading.classList.add('hidden');raf=requestAnimationFrame(animate);
+window.__sceneReady=true;
+window.__sceneDiagnostics=()=>({voxels:totalVoxels,waterVoxels:waterData.length,drawCalls:renderer.info.render.calls,paused:settings.paused,time:simTime,heel,heave,cameraDistance:camera.position.distanceTo(controls.target),settings:{...settings}});
+}
+init().catch(error=>{console.error(error);loading.classList.add('error');$('loadingText').textContent='This world needs WebGL and an internet connection to load its pinned 3D library. Please enable hardware acceleration or try a current browser, then reload.';});
+</script>
+</body>
+</html>
