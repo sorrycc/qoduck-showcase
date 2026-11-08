@@ -4,109 +4,215 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QoDuck Showcase</title>
-<style>
-  :root { --bg:#fafaf7; --fg:#1b1b1b; --muted:#6b6b6b; --card:#fff; --line:#e6e4dd; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#141414; --fg:#eee; --muted:#999; --card:#1d1d1d; --line:#2c2c2c; } }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 system-ui,-apple-system,sans-serif; }
-  header { max-width:1200px; margin:0 auto; padding:40px 16px 8px; }
-  h1 { margin:0 0 4px; font-size:28px; }
-  header p { margin:0; color:var(--muted); }
-  main { max-width:1200px; margin:0 auto; padding:24px 16px 64px; display:grid; gap:20px; grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr)); }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; transition:transform .15s; }
-  .card a { color:inherit; text-decoration:none; }
-  .card:hover { transform:translateY(-2px); }
-  .card img, .ph { display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:top; background:var(--line); }
-  .meta { display:flex; justify-content:space-between; gap:8px; padding:10px 14px; }
-  .p { color:var(--muted); font-size:13px; }
-</style>
+<meta name="description" content="Web pages built by qodercli and QoDuck, each from one prompt with no follow-up.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="primitives.css">
+<link rel="stylesheet" href="page.css">
 </head>
 <body>
-<header>
-  <h1>QoDuck Showcase</h1>
-  <p>HTML pages built by qodercli + QoDuck from one prompt, no follow-up. Click a card to open the live page.</p>
-</header>
-<main>
-    <div class="card">
-      <a href="cases/boarding-pass-with-skill/"><img src="cases/boarding-pass-with-skill/thumb.png?v=2f14d544" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/boarding-pass-with-skill/">Boarding pass with skill</a><a class="p" href="cases/boarding-pass-with-skill/prompt.md">prompt</a></div>
+  <header class="container nav">
+    <a class="wordmark" href="./">QoDuck Showcase</a>
+    <nav aria-label="Sections"><ul><li><a href="#compare">Comparisons</a></li><li><a href="#scenes">3D scenes</a></li><li><a href="#pages">2D pages</a></li><li><a href="https://github.com/sorrycc/qoduck-showcase">GitHub</a></li></ul></nav>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="top-h">
+      <div class="container stack-lg">
+        <h1 id="top-h">One prompt.<br>One turn.<br><span class="accent">No follow-up.</span></h1>
+        <p class="lead">Web pages built by qodercli with the QoDuck model. Each one came from a single prompt in a single non-interactive run. Nobody asked for fixes afterwards, so what you open is exactly what the agent handed back.</p>
+        <dl class="stats">
+          <div><dt>Pages</dt><dd>20</dd></div>
+          <div><dt>Skill comparisons</dt><dd>4</dd></div>
+          <div><dt>3D scenes</dt><dd>7</dd></div>
+          <div><dt>2D pages</dt><dd>5</dd></div>
+        </dl>
+      </div>
+    </section>
+    <section class="section rule" id="compare" aria-labelledby="compare-h">
+      <div class="container stack-lg">
+        <div class="stack">
+          <h2 id="compare-h">With and without frontend-rails</h2>
+          <p class="lead">Each pair was built twice from the same brief. One run also had the <a href="https://github.com/sorrycc/frontend-rails">frontend-rails</a> skill: a ready-made theme, its tokens, and a browser check that screenshots the page and flags what to fix.</p>
+        </div>
+        <article class="pair">
+          <h3>Boarding pass</h3>
+          <div class="pair-grid">
+            <figure class="side side-plain">
+              <a class="shot" href="cases/boarding-pass-without-skill/"><img src="cases/boarding-pass-without-skill/card.webp?v=d4d4bf58" alt="Screenshot of Boarding pass, without skill" width="960" height="600"></a>
+              <figcaption><span class="tag">Without skill</span><span class="meta">index.html · 29 KB</span></figcaption>
+              <p class="links"><a href="cases/boarding-pass-without-skill/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/boarding-pass-without-skill/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/boarding-pass-without-skill/index.html">Source</a></p>
+            </figure>
+            <figure class="side side-skill">
+              <a class="shot" href="cases/boarding-pass-with-skill/"><img src="cases/boarding-pass-with-skill/card.webp?v=8099aecb" alt="Screenshot of Boarding pass, with frontend-rails" width="960" height="600"></a>
+              <figcaption><span class="tag">With frontend-rails</span><span class="meta">index.html · 47 KB</span></figcaption>
+              <p class="links"><a href="cases/boarding-pass-with-skill/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/boarding-pass-with-skill/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/boarding-pass-with-skill/index.html">Source</a></p>
+            </figure>
+          </div>
+          <details class="diff">
+            <summary>What the "with skill" prompt adds</summary>
+            <pre>Use the github.com/sorrycc/frontend-rails skill for this.
+ 
+ 
+ Build the file incrementally: create the HTML skeleton and styles first, then
+ append sections, content and JavaScript in several separate tool calls. Never
+ try to emit the entire file in a single tool call.</pre>
+          </details>
+        </article>
+        <article class="pair">
+          <h3>Coffee roaster site</h3>
+          <div class="pair-grid">
+            <figure class="side side-plain">
+              <a class="shot" href="cases/coffee-roaster-site-without-skill/"><img src="cases/coffee-roaster-site-without-skill/card.webp?v=a4e551cb" alt="Screenshot of Coffee roaster site, without skill" width="960" height="600"></a>
+              <figcaption><span class="tag">Without skill</span><span class="meta">index.html · 107 KB</span></figcaption>
+              <p class="links"><a href="cases/coffee-roaster-site-without-skill/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/coffee-roaster-site-without-skill/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/coffee-roaster-site-without-skill/index.html">Source</a></p>
+            </figure>
+            <figure class="side side-skill">
+              <a class="shot" href="cases/coffee-roaster-site-with-skill/"><img src="cases/coffee-roaster-site-with-skill/card.webp?v=cc1e0bc9" alt="Screenshot of Coffee roaster site, with frontend-rails" width="960" height="600"></a>
+              <figcaption><span class="tag">With frontend-rails</span><span class="meta">index.html · 81 KB</span></figcaption>
+              <p class="links"><a href="cases/coffee-roaster-site-with-skill/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/coffee-roaster-site-with-skill/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/coffee-roaster-site-with-skill/index.html">Source</a></p>
+            </figure>
+          </div>
+          <details class="diff">
+            <summary>What the "with skill" prompt adds</summary>
+            <pre>Use the github.com/sorrycc/frontend-rails skill for this.</pre>
+          </details>
+        </article>
+        <article class="pair">
+          <h3>Mayoi landing</h3>
+          <div class="pair-grid">
+            <figure class="side side-plain">
+              <a class="shot" href="cases/mayoi-landing-without-skill/"><img src="cases/mayoi-landing-without-skill/card.webp?v=b9e875f1" alt="Screenshot of Mayoi landing, without skill" width="960" height="600"></a>
+              <figcaption><span class="tag">Without skill</span><span class="meta">index.html · 21 KB</span></figcaption>
+              <p class="links"><a href="cases/mayoi-landing-without-skill/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/mayoi-landing-without-skill/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/mayoi-landing-without-skill/index.html">Source</a></p>
+            </figure>
+            <figure class="side side-skill">
+              <a class="shot" href="cases/mayoi-landing-with-skill/"><img src="cases/mayoi-landing-with-skill/card.webp?v=a4d75228" alt="Screenshot of Mayoi landing, with frontend-rails" width="960" height="600"></a>
+              <figcaption><span class="tag">With frontend-rails</span><span class="meta">index.html · 30 KB</span></figcaption>
+              <p class="links"><a href="cases/mayoi-landing-with-skill/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/mayoi-landing-with-skill/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/mayoi-landing-with-skill/index.html">Source</a></p>
+            </figure>
+          </div>
+          <p class="meta">Both runs got the same prompt.</p>
+        </article>
+        <article class="pair">
+          <h3>Ops dashboard</h3>
+          <div class="pair-grid">
+            <figure class="side side-plain">
+              <a class="shot" href="cases/ops-dashboard-without-skill/"><img src="cases/ops-dashboard-without-skill/card.webp?v=f76fa041" alt="Screenshot of Ops dashboard, without skill" width="960" height="600"></a>
+              <figcaption><span class="tag">Without skill</span><span class="meta">index.html · 38 KB</span></figcaption>
+              <p class="links"><a href="cases/ops-dashboard-without-skill/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/ops-dashboard-without-skill/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/ops-dashboard-without-skill/index.html">Source</a></p>
+            </figure>
+            <figure class="side side-skill">
+              <a class="shot" href="cases/ops-dashboard-with-skill/"><img src="cases/ops-dashboard-with-skill/card.webp?v=9c99297c" alt="Screenshot of Ops dashboard, with frontend-rails" width="960" height="600"></a>
+              <figcaption><span class="tag">With frontend-rails</span><span class="meta">index.html · 115 KB</span></figcaption>
+              <p class="links"><a href="cases/ops-dashboard-with-skill/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/ops-dashboard-with-skill/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/ops-dashboard-with-skill/index.html">Source</a></p>
+            </figure>
+          </div>
+          <details class="diff">
+            <summary>What the "with skill" prompt adds</summary>
+            <pre>Use the github.com/sorrycc/frontend-rails skill for this.</pre>
+          </details>
+        </article>
+      </div>
+    </section>
+    <section class="section rule" id="scenes" aria-labelledby="scenes-h">
+      <div class="container stack-lg">
+        <div class="stack">
+          <h2 id="scenes-h">3D scenes</h2>
+          <p class="lead">Three.js and WebGL worlds you can orbit, scrub and poke at. Drag to look around once a page has loaded.</p>
+        </div>
+        <ul class="cases">
+        <li class="case">
+          <a class="shot" href="cases/dragon-castle-storm/"><img src="cases/dragon-castle-storm/card.webp?v=373a2ced" alt="Screenshot of Dragon castle storm" width="960" height="600"></a>
+          <h3><a href="cases/dragon-castle-storm/">Dragon castle storm</a></h3>
+          <p class="meta">index.html · 758 KB</p>
+          <p class="links"><a href="cases/dragon-castle-storm/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/dragon-castle-storm/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/dragon-castle-storm/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/fable-kingdom-voxel-siege/"><img src="cases/fable-kingdom-voxel-siege/card.webp?v=36df60d8" alt="Screenshot of Fable kingdom voxel siege" width="960" height="600"></a>
+          <h3><a href="cases/fable-kingdom-voxel-siege/">Fable kingdom voxel siege</a></h3>
+          <p class="meta">index.html · 220 KB</p>
+          <p class="links"><a href="cases/fable-kingdom-voxel-siege/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/fable-kingdom-voxel-siege/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/fable-kingdom-voxel-siege/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/pelican-bicycle-threejs/"><img src="cases/pelican-bicycle-threejs/card.webp?v=5e737c87" alt="Screenshot of Pelican bicycle three.js" width="960" height="600"></a>
+          <h3><a href="cases/pelican-bicycle-threejs/">Pelican bicycle three.js</a></h3>
+          <p class="meta">index.html · 810 KB</p>
+          <p class="links"><a href="cases/pelican-bicycle-threejs/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/pelican-bicycle-threejs/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/pelican-bicycle-threejs/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/pirate-ship-sunset-3d/"><img src="cases/pirate-ship-sunset-3d/card.webp?v=460bfec0" alt="Screenshot of Pirate ship sunset 3D" width="960" height="600"></a>
+          <h3><a href="cases/pirate-ship-sunset-3d/">Pirate ship sunset 3D</a></h3>
+          <p class="meta">index.html · 52 KB</p>
+          <p class="links"><a href="cases/pirate-ship-sunset-3d/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/pirate-ship-sunset-3d/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/pirate-ship-sunset-3d/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/rubiks-cube-3d/"><img src="cases/rubiks-cube-3d/card.webp?v=87500d1f" alt="Screenshot of Rubik&#x27;s cube 3D" width="960" height="600"></a>
+          <h3><a href="cases/rubiks-cube-3d/">Rubik&#x27;s cube 3D</a></h3>
+          <p class="meta">index.html · 30 KB</p>
+          <p class="links"><a href="cases/rubiks-cube-3d/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/rubiks-cube-3d/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/rubiks-cube-3d/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/sakura-valley-3d/"><img src="cases/sakura-valley-3d/card.webp?v=5ded27a2" alt="Screenshot of Sakura valley 3D" width="960" height="600"></a>
+          <h3><a href="cases/sakura-valley-3d/">Sakura valley 3D</a></h3>
+          <p class="meta">index.html · 158 KB · Chinese prompt</p>
+          <p class="links"><a href="cases/sakura-valley-3d/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/sakura-valley-3d/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/sakura-valley-3d/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/ship-in-bottle-voxel/"><img src="cases/ship-in-bottle-voxel/card.webp?v=b53bc6d2" alt="Screenshot of Ship in bottle voxel" width="960" height="600"></a>
+          <h3><a href="cases/ship-in-bottle-voxel/">Ship in bottle voxel</a></h3>
+          <p class="meta">index.html · 50 KB</p>
+          <p class="links"><a href="cases/ship-in-bottle-voxel/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/ship-in-bottle-voxel/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/ship-in-bottle-voxel/index.html">Source</a></p>
+        </li>
+        </ul>
+      </div>
+    </section>
+    <section class="section rule" id="pages" aria-labelledby="pages-h">
+      <div class="container stack-lg">
+        <div class="stack">
+          <h2 id="pages-h">Illustration, SVG and pages</h2>
+          <p class="lead">Vector drawings, canvas animation and plain HTML and CSS pages.</p>
+        </div>
+        <ul class="cases">
+        <li class="case">
+          <a class="shot" href="cases/citrus-pose/"><img src="cases/citrus-pose/card.webp?v=0464e076" alt="Screenshot of Citrus pose" width="960" height="600"></a>
+          <h3><a href="cases/citrus-pose/">Citrus pose</a></h3>
+          <p class="meta">index.html · 62 KB</p>
+          <p class="links"><a href="cases/citrus-pose/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/citrus-pose/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/citrus-pose/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/cloud-animal/"><img src="cases/cloud-animal/card.webp?v=a65d57c5" alt="Screenshot of Cloud animal" width="960" height="600"></a>
+          <h3><a href="cases/cloud-animal/">Cloud animal</a></h3>
+          <p class="meta">index.html · 19 KB</p>
+          <p class="links"><a href="cases/cloud-animal/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/cloud-animal/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/cloud-animal/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/pelican-bicycle-svg-animated/"><img src="cases/pelican-bicycle-svg-animated/card.webp?v=1edc5ffd" alt="Screenshot of Pelican bicycle SVG animated" width="960" height="600"></a>
+          <h3><a href="cases/pelican-bicycle-svg-animated/">Pelican bicycle SVG animated</a></h3>
+          <p class="meta">index.html · 84 KB</p>
+          <p class="links"><a href="cases/pelican-bicycle-svg-animated/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/pelican-bicycle-svg-animated/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/pelican-bicycle-svg-animated/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/pelican-bicycle-svg-detailed/"><img src="cases/pelican-bicycle-svg-detailed/card.webp?v=067dc9c1" alt="Screenshot of Pelican bicycle SVG detailed" width="960" height="600"></a>
+          <h3><a href="cases/pelican-bicycle-svg-detailed/">Pelican bicycle SVG detailed</a></h3>
+          <p class="meta">index.html · 99 KB</p>
+          <p class="links"><a href="cases/pelican-bicycle-svg-detailed/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/pelican-bicycle-svg-detailed/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/pelican-bicycle-svg-detailed/index.html">Source</a></p>
+        </li>
+        <li class="case">
+          <a class="shot" href="cases/tired-ai/"><img src="cases/tired-ai/card.webp?v=1417bfb7" alt="Screenshot of Tired AI" width="960" height="600"></a>
+          <h3><a href="cases/tired-ai/">Tired AI</a></h3>
+          <p class="meta">index.html · 25 KB</p>
+          <p class="links"><a href="cases/tired-ai/">Open page</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/tired-ai/prompt.md">Prompt</a><a href="https://github.com/sorrycc/qoduck-showcase/blob/master/cases/tired-ai/index.html">Source</a></p>
+        </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="container cluster spread">
+      <p>Each case links to its live page, the exact prompt and the HTML source.</p>
+      <p><a href="https://github.com/sorrycc/qoduck-showcase">sorrycc/qoduck-showcase</a> · styled with the mono-print theme from <a href="https://github.com/sorrycc/frontend-rails">frontend-rails</a></p>
     </div>
-    <div class="card">
-      <a href="cases/boarding-pass-without-skill/"><img src="cases/boarding-pass-without-skill/thumb.png?v=272b2089" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/boarding-pass-without-skill/">Boarding pass without skill</a><a class="p" href="cases/boarding-pass-without-skill/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/citrus-pose/"><img src="cases/citrus-pose/thumb.png?v=d3a6859e" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/citrus-pose/">Citrus pose</a><a class="p" href="cases/citrus-pose/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/cloud-animal/"><img src="cases/cloud-animal/thumb.png?v=9f041629" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/cloud-animal/">Cloud animal</a><a class="p" href="cases/cloud-animal/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/coffee-roaster-site-with-skill/"><img src="cases/coffee-roaster-site-with-skill/thumb.png?v=00a04fd4" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/coffee-roaster-site-with-skill/">Coffee roaster site with skill</a><a class="p" href="cases/coffee-roaster-site-with-skill/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/coffee-roaster-site-without-skill/"><img src="cases/coffee-roaster-site-without-skill/thumb.png?v=1b3982eb" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/coffee-roaster-site-without-skill/">Coffee roaster site without skill</a><a class="p" href="cases/coffee-roaster-site-without-skill/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/dragon-castle-storm/"><img src="cases/dragon-castle-storm/thumb.png?v=751496d1" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/dragon-castle-storm/">Dragon castle storm</a><a class="p" href="cases/dragon-castle-storm/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/fable-kingdom-voxel-siege/"><img src="cases/fable-kingdom-voxel-siege/thumb.png?v=f591e4df" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/fable-kingdom-voxel-siege/">Fable kingdom voxel siege</a><a class="p" href="cases/fable-kingdom-voxel-siege/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/mayoi-landing-with-skill/"><img src="cases/mayoi-landing-with-skill/thumb.png?v=69ddbd93" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/mayoi-landing-with-skill/">Mayoi landing with skill</a><a class="p" href="cases/mayoi-landing-with-skill/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/mayoi-landing-without-skill/"><img src="cases/mayoi-landing-without-skill/thumb.png?v=fd4ea5b0" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/mayoi-landing-without-skill/">Mayoi landing without skill</a><a class="p" href="cases/mayoi-landing-without-skill/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/ops-dashboard-with-skill/"><img src="cases/ops-dashboard-with-skill/thumb.png?v=6ddc8d67" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/ops-dashboard-with-skill/">Ops dashboard with skill</a><a class="p" href="cases/ops-dashboard-with-skill/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/ops-dashboard-without-skill/"><img src="cases/ops-dashboard-without-skill/thumb.png?v=ac7f51b1" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/ops-dashboard-without-skill/">Ops dashboard without skill</a><a class="p" href="cases/ops-dashboard-without-skill/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/pelican-bicycle-svg-animated/"><img src="cases/pelican-bicycle-svg-animated/thumb.png?v=523b63ed" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/pelican-bicycle-svg-animated/">Pelican bicycle SVG animated</a><a class="p" href="cases/pelican-bicycle-svg-animated/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/pelican-bicycle-svg-detailed/"><img src="cases/pelican-bicycle-svg-detailed/thumb.png?v=2811d9d6" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/pelican-bicycle-svg-detailed/">Pelican bicycle SVG detailed</a><a class="p" href="cases/pelican-bicycle-svg-detailed/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/pelican-bicycle-threejs/"><img src="cases/pelican-bicycle-threejs/thumb.png?v=0bdd3400" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/pelican-bicycle-threejs/">Pelican bicycle three.js</a><a class="p" href="cases/pelican-bicycle-threejs/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/pirate-ship-sunset-3d/"><img src="cases/pirate-ship-sunset-3d/thumb.png?v=1e91ad17" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/pirate-ship-sunset-3d/">Pirate ship sunset 3D</a><a class="p" href="cases/pirate-ship-sunset-3d/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/rubiks-cube-3d/"><img src="cases/rubiks-cube-3d/thumb.png?v=be0243c2" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/rubiks-cube-3d/">Rubik&#x27;s cube 3D</a><a class="p" href="cases/rubiks-cube-3d/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/sakura-valley-3d/"><img src="cases/sakura-valley-3d/thumb.png?v=769e511c" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/sakura-valley-3d/">Sakura valley 3D</a><a class="p" href="cases/sakura-valley-3d/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/ship-in-bottle-voxel/"><img src="cases/ship-in-bottle-voxel/thumb.png?v=d441f47b" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/ship-in-bottle-voxel/">Ship in bottle voxel</a><a class="p" href="cases/ship-in-bottle-voxel/prompt.md">prompt</a></div>
-    </div>
-    <div class="card">
-      <a href="cases/tired-ai/"><img src="cases/tired-ai/thumb.png?v=f55208cd" alt="" loading="lazy"></a>
-      <div class="meta"><a href="cases/tired-ai/">Tired AI</a><a class="p" href="cases/tired-ai/prompt.md">prompt</a></div>
-    </div>
-</main>
+  </footer>
 </body>
 </html>
