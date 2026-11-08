@@ -7,6 +7,7 @@ HTML pages built by [qodercli](https://qoder.com) + QoDuck, each from one prompt
 |---|---|---|---|
 | Citrus pose | [live](https://sorrycc.github.io/qoduck-showcase/cases/citrus-pose/) | [source](cases/citrus-pose/index.html) | [prompt](cases/citrus-pose/prompt.md) |
 | Cloud animal | [live](https://sorrycc.github.io/qoduck-showcase/cases/cloud-animal/) | [source](cases/cloud-animal/index.html) | [prompt](cases/cloud-animal/prompt.md) |
+| Dragon castle storm | [live](https://sorrycc.github.io/qoduck-showcase/cases/dragon-castle-storm/) | [source](cases/dragon-castle-storm/index.html) | [prompt](cases/dragon-castle-storm/prompt.md) |
 | Mayoi landing with skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/mayoi-landing-with-skill/) | [source](cases/mayoi-landing-with-skill/index.html) | [prompt](cases/mayoi-landing-with-skill/prompt.md) |
 | Mayoi landing without skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/mayoi-landing-without-skill/) | [source](cases/mayoi-landing-without-skill/index.html) | [prompt](cases/mayoi-landing-without-skill/prompt.md) |
 | Pelican bicycle SVG animated | [live](https://sorrycc.github.io/qoduck-showcase/cases/pelican-bicycle-svg-animated/) | [source](cases/pelican-bicycle-svg-animated/index.html) | [prompt](cases/pelican-bicycle-svg-animated/prompt.md) |

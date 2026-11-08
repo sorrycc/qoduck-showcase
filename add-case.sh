@@ -2,7 +2,8 @@
 # Usage: ./add-case.sh <run-dir | entry-dir> [...]
 #
 # Copies an agent-arena qodercli entry into cases/<prompt>/:
-#   work/* (minus .build/ and .DS_Store), prompt.md, shot-1440-light.png -> thumb.png
+#   work/* (minus top-level .* / _* scratch like .build/ and _shots/), prompt.md,
+#   shot-1440-light.png -> thumb.png
 # Run metadata (meta/cmd/envelope/result/stdout/stderr) is never copied.
 # A run dir picks its qodercli__* entry; _superseded/ is ignored.
 # Re-adding a case replaces it. Rebuilds index.html and README.md afterwards.
@@ -26,7 +27,7 @@ add() {
 
   rm -rf "$dest"
   mkdir -p "$dest"
-  rsync -a --exclude '.build' --exclude '.DS_Store' "$entry/work/" "$dest/"
+  rsync -a --exclude '/.*' --exclude '/_*' --exclude '.DS_Store' "$entry/work/" "$dest/"
   cp "$entry/prompt.md" "$dest/prompt.md"
   [[ -f "$entry/shot-1440-light.png" ]] && cp "$entry/shot-1440-light.png" "$dest/thumb.png"
   echo "added $name  <-  $entry"
