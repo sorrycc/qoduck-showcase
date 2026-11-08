@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Low Tide Coffee — Roasted on Tuesdays, gone by Sunday.</title>
+<meta name="description" content="Low Tide Coffee. Light roasts from a former boat repair shed at 4 Quay Lane. Roasted on Tuesdays, gone by Sunday.">
+<meta name="theme-color" content="#fbf6ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14100c" media="(prefers-color-scheme: dark)">
+<style>
+/* ============================================================
+   tokens.css — theme: warm-craft, retuned for a harbor roastery
+   ============================================================ */
+:root {
+  color-scheme: light dark;
+
+  /* color roles */
+  --bg: #fbf6ef;
+  --surface: #fffaf3;
+  --surface-2: #f3e9db;
+  --text: #2b2118;
+  --text-muted: #6b5a4a;
+  --border: #e2d3bf;
+  --accent: #b4532a;
+  --accent-hover: #963f1c;
+  --accent-contrast: #fffaf3;
+  --accent-subtle: #f6e0d2;
+  --link: #a34a24;
+  --success: #3d6b2f;
+  --success-subtle: #e4eedb;
+  --warning: #8c5b00;
+  --warning-subtle: #f7e8c8;
+  --danger: #a32a2a;
+  --danger-subtle: #f7dcd8;
+  --info: #2d5f7a;
+  --info-subtle: #dceaf0;
+  --disabled-bg: #ece2d4;
+  --disabled-text: #a39482;
+  --focus: #b4532a;
+
+  /* harbor additions */
+  --tide: #1d5b60;
+  --tide-deep: #123f45;
+  --tide-subtle: #dcebe8;
+  --rope: #c9b391;
+  --sea-panel: #123f45;
+  --sea-panel-ink: #f6efe3;
+  --sea-panel-muted: #a9c9c6;
+  --scrim: rgb(24 18 12 / 0.44);
+  --paper-line: #e6d8c4;
+
+  /* type */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.25rem;
+  --fs-4xl: 3rem;
+  --fs-5xl: 4.25rem;
+  --weight-display: 400;
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-body: 1.65;
+  --measure: 66ch;
+
+  /* space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* shape */
+  --control-h: 2.75rem;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --shadow-1: 0 1px 2px rgb(43 33 24 / 0.08);
+  --shadow-2: 0 10px 30px rgb(43 33 24 / 0.10);
+
+  /* motion */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-std: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --nav-h: 4.5rem;
+}
+
+@media (max-width: 900px) {
+  :root { --fs-5xl: 3.25rem; --fs-4xl: 2.5rem; --fs-3xl: 2rem; }
+}
+@media (max-width: 600px) {
+  :root {
+    --fs-5xl: 2.5rem;
+    --fs-4xl: 2rem;
+    --fs-3xl: 1.75rem;
+    --fs-2xl: 1.5rem;
+    --space-9: 4rem;
+    --space-8: 3rem;
+    --nav-h: 3.75rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14100c;
+    --surface: #1e1813;
+    --surface-2: #2a221b;
+    --text: #f3e9db;
+    --text-muted: #b6a591;
+    --border: #3b3128;
+    --accent: #e08a5c;
+    --accent-hover: #eaa07a;
+    --accent-contrast: #14100c;
+    --accent-subtle: #3b2519;
+    --link: #e6a077;
+    --success: #9ccc85;
+    --success-subtle: #232e1c;
+    --warning: #e6b866;
+    --warning-subtle: #352a17;
+    --danger: #f08f84;
+    --danger-subtle: #3b1f1b;
+    --info: #8fc0da;
+    --info-subtle: #1c2b33;
+    --disabled-bg: #2a221b;
+    --disabled-text: #8b7d6b;
+    --focus: #e08a5c;
+    --tide: #79b8b2;
+    --tide-deep: #a8d6cf;
+    --tide-subtle: #17302f;
+    --rope: #6d5c44;
+    --sea-panel: #0f2f31;
+    --sea-panel-ink: #eef3f0;
+    --sea-panel-muted: #9dbcb9;
+    --scrim: rgb(0 0 0 / 0.6);
+    --paper-line: #332a21;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 14px 40px rgb(0 0 0 / 0.5);
+  }
+}
+
+/* ============================================================
+   primitives.css
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+img, svg, video { display: block; max-width: 100%; height: auto; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+ul, ol { padding-left: var(--space-5); }
+hr { border: 0; border-top: 1px solid var(--border); }
+small { font-size: var(--fs-sm); }
+code, kbd, pre, samp { font-family: var(--font-mono); font-size: var(--fs-sm); }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+::selection { background: var(--accent-subtle); color: var(--text); }
+
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: var(--weight-display); line-height: var(--lh-tight); text-wrap: balance; }
+h1 { font-size: var(--fs-4xl); }
+h2 { font-size: var(--fs-3xl); }
+h3 { font-size: var(--fs-xl); line-height: var(--lh-snug); }
+h4 { font-size: var(--fs-lg); line-height: var(--lh-snug); }
+p { text-wrap: pretty; }
+
+.container { width: min(100% - 2 * var(--space-5), 74rem); margin-inline: auto; }
+.section { padding-block: var(--space-8); }
+.stack { display: flex; flex-direction: column; gap: var(--space-4); }
+.stack-sm { display: flex; flex-direction: column; gap: var(--space-2); }
+.stack-lg { display: flex; flex-direction: column; gap: var(--space-7); }
+.cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.grid { display: grid; gap: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+.split { display: grid; gap: var(--space-6); align-items: center; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+.prose { max-width: var(--measure); }
+.prose > * + * { margin-top: var(--space-4); }
+
+.muted { color: var(--text-muted); }
+.lead { font-size: var(--fs-lg); color: var(--text-muted); max-width: var(--measure); }
+.mono { font-family: var(--font-mono); }
+.num { font-variant-numeric: tabular-nums; text-align: right; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--control-h); padding: 0 var(--space-4);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--surface); color: var(--text);
+  font-size: var(--fs-base); font-weight: 500; text-decoration: none; white-space: nowrap;
+  transition: background-color var(--dur-fast) var(--ease-std), border-color var(--dur-fast) var(--ease-std), color var(--dur-fast) var(--ease-std), transform var(--dur-fast) var(--ease-std);
+}
+.btn:hover { background: var(--surface-2); }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-tonal { background: var(--accent-subtle); border-color: var(--accent); color: var(--accent-hover); }
+.btn-tonal:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+.btn-lg { min-height: var(--space-7); padding-inline: var(--space-5); font-size: var(--fs-lg); }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn:disabled, .btn[aria-disabled="true"] { background: var(--disabled-bg); border-color: var(--disabled-bg); color: var(--disabled-text); cursor: not-allowed; transform: none; }
+
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+.field > label { font-size: var(--fs-sm); font-weight: 600; }
+.input {
+  width: 100%; min-height: var(--control-h); padding: 0 var(--space-3);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--surface); color: var(--text); font-size: var(--fs-base);
+  transition: border-color var(--dur-fast) var(--ease-std);
+}
+.input:focus-visible { outline: 2px solid var(--focus); outline-offset: 0; border-color: var(--focus); }
+.input[aria-invalid="true"] { border-color: var(--danger); }
+.hint { font-size: var(--fs-sm); color: var(--text-muted); }
+.error-text { font-size: var(--fs-sm); color: var(--danger); }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); }
+.panel { background: var(--surface-2); border-radius: var(--radius-lg); padding: var(--space-5); }
+.badge {
+  display: inline-flex; align-items: center; gap: var(--space-1); padding: 0 var(--space-2);
+  border-radius: var(--radius-full); background: var(--surface-2); color: var(--text);
+  font-size: var(--fs-xs); font-weight: 600; white-space: nowrap;
+}
+.badge-success { background: var(--success-subtle); color: var(--success); }
+.badge-warning { background: var(--warning-subtle); color: var(--warning); }
+.badge-danger { background: var(--danger-subtle); color: var(--danger); }
+.badge-info { background: var(--info-subtle); color: var(--info); }
+.alert { padding: var(--space-3) var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-2); }
+.alert-success { background: var(--success-subtle); border-color: var(--success); }
+.alert-danger { background: var(--danger-subtle); border-color: var(--danger); }
+
+.nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.nav ul { display: flex; flex-wrap: wrap; gap: var(--space-4); padding: 0; list-style: none; }
+.nav a { display: inline-flex; align-items: center; min-height: var(--control-h); color: var(--text); text-decoration: none; }
+.footer { border-top: 1px solid var(--border); padding-block: var(--space-6); color: var(--text-muted); font-size: var(--fs-sm); }
+
+.table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.table th, .table td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border); text-align: left; }
+.table th { color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+
+.empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-7) var(--space-4); text-align: center; color: var(--text-muted); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   page.css
+   ============================================================ */
+/* ---------- paper + page frame ---------- */
+body { overflow-x: hidden; position: relative; }
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+}
+body > * { position: relative; z-index: 1; }
+main { display: block; }
+section[id] { scroll-margin-top: calc(var(--nav-h) + var(--space-4)); }
+
+/* ---------- header ---------- */
+.site-head {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--bg);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur-base) var(--ease-std), box-shadow var(--dur-base) var(--ease-std), background-color var(--dur-base) var(--ease-std);
+}
+.site-head[data-stuck="true"] { border-bottom-color: var(--border); background: var(--surface); box-shadow: var(--shadow-1); }
+.head-inner { min-height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.brand { display: inline-flex; align-items: center; gap: var(--space-3); text-decoration: none; color: var(--text); }
+.brand svg { width: 2.25rem; height: 2.25rem; flex: none; }
+.brand-name { font-family: var(--font-display); font-size: var(--fs-lg); line-height: var(--lh-tight); letter-spacing: -0.01em; }
+.brand-sub { display: block; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.head-links { display: flex; align-items: center; gap: var(--space-5); list-style: none; margin: 0; padding: 0; }
+.head-links a {
+  display: inline-flex; align-items: center; min-height: var(--control-h);
+  color: var(--text-muted); text-decoration: none; font-size: var(--fs-sm); font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: color var(--dur-fast) var(--ease-std), border-color var(--dur-fast) var(--ease-std);
+}
+.head-links a:hover { color: var(--text); }
+.head-links a[aria-current="true"] { color: var(--text); border-bottom-color: var(--accent); }
+.bag-btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: var(--control-h); padding: 0 var(--space-3) 0 var(--space-4);
+  border: 1px solid var(--border); border-radius: var(--radius-full);
+  background: var(--surface); color: var(--text); font-size: var(--fs-sm); font-weight: 600;
+  transition: background-color var(--dur-fast) var(--ease-std), border-color var(--dur-fast) var(--ease-std), transform var(--dur-fast) var(--ease-std);
+}
+.bag-btn:hover { border-color: var(--accent); }
+.bag-btn:active { transform: scale(0.97); }
+.bag-btn svg { width: 1.125rem; height: 1.125rem; }
+.bag-count {
+  display: inline-grid; place-items: center; min-width: 1.5rem; height: 1.5rem; padding: 0 var(--space-1);
+  border-radius: var(--radius-full); background: var(--accent); color: var(--accent-contrast);
+  font-family: var(--font-mono); font-size: var(--fs-xs); font-variant-numeric: tabular-nums;
+}
+.bag-count[data-empty="true"] { background: var(--surface-2); color: var(--text-muted); }
+.bag-count.pop { animation: count-pop var(--dur-slow) var(--ease-out); }
+@keyframes count-pop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+
+/* ---------- hero ---------- */
+.hero { padding-block: var(--space-7) var(--space-7); position: relative; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr); gap: var(--space-8); align-items: center; }
+.hero h1 { font-size: var(--fs-5xl); letter-spacing: -0.02em; }
+.hero h1 em { font-style: italic; color: var(--accent); }
+.hero-kicker { display: flex; align-items: center; gap: var(--space-3); font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--tide); }
+.hero-kicker::before { content: ""; width: var(--space-7); height: 1px; background: var(--tide); }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); margin-top: var(--space-5); }
+.hero-facts { display: flex; flex-wrap: wrap; gap: var(--space-5); margin-top: var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--border); }
+.hero-fact { display: flex; flex-direction: column; gap: var(--space-1); }
+.hero-fact dt { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.hero-fact dd { font-family: var(--font-display); font-size: var(--fs-xl); margin: 0; }
+.hero-art { position: relative; }
+.hero-art svg { width: 100%; height: auto; overflow: visible; }
+.art-caption { margin-top: var(--space-3); font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); text-align: right; }
+.enter { opacity: 0; transform: translateY(10px); animation: enter var(--dur-slow) var(--ease-out) forwards; }
+.enter-2 { animation-delay: 80ms; }
+.enter-3 { animation-delay: 160ms; }
+@keyframes enter { to { opacity: 1; transform: none; } }
+
+/* ---------- live status pill ---------- */
+.status {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: 2rem; padding: 0 var(--space-3); border-radius: var(--radius-full);
+  background: var(--surface-2); color: var(--text); font-size: var(--fs-sm); font-weight: 600;
+}
+.status .dot { width: 0.5rem; height: 0.5rem; border-radius: var(--radius-full); background: var(--text-muted); flex: none; }
+.status[data-state="open"] { background: var(--success-subtle); color: var(--success); }
+.status[data-state="open"] .dot { background: var(--success); }
+.status[data-state="soon"] { background: var(--warning-subtle); color: var(--warning); }
+.status[data-state="soon"] .dot { background: var(--warning); }
+.status[data-state="closed"] { background: var(--surface-2); color: var(--text-muted); }
+
+/* ---------- section heading ---------- */
+.sec-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-6); }
+.sec-label { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--tide); margin-bottom: var(--space-2); }
+.sec-head p { max-width: 42ch; }
+
+/* ---------- bean ledger ---------- */
+.beans { border-top: 1px solid var(--border); }
+.bean {
+  display: grid; grid-template-columns: 3.5rem minmax(0, 1fr) auto auto;
+  align-items: center; gap: var(--space-5);
+  padding: var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  transition: background-color var(--dur-base) var(--ease-std);
+}
+.bean:hover { background: var(--surface); }
+.bean[data-sold="true"] { background: var(--surface-2); }
+.bean-seal { width: 3.5rem; height: 3.5rem; }
+.bean-name { font-family: var(--font-display); font-size: var(--fs-2xl); line-height: var(--lh-tight); }
+.bean-origin { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--tide); margin-top: var(--space-1); }
+.bean-notes { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.note-chip {
+  font-size: var(--fs-xs); padding: 0 var(--space-2); min-height: 1.5rem; display: inline-flex; align-items: center;
+  border: 1px solid var(--border); border-radius: var(--radius-full); color: var(--text-muted); background: var(--bg);
+}
+.bean[data-sold="true"] .bean-name { color: var(--text-muted); }
+.bean-price { font-family: var(--font-display); font-size: var(--fs-2xl); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bean-price span { display: block; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.bean-buy { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); min-width: 9.5rem; }
+.added-flag { font-size: var(--fs-xs); color: var(--success); font-weight: 600; opacity: 0; transition: opacity var(--dur-base) var(--ease-std); }
+.added-flag[data-show="true"] { opacity: 1; }
+.bean.stamp .bean-seal { animation: stamp var(--dur-slow) var(--ease-out); }
+@keyframes stamp { 0% { transform: scale(1) rotate(0deg); } 45% { transform: scale(0.86) rotate(-8deg); } 100% { transform: scale(1) rotate(0deg); } }
+.beans-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-4); padding-top: var(--space-5); font-size: var(--fs-sm); color: var(--text-muted); }
+
+/* ---------- the shed / story ---------- */
+.shed { background: var(--surface-2); border-block: 1px solid var(--border); }
+.shed-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: var(--space-8); align-items: start; }
+.shed-copy { position: sticky; top: calc(var(--nav-h) + var(--space-6)); }
+.shed-copy p { max-width: 46ch; }
+.dropcap::first-letter {
+  float: left; font-family: var(--font-display); font-size: var(--fs-5xl); line-height: 0.82;
+  padding-right: var(--space-3); padding-top: var(--space-1); color: var(--accent);
+}
+.shed-specs { display: grid; gap: 0; margin-top: var(--space-6); border-top: 1px solid var(--border); }
+.spec { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-3); border-bottom: 1px solid var(--border); }
+.spec dt { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text-muted); }
+.spec dd { margin: 0; font-family: var(--font-display); font-size: var(--fs-lg); text-align: right; }
+.roaster-plate { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-1); }
+.roaster-plate svg { width: 100%; height: auto; }
+.plate-caption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px dashed var(--border); font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.roast-curve { margin-top: var(--space-5); }
+.roast-curve figcaption { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); margin-top: var(--space-2); }
+
+/* ---------- visit ---------- */
+.visit-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-7); align-items: stretch; }
+.hours-card { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-1); }
+.hours-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.hours-now { font-family: var(--font-display); font-size: var(--fs-2xl); line-height: var(--lh-snug); margin-top: var(--space-4); }
+.hours-detail { font-size: var(--fs-sm); color: var(--text-muted); margin-top: var(--space-1); }
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-2); margin-top: var(--space-5); }
+.day {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-1);
+  padding: var(--space-3) var(--space-1); border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--bg); text-align: center;
+}
+.day-name { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.day-mark { font-size: var(--fs-xs); font-weight: 600; color: var(--text-muted); }
+.day[data-open="true"] { background: var(--tide-subtle); border-color: var(--tide); }
+.day[data-open="true"] .day-mark { color: var(--tide); }
+.day[data-roast="true"] { background: var(--accent-subtle); border-color: var(--accent); }
+.day[data-roast="true"] .day-mark { color: var(--accent-hover); }
+.day[data-today="true"] { box-shadow: inset 0 0 0 2px var(--text); }
+.hours-legend { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-4); font-size: var(--fs-xs); color: var(--text-muted); }
+.legend-key { display: inline-flex; align-items: center; gap: var(--space-2); }
+.legend-swatch { width: var(--space-3); height: var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.legend-swatch.open { background: var(--tide-subtle); border-color: var(--tide); }
+.legend-swatch.roast { background: var(--accent-subtle); border-color: var(--accent); }
+.hours-spacer { flex: 1 1 auto; min-height: var(--space-4); }
+.local-note { padding-top: var(--space-4); font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.address-card { display: flex; flex-direction: column; gap: var(--space-4); }
+.address-line { font-family: var(--font-display); font-size: var(--fs-3xl); line-height: var(--lh-tight); }
+.quay-art { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--tide-subtle); }
+.quay-art svg { width: 100%; height: auto; }
+
+/* ---------- subscription ---------- */
+.subscribe { background: var(--sea-panel); color: var(--sea-panel-ink); border-block: 1px solid var(--border); }
+.subscribe .sec-label { color: var(--sea-panel-muted); }
+.sub-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-8); align-items: center; }
+.sub-copy h2 { color: var(--sea-panel-ink); }
+.sub-copy p { color: var(--sea-panel-muted); max-width: 44ch; }
+.sub-price { display: flex; align-items: baseline; gap: var(--space-3); margin-top: var(--space-5); }
+.sub-price strong { font-family: var(--font-display); font-size: var(--fs-4xl); font-weight: var(--weight-display); color: var(--sea-panel-ink); }
+.sub-price span { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--sea-panel-muted); }
+.sub-form-card { background: var(--surface); color: var(--text); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-2); }
+.sub-form-card h3 { margin-bottom: var(--space-2); }
+.docket-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-bottom: var(--space-4); margin-bottom: var(--space-4); border-bottom: 2px dashed var(--border); }
+.docket-label { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.docket-stamp { width: var(--space-8); height: var(--space-8); flex: none; transform: rotate(-9deg); }
+.sub-form { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-5); }
+.sub-row { display: flex; gap: var(--space-3); }
+.sub-row .field { flex: 1 1 auto; min-width: 0; }
+.sub-row .btn { align-self: flex-end; }
+.sub-terms { font-size: var(--fs-xs); color: var(--text-muted); }
+.shake { animation: shake var(--dur-slow) var(--ease-std); }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+.sub-success { display: flex; flex-direction: column; gap: var(--space-4); align-items: flex-start; animation: enter var(--dur-slow) var(--ease-out); }
+.sub-success .check { width: var(--space-8); height: var(--space-8); }
+.check-path { stroke-dasharray: 48; stroke-dashoffset: 48; animation: draw var(--dur-slow) var(--ease-out) forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.sub-success h3 { color: var(--success); }
+.sub-success .email-echo { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text); word-break: break-all; }
+[hidden] { display: none !important; }
+
+/* ---------- footer ---------- */
+.site-foot { background: var(--bg); }
+.foot-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+.foot-tag { font-family: var(--font-display); font-size: var(--fs-2xl); color: var(--text); line-height: var(--lh-snug); max-width: 22ch; }
+.foot-col h4 { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); font-weight: 600; margin-bottom: var(--space-3); }
+.foot-col p, .foot-col a { font-size: var(--fs-sm); }
+.foot-base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: var(--fs-xs); }
+
+/* ---------- bag drawer ---------- */
+.scrim {
+  position: fixed; inset: 0; z-index: 60; background: var(--scrim);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-in);
+}
+.scrim[data-open="true"] { opacity: 1; pointer-events: auto; transition: opacity var(--dur-base) var(--ease-out); }
+.drawer {
+  position: fixed; top: 0; right: 0; z-index: 70; height: 100%; width: min(26rem, 100%);
+  display: flex; flex-direction: column;
+  background: var(--surface); border-left: 1px solid var(--border); box-shadow: var(--shadow-2);
+  transform: translateX(100%); visibility: hidden;
+  transition: transform var(--dur-slow) var(--ease-in), visibility 0s linear var(--dur-slow);
+}
+.drawer[data-open="true"] {
+  transform: none; visibility: visible;
+  transition: transform var(--dur-slow) var(--ease-out), visibility 0s;
+}
+.drawer-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-5); border-bottom: 1px solid var(--border); }
+.drawer-head h2 { font-size: var(--fs-xl); }
+.icon-btn {
+  display: inline-grid; place-items: center; width: var(--control-h); height: var(--control-h);
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--text);
+  transition: background-color var(--dur-fast) var(--ease-std), border-color var(--dur-fast) var(--ease-std);
+}
+.icon-btn:hover { background: var(--surface-2); border-color: var(--accent); }
+.icon-btn svg { width: 1.125rem; height: 1.125rem; }
+.drawer-body { flex: 1 1 auto; overflow-y: auto; padding: var(--space-5); }
+.bag-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+.bag-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding-bottom: var(--space-4); border-bottom: 1px solid var(--border); animation: enter var(--dur-base) var(--ease-out); }
+.bag-item-name { font-family: var(--font-display); font-size: var(--fs-lg); }
+.bag-item-meta { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.bag-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: var(--radius-full); overflow: hidden; }
+.stepper button { width: 2rem; height: 2rem; display: grid; place-items: center; color: var(--text); font-size: var(--fs-base); transition: background-color var(--dur-fast) var(--ease-std); }
+.stepper button:hover { background: var(--surface-2); }
+.stepper output { min-width: 1.75rem; text-align: center; font-family: var(--font-mono); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
+.bag-line-price { font-family: var(--font-mono); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
+.link-btn { font-size: var(--fs-xs); color: var(--text-muted); text-decoration: underline; text-underline-offset: 0.2em; min-height: 1.5rem; }
+.link-btn:hover { color: var(--danger); }
+.drawer-foot { padding: var(--space-5); border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: var(--space-3); background: var(--surface); }
+.total-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.total-row span { font-size: var(--fs-sm); color: var(--text-muted); }
+.total-row strong { font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: var(--weight-display); font-variant-numeric: tabular-nums; }
+.drawer-note { font-size: var(--fs-xs); color: var(--text-muted); }
+
+/* ---------- scrollbars in the house palette ---------- */
+* { scrollbar-width: thin; scrollbar-color: var(--rope) var(--surface-2); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--rope); border-radius: var(--radius-full); border: 2px solid var(--surface-2); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+  .hero-art { max-width: 34rem; margin-inline: auto; width: 100%; }
+  .shed-grid, .visit-grid, .sub-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  .shed-copy { position: static; }
+  .foot-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .foot-tag { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .head-links { display: none; }
+  .bean { grid-template-columns: 2.75rem minmax(0, 1fr); grid-template-areas: "seal info" "price buy"; row-gap: var(--space-4); }
+  .bean-seal { grid-area: seal; width: 2.75rem; height: 2.75rem; align-self: start; }
+  .bean-info { grid-area: info; }
+  .bean-price { grid-area: price; align-self: center; }
+  .bean-buy { grid-area: buy; min-width: 0; }
+  .week { gap: var(--space-1); }
+  .day { padding: var(--space-2) 0; }
+  .hero-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-5); }
+  .sub-row { flex-direction: column; }
+  .sub-row .btn { align-self: stretch; }
+  .hours-card, .sub-form-card { padding: var(--space-5); }
+  .foot-grid { grid-template-columns: minmax(0, 1fr); }
+  .drawer { width: 100%; border-left: 0; }
+}
+@media (max-width: 400px) {
+  .container { width: min(100% - 2 * var(--space-4), 74rem); }
+  .hero-facts { gap: var(--space-4); }
+  .brand-sub { display: none; }
+}
+</style>
+</head>
+<body>
+<a class="sr-only" href="#beans">Skip to this week's beans</a>
+
+<header class="site-head" id="siteHead">
+  <div class="container head-inner">
+    <a class="brand" href="#top" aria-label="Low Tide Coffee, back to top">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="18.5" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+        <path d="M4 24c4-3.4 8-3.4 12 0s8 3.4 12 0 8-3.4 8 0" fill="none" stroke="var(--tide)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M4 30c4-3.4 8-3.4 12 0s8 3.4 12 0 8-3.4 8 0" fill="none" stroke="var(--tide)" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+        <path d="M20 7c3.6 3 5.4 6 5.4 9 0 3.2-2.4 5.6-5.4 5.6s-5.4-2.4-5.4-5.6c0-3 1.8-6 5.4-9z" fill="var(--accent)"/>
+        <path d="M20 9.5v11" stroke="var(--accent-contrast)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <span>
+        <span class="brand-name">Low Tide Coffee</span>
+        <span class="brand-sub">4 Quay Lane</span>
+      </span>
+    </a>
+    <nav aria-label="Sections">
+      <ul class="head-links">
+        <li><a href="#beans" data-nav="beans">Beans</a></li>
+        <li><a href="#shed" data-nav="shed">The shed</a></li>
+        <li><a href="#visit" data-nav="visit">Visit</a></li>
+        <li><a href="#subscribe" data-nav="subscribe">Subscription</a></li>
+      </ul>
+    </nav>
+    <button class="bag-btn" id="bagOpen" aria-haspopup="dialog" aria-controls="bagDrawer">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+      </svg>
+      Bag
+      <span class="bag-count" id="bagCount" data-empty="true">0</span>
+      <span class="sr-only" id="bagCountText">0 bags in your bag</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ===================== hero ===================== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="stack">
+        <p class="hero-kicker enter">Low Tide Coffee · harbor roastery · est. 2019</p>
+        <h1 class="enter enter-2">Roasted on Tuesdays,<br><em>gone by Sunday.</em></h1>
+        <p class="lead enter enter-3">Light-roast coffee from a former boat repair shed at the water's edge. Forty kilos a week on one old drum, sold at 4 Quay Lane until the shelf is bare — then nothing until Tuesday.</p>
+        <div class="hero-actions enter">
+          <a class="btn btn-primary btn-lg" href="#beans">See this week's beans</a>
+          <span class="status" id="heroStatus" data-state="closed" role="status">
+            <span class="dot" aria-hidden="true"></span><span id="heroStatusText">Checking the door…</span>
+          </span>
+        </div>
+        <dl class="hero-facts">
+          <div class="hero-fact"><dt>Roast day</dt><dd>Tuesday</dd></div>
+          <div class="hero-fact"><dt>Each week</dt><dd>40 kg</dd></div>
+          <div class="hero-fact"><dt>The drum</dt><dd>1962 Probat</dd></div>
+          <div class="hero-fact"><dt>Roast style</dt><dd>Light only</dd></div>
+        </dl>
+      </div>
+
+      <figure class="hero-art enter" id="heroArt">
+        <svg viewBox="0 0 560 470" role="img" aria-labelledby="harborTitle harborDesc">
+          <title id="harborTitle">The roastery shed on the quay</title>
+          <desc id="harborDesc">A line drawing of a gabled boat shed beside harbor water, with a chimney, a moored boat and a tide gauge.</desc>
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--accent-subtle)"/>
+              <stop offset="100%" stop-color="var(--bg)"/>
+            </linearGradient>
+            <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--tide-subtle)"/>
+              <stop offset="100%" stop-color="var(--bg)"/>
+            </linearGradient>
+            <clipPath id="waterClip"><rect x="0" y="330" width="560" height="140"/></clipPath>
+          </defs>
+
+          <g data-depth="0.02">
+            <rect x="14" y="18" width="532" height="316" rx="18" fill="url(#sky)"/>
+            <circle cx="430" cy="96" r="34" fill="var(--accent)" opacity="0.18"/>
+            <circle cx="430" cy="96" r="21" fill="var(--accent)" opacity="0.5"/>
+            <path d="M60 120c10-9 20-9 30 0M96 106c8-7 16-7 24 0" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+            <path d="M300 74c7-6 14-6 21 0M328 62c6-5 12-5 18 0" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+          </g>
+
+          <!-- far shore -->
+          <g data-depth="0.05">
+            <path d="M14 268c60-16 96-6 140-14s96-22 150-10 108 26 152 18v72H14z" fill="var(--tide)" opacity="0.16"/>
+            <path d="M330 250h150M360 238h60" stroke="var(--tide)" stroke-width="1.5" opacity="0.35" stroke-linecap="round"/>
+          </g>
+
+          <!-- shed -->
+          <g data-depth="0.1">
+            <path d="M120 330V196l108-62 108 62v134z" fill="var(--surface)" stroke="var(--text)" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M104 202l124-72 124 72" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <g stroke="var(--border)" stroke-width="1.5">
+              <path d="M136 214v116M156 208v122M300 208v122M320 214v116"/>
+            </g>
+            <!-- open doors -->
+            <path d="M186 330v-92h84v92z" fill="var(--tide-deep)" opacity="0.9"/>
+            <path d="M186 238h84" stroke="var(--text)" stroke-width="2.5"/>
+            <path d="M228 238v92" stroke="var(--text)" stroke-width="2" opacity="0.5"/>
+            <path d="M176 238l-14 8v84h14zM280 238l14 8v84h-14z" fill="var(--surface-2)" stroke="var(--text)" stroke-width="2"/>
+            <!-- warm light inside -->
+            <path d="M200 330l14-56h28l14 56z" fill="var(--accent)" opacity="0.35"/>
+            <!-- window -->
+            <rect x="140" y="238" width="30" height="26" rx="3" fill="var(--warning-subtle)" stroke="var(--text)" stroke-width="2"/>
+            <path d="M155 238v26M140 251h30" stroke="var(--text)" stroke-width="1.5"/>
+            <!-- chimney + smoke -->
+            <path d="M286 168v-46h22v58" fill="var(--surface-2)" stroke="var(--text)" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M297 112c-10-10 8-18-2-30s6-20-2-30" fill="none" stroke="var(--text-muted)" stroke-width="2.5" stroke-linecap="round" opacity="0.55"/>
+            <!-- hanging sign -->
+            <path d="M348 214h44" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M356 214v10M384 214v10" stroke="var(--text)" stroke-width="1.5"/>
+            <rect x="348" y="224" width="44" height="30" rx="4" fill="var(--accent)"/>
+            <path d="M354 240c4-3.5 8-3.5 12 0s8 3.5 12 0 8-3.5 8 0" fill="none" stroke="var(--accent-contrast)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M354 247c4-3.5 8-3.5 12 0s8 3.5 12 0 8-3.5 8 0" fill="none" stroke="var(--accent-contrast)" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+          </g>
+
+          <!-- quay -->
+          <g data-depth="0.14">
+            <path d="M14 330h532v22H14z" fill="var(--surface-2)" stroke="var(--text)" stroke-width="2.5"/>
+            <path d="M40 352v18M120 352v18M420 352v18M500 352v18" stroke="var(--text)" stroke-width="2" opacity="0.5"/>
+            <path d="M74 330v-16h12v16" fill="var(--text)" opacity="0.8"/>
+            <path d="M80 316c26 6 44 18 62 14" fill="none" stroke="var(--rope)" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- tide gauge -->
+            <path d="M470 300v72" stroke="var(--text)" stroke-width="4" stroke-linecap="round"/>
+            <g stroke="var(--text)" stroke-width="2" stroke-linecap="round">
+              <path d="M470 308h12M470 320h8M470 332h12M470 344h8M470 356h12"/>
+            </g>
+          </g>
+
+          <!-- water -->
+          <g data-depth="0.2">
+            <rect x="14" y="352" width="532" height="104" rx="14" fill="url(#water)"/>
+            <g clip-path="url(#waterClip)" fill="none" stroke="var(--tide)" stroke-linecap="round">
+              <path d="M-20 372c22-9 44-9 66 0s44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0" stroke-width="2.5" opacity="0.75"/>
+              <path d="M-20 396c22-9 44-9 66 0s44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0" stroke-width="2" opacity="0.5"/>
+              <path d="M-20 420c22-9 44-9 66 0s44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0" stroke-width="2" opacity="0.32"/>
+              <path d="M-20 442c22-9 44-9 66 0s44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0" stroke-width="1.5" opacity="0.2"/>
+            </g>
+            <!-- moored boat -->
+            <g>
+              <path d="M330 372h74l-12 22h-50z" fill="var(--surface)" stroke="var(--text)" stroke-width="2.5" stroke-linejoin="round"/>
+              <path d="M366 372v-40" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M366 336l26 26h-26z" fill="var(--accent)" opacity="0.85"/>
+              <path d="M340 314c-14 10-24 24-26 38" fill="none" stroke="var(--rope)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+          </g>
+        </svg>
+        <figcaption class="art-caption">The shed at 4 Quay Lane — drawn from the water side.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== beans ===================== -->
+  <section class="section" id="beans" aria-labelledby="beansTitle">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <p class="sec-label">01 — on the bench</p>
+          <h2 id="beansTitle">What's on the shelf</h2>
+        </div>
+        <p class="muted">Every bag is 250 g, roasted the same Tuesday. Three left this week.</p>
+      </div>
+
+      <div class="beans" id="beanList">
+        <article class="bean" data-bean="kettle-hill" data-name="Kettle Hill" data-price="16">
+          <svg class="bean-seal" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="26" fill="var(--accent-subtle)" stroke="var(--accent)" stroke-width="1.5"/>
+            <path d="M6 34c5-4 10-4 15 0s10 4 15 0 10-4 14 0v14a26 26 0 0 1-44 0z" fill="var(--accent)" opacity="0.35"/>
+            <path d="M28 12c4.6 4 7 7.8 7 11.6 0 4-3.1 7-7 7s-7-3-7-7c0-3.8 2.4-7.6 7-11.6z" fill="var(--accent)"/>
+            <path d="M28 15v15" stroke="var(--accent-contrast)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <div class="bean-info">
+            <h3 class="bean-name">Kettle Hill</h3>
+            <p class="bean-origin">Ethiopia, Guji</p>
+            <div class="bean-notes"><span class="note-chip">peach</span><span class="note-chip">jasmine</span><span class="note-chip">black tea</span></div>
+          </div>
+          <p class="bean-price">€16<span>250 g</span></p>
+          <div class="bean-buy">
+            <button class="btn btn-tonal add-btn" type="button">Add to bag</button>
+            <span class="added-flag" aria-hidden="true">In your bag</span>
+          </div>
+        </article>
+
+        <article class="bean" data-bean="slow-water" data-name="Slow Water" data-price="14">
+          <svg class="bean-seal" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="26" fill="var(--tide-subtle)" stroke="var(--tide)" stroke-width="1.5"/>
+            <path d="M6 26c5-4 10-4 15 0s10 4 15 0 10-4 14 0v22a26 26 0 0 1-44 0z" fill="var(--tide)" opacity="0.3"/>
+            <path d="M28 12c4.6 4 7 7.8 7 11.6 0 4-3.1 7-7 7s-7-3-7-7c0-3.8 2.4-7.6 7-11.6z" fill="var(--tide)"/>
+            <path d="M28 15v15" stroke="var(--surface)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <div class="bean-info">
+            <h3 class="bean-name">Slow Water</h3>
+            <p class="bean-origin">Colombia, Huila</p>
+            <div class="bean-notes"><span class="note-chip">red apple</span><span class="note-chip">panela</span><span class="note-chip">cocoa</span></div>
+          </div>
+          <p class="bean-price">€14<span>250 g</span></p>
+          <div class="bean-buy">
+            <button class="btn btn-tonal add-btn" type="button">Add to bag</button>
+            <span class="added-flag" aria-hidden="true">In your bag</span>
+          </div>
+        </article>
+
+        <article class="bean" data-bean="night-ferry" data-name="Night Ferry" data-price="18">
+          <svg class="bean-seal" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="26" fill="var(--info-subtle)" stroke="var(--info)" stroke-width="1.5"/>
+            <path d="M6 38c5-4 10-4 15 0s10 4 15 0 10-4 14 0v10a26 26 0 0 1-44 0z" fill="var(--info)" opacity="0.3"/>
+            <circle cx="38" cy="17" r="5" fill="var(--info)" opacity="0.5"/>
+            <path d="M28 12c4.6 4 7 7.8 7 11.6 0 4-3.1 7-7 7s-7-3-7-7c0-3.8 2.4-7.6 7-11.6z" fill="var(--info)"/>
+            <path d="M28 15v15" stroke="var(--surface)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <div class="bean-info">
+            <h3 class="bean-name">Night Ferry</h3>
+            <p class="bean-origin">Kenya, Nyeri</p>
+            <div class="bean-notes"><span class="note-chip">blackcurrant</span><span class="note-chip">grapefruit</span></div>
+          </div>
+          <p class="bean-price">€18<span>250 g</span></p>
+          <div class="bean-buy">
+            <button class="btn btn-tonal add-btn" type="button">Add to bag</button>
+            <span class="added-flag" aria-hidden="true">In your bag</span>
+          </div>
+        </article>
+
+        <article class="bean" data-bean="harbor-house" data-name="Harbor House" data-price="12" data-sold="true">
+          <svg class="bean-seal" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="26" fill="var(--disabled-bg)" stroke="var(--border)" stroke-width="1.5"/>
+            <path d="M6 44c5-4 10-4 15 0s10 4 15 0 10-4 14 0v4a26 26 0 0 1-44 0z" fill="var(--disabled-text)" opacity="0.4"/>
+            <path d="M28 12c4.6 4 7 7.8 7 11.6 0 4-3.1 7-7 7s-7-3-7-7c0-3.8 2.4-7.6 7-11.6z" fill="var(--disabled-text)"/>
+            <path d="M14 42L42 14" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+          </svg>
+          <div class="bean-info">
+            <h3 class="bean-name">Harbor House</h3>
+            <p class="bean-origin">Brazil, Mogiana</p>
+            <div class="bean-notes"><span class="note-chip">hazelnut</span><span class="note-chip">milk chocolate</span></div>
+          </div>
+          <p class="bean-price">€12<span>250 g</span></p>
+          <div class="bean-buy">
+            <button class="btn add-btn" type="button" disabled aria-disabled="true">Sold out</button>
+            <span class="badge badge-danger">Gone for now</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="beans-foot">
+        <p>Prices are per 250 g bag. The shelf is the shelf — there is no back room.</p>
+        <p class="mono" id="nextRoast">Next roast: Tuesday</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== the shed ===================== -->
+  <section class="section shed" id="shed" aria-labelledby="shedTitle">
+    <div class="container shed-grid">
+      <div class="shed-copy stack">
+        <div>
+          <p class="sec-label">02 — the shed</p>
+          <h2 id="shedTitle">A boat shed that smells of peach and jasmine</h2>
+        </div>
+        <div class="prose">
+          <p class="dropcap">Mara Quint started Low Tide in 2019, in a former boat repair shed by the harbor. The doors still open the way boat doors do — wide, and straight onto the quay.</p>
+          <p>Forty kilos a week goes through a 1962 Probat drum roaster. It is older than most of the equipment in this town and it does one thing well: it takes its time.</p>
+          <p>Light roasts only. Nothing is taken dark to hide anything, so the origin stays in the cup — peach and jasmine from Guji, red apple and panela from Huila, blackcurrant from Nyeri.</p>
+          <p>Tuesday and Monday the shop is shut and the drum is running. Wednesday the doors open at eight, and by Sunday the shelf is usually bare.</p>
+        </div>
+        <dl class="shed-specs">
+          <div class="spec"><dt>Founded</dt><dd>2019, by Mara Quint</dd></div>
+          <div class="spec"><dt>Roaster</dt><dd>1962 Probat drum</dd></div>
+          <div class="spec"><dt>Weekly batch</dt><dd>40 kg</dd></div>
+          <div class="spec"><dt>Roast style</dt><dd>Light only</dd></div>
+        </dl>
+      </div>
+
+      <div class="stack-lg">
+        <figure class="roaster-plate">
+          <svg viewBox="0 0 520 380" role="img" aria-labelledby="probatTitle">
+            <title id="probatTitle">Line drawing of the 1962 Probat drum roaster</title>
+            <defs>
+              <linearGradient id="drumShade" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="var(--accent)"/>
+                <stop offset="100%" stop-color="var(--accent-hover)"/>
+              </linearGradient>
+            </defs>
+            <rect x="8" y="8" width="504" height="364" rx="14" fill="var(--bg)"/>
+            <g stroke="var(--paper-line)" stroke-width="1">
+              <path d="M8 60h504M8 120h504M8 180h504M8 240h504M8 300h504M80 8v364M160 8v364M240 8v364M320 8v364M400 8v364M480 8v364"/>
+            </g>
+            <!-- chimney -->
+            <path d="M330 96V40h34v70" fill="none" stroke="var(--text)" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M347 34c-9-8 6-14-2-22" fill="none" stroke="var(--text-muted)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+            <!-- hopper -->
+            <path d="M212 60h96l-22 46h-52z" fill="var(--surface-2)" stroke="var(--text)" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M222 74h76" stroke="var(--text)" stroke-width="1.5" opacity="0.5"/>
+            <!-- body -->
+            <rect x="150" y="106" width="220" height="132" rx="12" fill="var(--surface-2)" stroke="var(--text)" stroke-width="3"/>
+            <!-- drum face -->
+            <circle cx="238" cy="172" r="52" fill="url(#drumShade)" stroke="var(--text)" stroke-width="3"/>
+            <circle cx="238" cy="172" r="34" fill="none" stroke="var(--accent-contrast)" stroke-width="2" opacity="0.7"/>
+            <circle cx="238" cy="172" r="8" fill="var(--accent-contrast)"/>
+            <g stroke="var(--accent-contrast)" stroke-width="2.5" stroke-linecap="round" opacity="0.85">
+              <path d="M238 130v12M238 202v12M196 172h12M268 172h12"/>
+            </g>
+            <!-- control panel -->
+            <rect x="304" y="128" width="48" height="88" rx="6" fill="var(--surface)" stroke="var(--text)" stroke-width="2.5"/>
+            <circle cx="328" cy="150" r="11" fill="var(--warning-subtle)" stroke="var(--text)" stroke-width="2"/>
+            <path d="M328 150l6-6" stroke="var(--danger)" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="328" cy="180" r="6" fill="var(--success)"/>
+            <circle cx="328" cy="200" r="6" fill="var(--danger)" opacity="0.8"/>
+            <!-- cooling tray -->
+            <path d="M120 250h280l-16 44H136z" fill="var(--surface)" stroke="var(--text)" stroke-width="3" stroke-linejoin="round"/>
+            <g stroke="var(--border)" stroke-width="2">
+              <path d="M150 258l-8 28M180 258l-6 28M210 258l-4 28M240 258v28M270 258l4 28M300 258l6 28M330 258l8 28M360 258l10 28"/>
+            </g>
+            <path d="M260 238v12" stroke="var(--text)" stroke-width="3"/>
+            <!-- beans in tray -->
+            <g fill="var(--accent)">
+              <ellipse cx="196" cy="272" rx="6" ry="4" transform="rotate(-18 196 272)"/>
+              <ellipse cx="228" cy="278" rx="6" ry="4" transform="rotate(12 228 278)"/>
+              <ellipse cx="262" cy="270" rx="6" ry="4" transform="rotate(-6 262 270)"/>
+              <ellipse cx="296" cy="278" rx="6" ry="4" transform="rotate(22 296 278)"/>
+              <ellipse cx="326" cy="270" rx="6" ry="4" transform="rotate(-14 326 270)"/>
+            </g>
+            <!-- legs -->
+            <path d="M160 294v52M360 294v52M140 346h44M336 346h48" stroke="var(--text)" stroke-width="3" stroke-linecap="round"/>
+            <!-- plate -->
+            <rect x="60" y="316" width="112" height="34" rx="6" fill="var(--accent)" />
+            <text x="116" y="338" text-anchor="middle" font-family="var(--font-mono)" font-size="14" fill="var(--accent-contrast)">PROBAT · 1962</text>
+          </svg>
+          <figcaption class="plate-caption"><span>Fig. 1 — the drum, the tray, the chimney</span><span>40 kg / week</span></figcaption>
+        </figure>
+
+        <figure class="roast-curve">
+          <svg viewBox="0 0 520 150" role="img" aria-labelledby="curveTitle">
+            <title id="curveTitle">The week at the shed: roasting Monday and Tuesday, open Wednesday to Sunday</title>
+            <path d="M10 118h500" stroke="var(--border)" stroke-width="2"/>
+            <path d="M10 118C60 118 60 40 110 40s60 78 110 78" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M220 118h290" stroke="var(--tide)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10"/>
+            <circle cx="110" cy="40" r="6" fill="var(--accent)"/>
+            <text x="110" y="24" text-anchor="middle" font-family="var(--font-mono)" font-size="13" fill="var(--text-muted)">drum on</text>
+            <text x="366" y="104" text-anchor="middle" font-family="var(--font-mono)" font-size="13" fill="var(--tide)">doors open, shelf empties</text>
+            <text x="10" y="142" font-family="var(--font-mono)" font-size="12" fill="var(--text-muted)">Mon</text>
+            <text x="252" y="142" font-family="var(--font-mono)" font-size="12" fill="var(--text-muted)">Wed</text>
+            <text x="482" y="142" font-family="var(--font-mono)" font-size="12" fill="var(--text-muted)">Sun</text>
+          </svg>
+          <figcaption>One roast a week. The curve is the whole business plan.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== visit ===================== -->
+  <section class="section" id="visit" aria-labelledby="visitTitle">
+    <div class="container">
+      <div class="sec-head">
+        <div>
+          <p class="sec-label">03 — visit</p>
+          <h2 id="visitTitle">The door is the thing</h2>
+        </div>
+        <p class="muted">One shop, one counter. If the door is open, there is coffee behind it.</p>
+      </div>
+
+      <div class="visit-grid">
+        <div class="hours-card">
+          <div class="hours-top">
+            <h3>Opening hours</h3>
+            <span class="status" id="visitStatus" data-state="closed" role="status" aria-live="polite">
+              <span class="dot" aria-hidden="true"></span><span id="visitStatusText">Checking the door…</span>
+            </span>
+          </div>
+          <p class="hours-now" id="hoursNow">Wed–Sun, 8:00–15:00</p>
+          <p class="hours-detail" id="hoursDetail">Closed Monday and Tuesday — those are the roasting days.</p>
+
+          <ol class="week" id="weekStrip" aria-label="The week at the shop">
+            <li class="day" data-day="1" data-roast="true"><span class="day-name">Mon</span><span class="day-mark">Roast</span></li>
+            <li class="day" data-day="2" data-roast="true"><span class="day-name">Tue</span><span class="day-mark">Roast</span></li>
+            <li class="day" data-day="3" data-open="true"><span class="day-name">Wed</span><span class="day-mark">8–15</span></li>
+            <li class="day" data-day="4" data-open="true"><span class="day-name">Thu</span><span class="day-mark">8–15</span></li>
+            <li class="day" data-day="5" data-open="true"><span class="day-name">Fri</span><span class="day-mark">8–15</span></li>
+            <li class="day" data-day="6" data-open="true"><span class="day-name">Sat</span><span class="day-mark">8–15</span></li>
+            <li class="day" data-day="0" data-open="true"><span class="day-name">Sun</span><span class="day-mark">8–15</span></li>
+          </ol>
+
+          <div class="hours-legend">
+            <span class="legend-key"><span class="legend-swatch open" aria-hidden="true"></span>Open 8:00–15:00</span>
+            <span class="legend-key"><span class="legend-swatch roast" aria-hidden="true"></span>Roasting, door shut</span>
+          </div>
+          <div class="hours-spacer" aria-hidden="true"></div>
+          <p class="local-note" id="localNote">Times shown in your local time.</p>
+        </div>
+
+        <div class="address-card">
+          <p class="address-line">4 Quay Lane</p>
+          <p class="muted">The shed with the wide doors, on the water side of the quay. Look for the chimney.</p>
+          <figure class="quay-art">
+            <svg viewBox="0 0 520 320" role="img" aria-labelledby="quayTitle">
+              <title id="quayTitle">Diagram of the shed on the quay, with the door facing the water</title>
+              <rect width="520" height="320" fill="var(--tide-subtle)"/>
+              <g fill="none" stroke="var(--tide)" stroke-width="2" stroke-linecap="round" opacity="0.5">
+                <path d="M-10 250c22-9 44-9 66 0s44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0"/>
+                <path d="M-10 278c22-9 44-9 66 0s44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0"/>
+                <path d="M-10 304c22-9 44-9 66 0s44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0 44-9 66 0 44 9 66 0"/>
+              </g>
+              <rect x="0" y="188" width="520" height="42" fill="var(--surface-2)" stroke="var(--border)" stroke-width="2"/>
+              <g stroke="var(--rope)" stroke-width="2">
+                <path d="M40 188v42M120 188v42M200 188v42M280 188v42M360 188v42M440 188v42"/>
+              </g>
+              <rect x="150" y="52" width="220" height="136" fill="var(--surface)" stroke="var(--text)" stroke-width="3"/>
+              <path d="M150 52l110-34 110 34" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linejoin="round"/>
+              <rect x="228" y="120" width="64" height="68" fill="var(--tide-deep)"/>
+              <path d="M228 120h64" stroke="var(--text)" stroke-width="3"/>
+              <path d="M260 188v26" stroke="var(--accent)" stroke-width="3" stroke-dasharray="4 6" stroke-linecap="round"/>
+              <path d="M252 208l8 10 8-10" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="260" y="96" text-anchor="middle" font-family="var(--font-display)" font-size="22" fill="var(--text)">Low Tide</text>
+              <rect x="146" y="234" width="228" height="24" rx="6" fill="var(--bg)" opacity="0.9"/>
+              <text x="260" y="251" text-anchor="middle" font-family="var(--font-mono)" font-size="13" fill="var(--tide)">the door · Wed–Sun 8:00</text>
+              <text x="486" y="176" text-anchor="end" font-family="var(--font-mono)" font-size="13" fill="var(--text-muted)">Quay Lane</text>
+              <text x="34" y="240" font-family="var(--font-mono)" font-size="13" fill="var(--tide)">harbor</text>
+              <circle cx="404" cy="120" r="16" fill="none" stroke="var(--text-muted)" stroke-width="2"/>
+              <path d="M404 108v24M396 116l8-8 8 8" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </figure>
+          <p class="muted">Questions before you walk over? <a href="mailto:hello@lowtide.coffee">hello@lowtide.coffee</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== subscription ===================== -->
+  <section class="section subscribe" id="subscribe" aria-labelledby="subTitle">
+    <div class="container sub-grid">
+      <div class="sub-copy stack">
+        <div>
+          <p class="sec-label">04 — the standing order</p>
+          <h2 id="subTitle">Let the roaster choose</h2>
+        </div>
+        <p>One bag every two weeks, whichever lot Mara is happiest with when the drum cools. You don't pick. That's the point.</p>
+        <p class="sub-price"><strong>€13</strong><span>per bag · one bag / two weeks</span></p>
+      </div>
+
+      <div class="sub-form-card">
+        <div id="subFormWrap">
+          <div class="docket-top">
+            <span class="docket-label">Standing order · one bag / fortnight</span>
+            <svg class="docket-stamp" viewBox="0 0 64 64" aria-hidden="true">
+              <circle cx="32" cy="32" r="29" fill="none" stroke="var(--accent)" stroke-width="2"/>
+              <circle cx="32" cy="32" r="24" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2 3"/>
+              <path d="M14 38c4-3.5 8-3.5 12 0s8 3.5 12 0 8-3.5 12 0" fill="none" stroke="var(--tide)" stroke-width="2" stroke-linecap="round"/>
+              <text x="32" y="26" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--accent)">ROASTER'S</text>
+              <text x="32" y="48" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--accent)">CHOICE</text>
+            </svg>
+          </div>
+          <h3>Put your name on the list</h3>
+          <p class="muted">Leave an email and we'll write back with the first bag. No account, no password.</p>
+          <form class="sub-form" id="subForm" novalidate>
+            <div class="sub-row">
+              <div class="field">
+                <label for="subEmail">Email address</label>
+                <input class="input" id="subEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" aria-describedby="subHint subError" required>
+                <span class="hint" id="subHint">Roaster's choice, €13 a bag, every two weeks.</span>
+                <span class="error-text" id="subError" role="alert" hidden></span>
+              </div>
+              <button class="btn btn-primary" type="submit">Sign up</button>
+            </div>
+            <p class="sub-terms">We only use this address to arrange your bag. Ask us to stop and we stop.</p>
+          </form>
+        </div>
+
+        <div class="sub-success" id="subSuccess" hidden role="status">
+          <svg class="check" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="32" r="29" fill="var(--success-subtle)" stroke="var(--success)" stroke-width="2"/>
+            <path class="check-path" d="M19 33l9 9 17-19" fill="none" stroke="var(--success)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h3>You're on the list.</h3>
+          <p class="muted">We'll write to <span class="email-echo" id="subEmailEcho"></span> from hello@lowtide.coffee to arrange the first bag — €13, roaster's choice, every two weeks.</p>
+          <button class="btn" type="button" id="subReset">Use a different email</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== footer ===================== -->
+<footer class="footer site-foot">
+  <div class="container">
+    <div class="foot-grid">
+      <p class="foot-tag">Roasted on Tuesdays, gone by Sunday.</p>
+      <div class="foot-col">
+        <h4>The shop</h4>
+        <p>4 Quay Lane<br>Wed–Sun 8:00–15:00<br>Closed Mon–Tue, roasting</p>
+      </div>
+      <div class="foot-col">
+        <h4>Write to us</h4>
+        <p><a href="mailto:hello@lowtide.coffee">hello@lowtide.coffee</a></p>
+        <p class="muted">Low Tide Coffee, founded 2019 by Mara Quint.</p>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>Low Tide Coffee · 4 Quay Lane</span>
+      <span>Light roasts only · 40 kg a week</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== bag drawer ===================== -->
+<div class="scrim" id="bagScrim" data-open="false"></div>
+<aside class="drawer" id="bagDrawer" data-open="false" role="dialog" aria-modal="true" aria-labelledby="bagTitle" aria-hidden="true">
+  <div class="drawer-head">
+    <h2 id="bagTitle">Your bag</h2>
+    <button class="icon-btn" id="bagClose" type="button" aria-label="Close bag">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body">
+    <div class="empty" id="bagEmpty">
+      <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true" fill="none" stroke="var(--rope)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 22h36l-3 32H17L14 22z"/><path d="M24 22v-6a8 8 0 0 1 16 0v6"/>
+        <path d="M20 38c4-3 8-3 12 0s8 3 12 0" stroke="var(--tide)"/>
+      </svg>
+      <p>Nothing in the bag yet. The shelf is right there.</p>
+      <button class="btn" type="button" id="bagBrowse">Back to the beans</button>
+    </div>
+    <ul class="bag-list" id="bagList" hidden></ul>
+  </div>
+  <div class="drawer-foot">
+    <div class="total-row"><span id="bagSummary">0 bags</span><strong id="bagTotal">€0</strong></div>
+    <a class="btn btn-primary" id="bagOrder" href="mailto:hello@lowtide.coffee" aria-disabled="true">Email the shop about this bag</a>
+    <p class="drawer-note">Your bag stays on this device. Nothing is charged here — this opens an email to the shop with your bag in it.</p>
+  </div>
+</aside>
+
+<div class="sr-only" role="status" aria-live="polite" id="liveRegion"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var BEANS = {
+    'kettle-hill':  { name: 'Kettle Hill',  origin: 'Ethiopia, Guji',  price: 16 },
+    'slow-water':   { name: 'Slow Water',   origin: 'Colombia, Huila', price: 14 },
+    'night-ferry':  { name: 'Night Ferry',  origin: 'Kenya, Nyeri',    price: 18 },
+    'harbor-house': { name: 'Harbor House', origin: 'Brazil, Mogiana', price: 12, soldOut: true }
+  };
+  var SHOP_DAYS = [0, 3, 4, 5, 6]; // Sun, Wed–Sun
+  var OPEN_MIN = 8 * 60, CLOSE_MIN = 15 * 60;
+  var DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var live = $('liveRegion');
+  function announce(msg) { live.textContent = ''; window.setTimeout(function () { live.textContent = msg; }, 40); }
+  function euro(n) { return '€' + n; }
+
+  /* ---------------- bag state ---------------- */
+  var bag = {};
+  try {
+    var saved = window.localStorage.getItem('lowtide.bag');
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      Object.keys(parsed).forEach(function (id) {
+        var qty = parseInt(parsed[id], 10);
+        if (BEANS[id] && !BEANS[id].soldOut && qty > 0) bag[id] = Math.min(qty, 99);
+      });
+    }
+  } catch (e) { /* storage unavailable — bag lives in memory */ }
+
+  function persist() {
+    try { window.localStorage.setItem('lowtide.bag', JSON.stringify(bag)); } catch (e) {}
+  }
+  function bagCount() {
+    return Object.keys(bag).reduce(function (n, id) { return n + bag[id]; }, 0);
+  }
+  function bagTotal() {
+    return Object.keys(bag).reduce(function (n, id) { return n + bag[id] * BEANS[id].price; }, 0);
+  }
+
+  var countEl = $('bagCount'), countText = $('bagCountText');
+  function renderCount(pop) {
+    var n = bagCount();
+    countEl.textContent = String(n);
+    countEl.setAttribute('data-empty', n === 0 ? 'true' : 'false');
+    countText.textContent = n === 1 ? '1 bag in your bag' : n + ' bags in your bag';
+    if (pop) {
+      countEl.classList.remove('pop');
+      void countEl.offsetWidth;
+      countEl.classList.add('pop');
+    }
+  }
+
+  var bagList = $('bagList'), bagEmpty = $('bagEmpty'), bagSummary = $('bagSummary'),
+      bagTotalEl = $('bagTotal'), bagOrder = $('bagOrder');
+
+  function renderBag() {
+    var ids = Object.keys(bag);
+    bagList.innerHTML = '';
+    ids.forEach(function (id) {
+      var bean = BEANS[id], qty = bag[id];
+      var li = document.createElement('li');
+      li.className = 'bag-item';
+
+      var left = document.createElement('div');
+      var name = document.createElement('p');
+      name.className = 'bag-item-name';
+      name.textContent = bean.name;
+      var meta = document.createElement('p');
+      meta.className = 'bag-item-meta';
+      meta.textContent = bean.origin + ' · 250 g · ' + euro(bean.price);
+      var remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'link-btn';
+      remove.textContent = 'Remove';
+      remove.setAttribute('aria-label', 'Remove ' + bean.name + ' from bag');
+      remove.addEventListener('click', function () {
+        delete bag[id];
+        persist(); renderBag(); renderCount(false); syncFlags();
+        announce(bean.name + ' removed from your bag.');
+      });
+      left.appendChild(name); left.appendChild(meta); left.appendChild(remove);
+
+      var right = document.createElement('div');
+      right.className = 'bag-item-right';
+      var stepper = document.createElement('div');
+      stepper.className = 'stepper';
+      var minus = document.createElement('button');
+      minus.type = 'button'; minus.textContent = '−';
+      minus.setAttribute('aria-label', 'One fewer bag of ' + bean.name);
+      var out = document.createElement('output');
+      out.textContent = String(qty);
+      out.setAttribute('aria-label', bean.name + ' quantity');
+      var plus = document.createElement('button');
+      plus.type = 'button'; plus.textContent = '+';
+      plus.setAttribute('aria-label', 'One more bag of ' + bean.name);
+      minus.addEventListener('click', function () { changeQty(id, -1); });
+      plus.addEventListener('click', function () { changeQty(id, 1); });
+      stepper.appendChild(minus); stepper.appendChild(out); stepper.appendChild(plus);
+      var line = document.createElement('p');
+      line.className = 'bag-line-price';
+      line.textContent = euro(qty * bean.price);
+      right.appendChild(stepper); right.appendChild(line);
+
+      li.appendChild(left); li.appendChild(right);
+      bagList.appendChild(li);
+    });
+
+    var n = bagCount();
+    bagEmpty.hidden = n > 0;
+    bagList.hidden = n === 0;
+    bagSummary.textContent = n === 1 ? '1 bag · 250 g each' : n + ' bags · 250 g each';
+    bagTotalEl.textContent = euro(bagTotal());
+
+    if (n === 0) {
+      bagOrder.setAttribute('aria-disabled', 'true');
+      bagOrder.removeAttribute('tabindex');
+      bagOrder.href = 'mailto:hello@lowtide.coffee';
+    } else {
+      bagOrder.removeAttribute('aria-disabled');
+      var lines = ids.map(function (id) {
+        return bag[id] + ' × ' + BEANS[id].name + ' (250 g) — ' + euro(bag[id] * BEANS[id].price);
+      });
+      var body = 'Hello Low Tide,\n\nI would like this bag:\n\n' + lines.join('\n') +
+        '\n\nTotal: ' + euro(bagTotal()) + '\n\nName:\nPickup day (Wed–Sun, 8:00–15:00):\n\nThank you.';
+      bagOrder.href = 'mailto:hello@lowtide.coffee?subject=' +
+        encodeURIComponent('Bag from the website — ' + n + (n === 1 ? ' bag' : ' bags')) +
+        '&body=' + encodeURIComponent(body);
+    }
+  }
+
+  function changeQty(id, delta) {
+    if (!bag[id]) return;
+    var next = bag[id] + delta;
+    if (next <= 0) { delete bag[id]; } else { bag[id] = Math.min(next, 99); }
+    persist(); renderBag(); renderCount(false); syncFlags();
+  }
+
+  function syncFlags() {
+    document.querySelectorAll('.bean').forEach(function (row) {
+      var flag = row.querySelector('.added-flag');
+      if (!flag) return;
+      var qty = bag[row.getAttribute('data-bean')] || 0;
+      flag.setAttribute('data-show', qty > 0 ? 'true' : 'false');
+      flag.textContent = qty > 0 ? (qty === 1 ? '1 in your bag' : qty + ' in your bag') : 'In your bag';
+    });
+  }
+
+  document.querySelectorAll('.bean').forEach(function (row) {
+    var id = row.getAttribute('data-bean');
+    var btn = row.querySelector('.add-btn');
+    var bean = BEANS[id];
+    if (bean.soldOut) {
+      btn.disabled = true;
+      btn.setAttribute('aria-disabled', 'true');
+      btn.setAttribute('aria-label', bean.name + ' is sold out and cannot be added');
+      return;
+    }
+    btn.setAttribute('aria-label', 'Add a 250 g bag of ' + bean.name + ' to your bag, ' + euro(bean.price));
+    btn.addEventListener('click', function () {
+      bag[id] = Math.min((bag[id] || 0) + 1, 99);
+      persist(); renderCount(true); renderBag(); syncFlags();
+      row.classList.remove('stamp');
+      void row.offsetWidth;
+      row.classList.add('stamp');
+      announce(bean.name + ' added. ' + bagCount() + (bagCount() === 1 ? ' bag' : ' bags') + ' in your bag, ' + euro(bagTotal()) + '.');
+    });
+  });
+
+  /* ---------------- drawer ---------------- */
+  var drawer = $('bagDrawer'), scrim = $('bagScrim'), openBtn = $('bagOpen'), closeBtn = $('bagClose');
+  var lastFocus = null;
+
+  function openBag() {
+    lastFocus = document.activeElement;
+    drawer.setAttribute('data-open', 'true');
+    drawer.setAttribute('aria-hidden', 'false');
+    scrim.setAttribute('data-open', 'true');
+    document.body.style.overflow = 'hidden';
+    window.setTimeout(function () { closeBtn.focus(); }, 60);
+  }
+  function closeBag() {
+    drawer.setAttribute('data-open', 'false');
+    drawer.setAttribute('aria-hidden', 'true');
+    scrim.setAttribute('data-open', 'false');
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  openBtn.addEventListener('click', openBag);
+  closeBtn.addEventListener('click', closeBag);
+  scrim.addEventListener('click', closeBag);
+  $('bagBrowse').addEventListener('click', function () {
+    closeBag();
+    document.getElementById('beans').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && drawer.getAttribute('data-open') === 'true') closeBag();
+    if (e.key === 'Tab' && drawer.getAttribute('data-open') === 'true') {
+      var focusables = drawer.querySelectorAll('button, a[href], input, [tabindex]:not([tabindex="-1"])');
+      var list = Array.prototype.filter.call(focusables, function (el) { return el.offsetParent !== null && !el.disabled; });
+      if (!list.length) return;
+      var first = list[0], last = list[list.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  bagOrder.addEventListener('click', function (e) {
+    if (bagOrder.getAttribute('aria-disabled') === 'true') { e.preventDefault(); announce('Your bag is empty. Add a bean first.'); }
+  });
+
+  /* ---------------- opening hours, in the visitor's local time ---------------- */
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+  function clock(mins) { return Math.floor(mins / 60) + ':' + pad(mins % 60); }
+
+  function nextOpening(from) {
+    for (var i = 0; i < 8; i++) {
+      var d = new Date(from.getTime());
+      d.setDate(d.getDate() + i);
+      if (SHOP_DAYS.indexOf(d.getDay()) === -1) continue;
+      if (i === 0 && from.getHours() * 60 + from.getMinutes() >= OPEN_MIN) continue;
+      d.setHours(8, 0, 0, 0);
+      return { date: d, today: i === 0 };
+    }
+    return null;
+  }
+
+  function renderHours() {
+    var now = new Date();
+    var day = now.getDay(), mins = now.getHours() * 60 + now.getMinutes();
+    var isOpenDay = SHOP_DAYS.indexOf(day) !== -1;
+    var isOpen = isOpenDay && mins >= OPEN_MIN && mins < CLOSE_MIN;
+    var state, shortText, nowText, detail;
+
+    if (isOpen) {
+      var left = CLOSE_MIN - mins;
+      if (left <= 60) {
+        state = 'soon';
+        shortText = 'Closing soon · ' + left + ' min left';
+        nowText = 'Open now, but only just';
+        detail = 'The door closes at 15:00 — ' + left + ' minutes from now. ' + DAY_NAMES[day] + ' is a shop day.';
+      } else {
+        state = 'open';
+        shortText = 'Open now · until 15:00';
+        nowText = 'Open now until 15:00';
+        detail = 'It is ' + clock(mins) + ' on ' + DAY_NAMES[day] + ' where you are. The door is open and the shelf is stocked.';
+      }
+    } else {
+      state = 'closed';
+      var next = nextOpening(now);
+      var when = next ? (next.today ? 'today' : DAY_SHORT[next.date.getDay()]) + ' at 8:00' : 'Wednesday at 8:00';
+      var roastNote = (day === 1 || day === 2) ? ' Today is a roasting day — the drum is on.' : '';
+      if (isOpenDay && mins < OPEN_MIN) {
+        shortText = 'Closed · opens today 8:00';
+        nowText = 'Not open yet this morning';
+        detail = 'The door opens at 8:00, in ' + (OPEN_MIN - mins) + ' minutes.' + roastNote;
+      } else {
+        shortText = 'Closed · opens ' + when;
+        nowText = 'Closed right now';
+        detail = 'Next open: ' + (next ? DAY_NAMES[next.date.getDay()] : 'Wednesday') + ' at 8:00.' + roastNote;
+      }
+    }
+
+    ['heroStatus', 'visitStatus'].forEach(function (id) { $(id).setAttribute('data-state', state); });
+    $('heroStatusText').textContent = shortText;
+    $('visitStatusText').textContent = shortText;
+    $('hoursNow').textContent = nowText;
+    $('hoursDetail').textContent = detail;
+
+    var tz = 'your local time';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/_/g, ' '); } catch (e) {}
+    $('localNote').textContent = 'Your local time: ' + DAY_SHORT[day] + ' ' + clock(mins) + ' (' + tz + '). Hours are the shop\'s own: Wed–Sun 8:00–15:00.';
+
+    document.querySelectorAll('.day').forEach(function (cell) {
+      var today = parseInt(cell.getAttribute('data-day'), 10) === day;
+      cell.setAttribute('data-today', today ? 'true' : 'false');
+      if (today) { cell.setAttribute('aria-current', 'date'); } else { cell.removeAttribute('aria-current'); }
+    });
+
+    var roast = new Date(now.getTime());
+    var add = (2 - roast.getDay() + 7) % 7;
+    if (add === 0 && mins >= CLOSE_MIN) add = 7;
+    roast.setDate(roast.getDate() + add);
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var roastEl = document.getElementById('nextRoast');
+    if (roastEl) roastEl.textContent = 'Next roast: Tue ' + roast.getDate() + ' ' + months[roast.getMonth()];
+  }
+
+  /* ---------------- subscription ---------------- */
+  var form = $('subForm'), email = $('subEmail'), err = $('subError'),
+      formWrap = $('subFormWrap'), success = $('subSuccess'), echo = $('subEmailEcho');
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  function showError(msg) {
+    err.textContent = msg;
+    err.hidden = false;
+    email.setAttribute('aria-invalid', 'true');
+    email.classList.remove('shake');
+    void email.offsetWidth;
+    email.classList.add('shake');
+    email.focus();
+  }
+  function clearError() {
+    err.hidden = true;
+    err.textContent = '';
+    email.removeAttribute('aria-invalid');
+  }
+  email.addEventListener('input', function () { if (!err.hidden) clearError(); });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var value = email.value.trim();
+    if (!value) { showError('We need an email address to write back to.'); return; }
+    if (!EMAIL_RE.test(value)) { showError('That does not look like an email address — check for a typo.'); return; }
+    clearError();
+    echo.textContent = value;
+    formWrap.hidden = true;
+    success.hidden = false;
+    success.setAttribute('tabindex', '-1');
+    success.focus();
+    announce('You are on the list. We will write to ' + value + ' to arrange the first bag.');
+  });
+
+  $('subReset').addEventListener('click', function () {
+    success.hidden = true;
+    formWrap.hidden = false;
+    email.value = '';
+    clearError();
+    email.focus();
+  });
+
+  /* ---------------- header state + scroll depth ---------------- */
+  var head = $('siteHead');
+  var sections = ['beans', 'shed', 'visit', 'subscribe'].map(function (id) { return document.getElementById(id); });
+  var navLinks = {};
+  document.querySelectorAll('[data-nav]').forEach(function (a) { navLinks[a.getAttribute('data-nav')] = a; });
+  var depthEls = Array.prototype.slice.call(document.querySelectorAll('#heroArt [data-depth]'));
+  var ticking = false;
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () {
+      ticking = false;
+      var y = window.scrollY || window.pageYOffset;
+      head.setAttribute('data-stuck', y > 8 ? 'true' : 'false');
+
+      var current = '';
+      sections.forEach(function (sec) {
+        if (sec.getBoundingClientRect().top <= 140) current = sec.id;
+      });
+      Object.keys(navLinks).forEach(function (id) {
+        if (id === current) navLinks[id].setAttribute('aria-current', 'true');
+        else navLinks[id].removeAttribute('aria-current');
+      });
+
+      if (y < 900) {
+        depthEls.forEach(function (g) {
+          var d = parseFloat(g.getAttribute('data-depth')) || 0;
+          g.style.transform = 'translateY(' + (y * d * -1).toFixed(1) + 'px)';
+        });
+      }
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---------------- boot ---------------- */
+  renderCount(false);
+  renderBag();
+  syncFlags();
+  renderHours();
+  onScroll();
+  window.setInterval(renderHours, 30000);
+})();
+</script>
+</body>
+</html>

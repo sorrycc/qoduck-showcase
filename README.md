@@ -7,6 +7,8 @@ HTML pages built by [qodercli](https://qoder.com) + QoDuck, each from one prompt
 |---|---|---|---|
 | Citrus pose | [live](https://sorrycc.github.io/qoduck-showcase/cases/citrus-pose/) | [source](cases/citrus-pose/index.html) | [prompt](cases/citrus-pose/prompt.md) |
 | Cloud animal | [live](https://sorrycc.github.io/qoduck-showcase/cases/cloud-animal/) | [source](cases/cloud-animal/index.html) | [prompt](cases/cloud-animal/prompt.md) |
+| Coffee roaster site with skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/coffee-roaster-site-with-skill/) | [source](cases/coffee-roaster-site-with-skill/index.html) | [prompt](cases/coffee-roaster-site-with-skill/prompt.md) |
+| Coffee roaster site without skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/coffee-roaster-site-without-skill/) | [source](cases/coffee-roaster-site-without-skill/index.html) | [prompt](cases/coffee-roaster-site-without-skill/prompt.md) |
 | Dragon castle storm | [live](https://sorrycc.github.io/qoduck-showcase/cases/dragon-castle-storm/) | [source](cases/dragon-castle-storm/index.html) | [prompt](cases/dragon-castle-storm/prompt.md) |
 | Mayoi landing with skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/mayoi-landing-with-skill/) | [source](cases/mayoi-landing-with-skill/index.html) | [prompt](cases/mayoi-landing-with-skill/prompt.md) |
 | Mayoi landing without skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/mayoi-landing-without-skill/) | [source](cases/mayoi-landing-without-skill/index.html) | [prompt](cases/mayoi-landing-without-skill/prompt.md) |
@@ -22,7 +24,7 @@ HTML pages built by [qodercli](https://qoder.com) + QoDuck, each from one prompt
 | Tired AI | [live](https://sorrycc.github.io/qoduck-showcase/cases/tired-ai/) | [source](cases/tired-ai/index.html) | [prompt](cases/tired-ai/prompt.md) |
 <!-- /cases -->
 
-The Mayoi landing and ops dashboard pairs each come from the same prompt: the "with skill" run also used the frontend-rails skill, the "without skill" run did not.
+The Mayoi landing, ops dashboard and coffee roaster site pairs each come from the same prompt: the "with skill" run also used the frontend-rails skill, the "without skill" run did not.
 
 ## Adding cases
 
