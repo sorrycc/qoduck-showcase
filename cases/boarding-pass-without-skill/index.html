@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Northline · Boarding Pass · NL 482</title>
+<style>
+  :root{
+    --bg:#e9eff6;
+    --bg-deep:#dbe6f0;
+    --surface:#ffffff;
+    --surface-2:#f2f6fa;
+    --overlay:rgba(255,255,255,.72);
+    --scrim:rgba(11,37,69,.45);
+    --ink:#0b2545;
+    --ink-soft:#41597a;
+    --ink-faint:#7b90ab;
+    --line:#d7e2ee;
+    --navy:#0b2545;
+    --navy-2:#12365f;
+    --teal:#0e9f7e;
+    --teal-bright:#14c79a;
+    --ice:#1f6fe0;
+    --ice-soft:#e3eefc;
+    --magenta:#d63384;
+    --amber:#b45309;
+    --amber-bg:#fdf1de;
+    --amber-line:#f0d9b0;
+    --success:#0e9f6e;
+    --success-bg:#e2f6ee;
+    --danger:#d64545;
+    --info:#1f6fe0;
+    --scan-bg:linear-gradient(135deg,#0b2545 0%,#123a66 60%,#0e4a63 100%);
+    --scan-ink:#f2f8ff;
+    --scan-soft:#9fc2e8;
+    --scan-line:rgba(159,194,232,.25);
+    --qr-ink:#0b2545;
+    --qr-bg:#ffffff;
+    --shadow:0 24px 60px -24px rgba(11,37,69,.35),0 4px 14px -6px rgba(11,37,69,.14);
+    --aurora-a:rgba(20,199,154,.30);
+    --aurora-b:rgba(31,111,224,.24);
+    --aurora-c:rgba(214,51,132,.14);
+    --thumb:#b9c9db;
+    --thumb-hover:#8fa8c4;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#060b18;
+      --bg-deep:#04070f;
+      --surface:#0d1526;
+      --surface-2:#111c31;
+      --overlay:rgba(13,21,38,.78);
+      --scrim:rgba(2,5,12,.6);
+      --ink:#eaf2ff;
+      --ink-soft:#a7bad6;
+      --ink-faint:#64789a;
+      --line:#1e2c47;
+      --navy:#0d1f3c;
+      --navy-2:#13315c;
+      --teal:#2dd4a7;
+      --teal-bright:#3ce9bb;
+      --ice:#6ec9ff;
+      --ice-soft:#12233d;
+      --magenta:#ff5fa2;
+      --amber:#ffb454;
+      --amber-bg:#2b2010;
+      --amber-line:#4d3a17;
+      --success:#35d07f;
+      --success-bg:#0e2a1e;
+      --danger:#ff6b6b;
+      --info:#6ec9ff;
+      --scan-bg:linear-gradient(135deg,#b8f4e2 0%,#8fe0ff 55%,#a9c8ff 100%);
+      --scan-ink:#07203a;
+      --scan-soft:#28527a;
+      --scan-line:rgba(7,32,58,.18);
+      --qr-ink:#eaf2ff;
+      --qr-bg:#0d1526;
+      --shadow:0 24px 60px -20px rgba(0,0,0,.7),0 0 0 1px rgba(110,201,255,.06);
+      --aurora-a:rgba(45,212,167,.16);
+      --aurora-b:rgba(110,201,255,.13);
+      --aurora-c:rgba(255,95,162,.10);
+      --thumb:#2a3c5e;
+      --thumb-hover:#3c5480;
+    }
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scrollbar-width:thin;scrollbar-color:var(--thumb) transparent}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--thumb);border-radius:8px}
+  ::-webkit-scrollbar-thumb:hover{background:var(--thumb-hover)}
+
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    min-height:100dvh;
+    display:grid;
+    place-items:center;
+    padding:max(20px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ---- ambient background ---- */
+  .sky{position:fixed;inset:0;z-index:-2;background:
+    radial-gradient(120% 90% at 50% 0%,var(--bg) 0%,var(--bg-deep) 100%)}
+  .aurora{position:fixed;inset:-20%;z-index:-1;filter:blur(70px);opacity:.9;pointer-events:none}
+  .aurora i{position:absolute;border-radius:50%}
+  .aurora i:nth-child(1){width:55vmax;height:32vmax;left:-8%;top:-6%;background:var(--aurora-a);animation:drift1 26s ease-in-out infinite alternate}
+  .aurora i:nth-child(2){width:48vmax;height:30vmax;right:-10%;top:14%;background:var(--aurora-b);animation:drift2 32s ease-in-out infinite alternate}
+  .aurora i:nth-child(3){width:40vmax;height:26vmax;left:22%;bottom:-12%;background:var(--aurora-c);animation:drift3 38s ease-in-out infinite alternate}
+  @keyframes drift1{to{transform:translate(9%,14%) rotate(8deg)}}
+  @keyframes drift2{to{transform:translate(-10%,9%) rotate(-10deg)}}
+  @keyframes drift3{to{transform:translate(8%,-10%) rotate(6deg)}}
+  .grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .phone{width:min(390px,100%);position:relative;z-index:1}
+
+  /* ---- top bar ---- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:2px 6px 16px;
+    animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+  .brand{display:flex;align-items:center;gap:9px}
+  .brand svg{width:26px;height:26px;flex:none}
+  .brand b{font-size:15px;letter-spacing:.24em;font-weight:800}
+  .brand small{display:block;font-size:9px;letter-spacing:.3em;color:var(--ink-faint);font-weight:600;margin-top:1px}
+  .datechip{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--ink-soft);
+    border:1px solid var(--line);background:var(--overlay);backdrop-filter:blur(8px);
+    padding:7px 12px;border-radius:999px}
+
+  /* ---- pass card ---- */
+  .pass{background:var(--surface);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;
+    border:1px solid var(--line);animation:rise .7s .08s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+  .pass-head{padding:18px 20px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:linear-gradient(120deg,var(--surface-2),var(--surface))}
+  .flight-id{display:flex;align-items:center;gap:10px;min-width:0}
+  .flight-badge{width:38px;height:38px;border-radius:12px;flex:none;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--teal),var(--ice));color:#fff;box-shadow:0 6px 14px -6px rgba(31,111,224,.5)}
+  .flight-badge svg{width:20px;height:20px}
+  .flight-id h1{font-size:19px;font-weight:800;letter-spacing:.02em;line-height:1.1}
+  .flight-id p{font-size:11px;color:var(--ink-faint);font-weight:600;letter-spacing:.04em;margin-top:2px}
+
+  .status{border:none;cursor:pointer;font:inherit;display:inline-flex;align-items:center;gap:7px;
+    padding:8px 13px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.05em;
+    background:var(--success-bg);color:var(--success);border:1px solid transparent;
+    transition:transform .15s ease,background .3s,color .3s,border-color .3s;flex:none}
+  .status:active{transform:scale(.94)}
+  .status .dot{width:7px;height:7px;border-radius:50%;background:currentColor;position:relative}
+  .status .dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid currentColor;opacity:.5;animation:pulse 2s ease-out infinite}
+  @keyframes pulse{0%{transform:scale(.5);opacity:.7}80%,100%{transform:scale(1.4);opacity:0}}
+  .status.delayed{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-line)}
+  .status .hint{font-size:9px;font-weight:700;opacity:.65;letter-spacing:.02em}
+
+  /* ---- route ---- */
+  .route{padding:10px 20px 18px}
+  .route-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+  .port .code{font-size:34px;font-weight:800;letter-spacing:.01em;line-height:1;font-variant-numeric:tabular-nums}
+  .port .city{font-size:12px;color:var(--ink-soft);font-weight:600;margin-top:5px}
+  .port .time{font-size:15px;font-weight:800;margin-top:7px;font-variant-numeric:tabular-nums}
+  .port .time small{font-size:10px;color:var(--ink-faint);font-weight:600;margin-left:3px}
+  .port.arr{text-align:right}
+  .path{width:110px;height:52px;position:relative}
+  .path svg{width:100%;height:100%;overflow:visible}
+  .path .dur{position:absolute;left:50%;top:-6px;transform:translateX(-50%);font-size:10px;font-weight:700;
+    color:var(--ink-faint);letter-spacing:.06em;white-space:nowrap}
+  .route-meta{display:flex;justify-content:center;gap:8px;margin-top:14px}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--ink-soft);
+    background:var(--surface-2);border:1px solid var(--line);padding:5px 11px;border-radius:999px}
+
+  /* ---- delay banner ---- */
+  .banner{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.2,.8,.2,1)}
+  .banner>div{overflow:hidden}
+  .banner-inner{margin:0 20px 4px;display:flex;gap:10px;align-items:flex-start;
+    background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--amber);
+    border-radius:14px;padding:12px 14px;font-size:12.5px;font-weight:700;line-height:1.45;
+    opacity:0;transform:translateY(-6px);transition:opacity .35s .1s,transform .35s .1s}
+  .banner-inner svg{width:16px;height:16px;flex:none;margin-top:1px}
+  .banner-inner small{display:block;font-weight:600;opacity:.85;font-size:11px;margin-top:2px}
+  .pass.is-delayed .banner{grid-template-rows:1fr}
+  .pass.is-delayed .banner-inner{opacity:1;transform:none;margin-bottom:14px}
+
+  /* ---- scan zone (the 2-second read) ---- */
+  .scanzone{margin:4px 14px 16px;border-radius:18px;background:var(--scan-bg);color:var(--scan-ink);
+    padding:16px 16px 14px;position:relative;overflow:hidden}
+  .scanzone::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(90% 60% at 85% -10%,rgba(255,255,255,.22),transparent 60%)}
+  .sz-grid{display:grid;grid-template-columns:1fr 1fr;position:relative}
+  .sz-cell{padding:6px 8px 10px}
+  .sz-cell:nth-child(odd){border-right:1px solid var(--scan-line)}
+  .sz-cell:nth-child(-n+2){border-bottom:1px solid var(--scan-line);padding-bottom:12px}
+  .sz-cell:nth-child(n+3){padding-top:12px}
+  .sz-label{font-size:9.5px;font-weight:800;letter-spacing:.22em;color:var(--scan-soft);text-transform:uppercase}
+  .sz-value{font-size:32px;font-weight:800;line-height:1.05;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+  .sz-value small{font-size:12px;font-weight:700;color:var(--scan-soft);margin-left:5px;letter-spacing:.03em}
+  .sz-cell.minor .sz-value{font-size:24px}
+  .sz-old{font-size:13px;font-weight:700;color:var(--scan-soft);text-decoration:line-through;margin-right:7px;vertical-align:4px}
+  .sz-new{color:inherit}
+  .pass.is-delayed .sz-boarding .sz-value{animation:flash .6s ease}
+  @keyframes flash{0%{opacity:.2;transform:translateY(4px)}100%{opacity:1;transform:none}}
+  .sz-note{position:relative;margin-top:10px;padding-top:10px;border-top:1px dashed var(--scan-line);
+    font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--scan-soft);display:flex;justify-content:space-between;gap:8px}
+  .sz-note b{color:var(--scan-ink)}
+
+  /* ---- journey timeline ---- */
+  .timeline{display:flex;align-items:flex-start;padding:2px 22px 16px;gap:0}
+  .step{flex:1;text-align:center;position:relative}
+  .step::before{content:"";position:absolute;top:6px;left:-50%;width:100%;height:2px;background:var(--line)}
+  .step:first-child::before{display:none}
+  .step.done::before{background:var(--teal)}
+  .step .pt{width:13px;height:13px;border-radius:50%;margin:0 auto;position:relative;z-index:1;
+    background:var(--surface);border:2px solid var(--line)}
+  .step.done .pt{background:var(--teal);border-color:var(--teal)}
+  .step.active .pt{border-color:var(--ice);background:var(--ice);box-shadow:0 0 0 4px var(--ice-soft)}
+  .step.active.warn .pt{border-color:var(--amber);background:var(--amber);box-shadow:0 0 0 4px var(--amber-bg)}
+  .step .sl{font-size:10px;font-weight:700;color:var(--ink-faint);margin-top:7px;letter-spacing:.05em}
+  .step .st{font-size:11px;font-weight:800;margin-top:1px;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+  .step.active .sl,.step.active .st{color:var(--ink)}
+  .step.active.warn .st{color:var(--amber)}
+
+  /* ---- perforation ---- */
+  .perf{position:relative;height:26px;margin:0 0}
+  .perf::before{content:"";position:absolute;left:22px;right:22px;top:50%;border-top:2px dashed var(--line)}
+  .notch{position:absolute;top:50%;width:26px;height:26px;border-radius:50%;transform:translateY(-50%);
+    background:var(--bg);border:1px solid var(--line)}
+  .notch.l{left:-14px}
+  .notch.r{right:-14px}
+
+  /* ---- barcode ---- */
+  .codearea{padding:14px 20px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;
+    background:linear-gradient(180deg,var(--surface),var(--surface-2))}
+  .qr-wrap{position:relative;padding:12px;border-radius:16px;background:var(--qr-bg);
+    border:1px solid var(--line);box-shadow:0 8px 20px -12px rgba(11,37,69,.25)}
+  #qr{display:block;width:168px;height:168px;color:var(--qr-ink)}
+  .scanline{position:absolute;left:10px;right:10px;height:2px;border-radius:2px;top:12px;
+    background:linear-gradient(90deg,transparent,var(--teal-bright),transparent);
+    box-shadow:0 0 12px 2px rgba(20,199,154,.45);animation:scan 3.2s ease-in-out infinite;pointer-events:none}
+  @keyframes scan{0%,100%{transform:translateY(0)}50%{transform:translateY(166px)}}
+  .code-caption{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-faint);text-transform:uppercase}
+  .ref-strip{display:flex;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
+  .ref-strip .ref{font-size:17px;font-weight:800;letter-spacing:.28em}
+  .mini-bars{display:flex;align-items:flex-end;gap:1.5px;height:22px}
+  .mini-bars i{width:2px;background:var(--ink-soft);border-radius:1px}
+
+  /* ---- details ---- */
+  .details{padding:6px 20px 20px}
+  .details h2{font-size:10px;font-weight:800;letter-spacing:.24em;color:var(--ink-faint);
+    text-transform:uppercase;padding:10px 0 8px;border-top:1px solid var(--line)}
+  .drow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:8px 0;
+    border-bottom:1px solid var(--line);font-size:13px}
+  .drow:last-child{border-bottom:none}
+  .drow .k{color:var(--ink-faint);font-weight:600;font-size:12px;flex:none}
+  .drow .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+  .drow .v.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;letter-spacing:.05em}
+  .drow .v .sub{color:var(--ink-faint);font-weight:600;font-size:11px;margin-left:5px}
+
+  /* ---- wallet ---- */
+  .wallet{margin-top:18px;animation:rise .7s .2s cubic-bezier(.2,.8,.2,1) both}
+  .wallet-btn{width:100%;border:none;cursor:pointer;font:inherit;display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:16px;border-radius:16px;font-size:15px;font-weight:800;letter-spacing:.02em;color:#fff;
+    background:linear-gradient(120deg,var(--navy) 0%,var(--navy-2) 55%,#0e4a63 100%);
+    box-shadow:0 14px 30px -12px rgba(11,37,69,.55),inset 0 1px 0 rgba(255,255,255,.14);
+    transition:transform .12s ease,box-shadow .2s,filter .2s;position:relative;overflow:hidden}
+  @media (prefers-color-scheme: dark){
+    .wallet-btn{background:linear-gradient(120deg,#16305a,#1d4276 55%,#155e77);box-shadow:0 14px 30px -12px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.12)}
+  }
+  .wallet-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);
+    transform:translateX(-120%);transition:transform .6s ease}
+  .wallet-btn:hover::after{transform:translateX(120%)}
+  .wallet-btn:active,.wallet-btn.pressed{transform:scale(.965);filter:brightness(.88);box-shadow:0 6px 14px -8px rgba(11,37,69,.5)}
+  .wallet-btn svg{width:20px;height:20px;flex:none}
+  .wallet-btn.added{background:linear-gradient(120deg,#0c7a5c,#0e9f7e 60%,#14c79a);cursor:default}
+  .wallet-btn .spinner{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);
+    border-top-color:#fff;animation:spin .7s linear infinite;display:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .wallet-btn.loading .spinner{display:block}
+  .wallet-btn.loading .w-icon,.wallet-btn.loading .w-check{display:none}
+  .wallet-btn .w-check{display:none}
+  .wallet-btn.added .w-check{display:block}
+  .wallet-btn.added .w-icon{display:none}
+  .footnote{text-align:center;font-size:10.5px;color:var(--ink-faint);font-weight:600;letter-spacing:.05em;margin-top:12px}
+
+  /* ---- toast ---- */
+  .toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translate(-50%,80px);
+    z-index:50;display:flex;align-items:center;gap:10px;padding:13px 18px;border-radius:14px;
+    background:var(--overlay);backdrop-filter:blur(14px);border:1px solid var(--line);
+    box-shadow:0 16px 40px -12px rgba(0,0,0,.35);font-size:13px;font-weight:700;color:var(--ink);
+    opacity:0;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .35s;pointer-events:none;max-width:calc(100vw - 32px)}
+  .toast.show{transform:translate(-50%,0);opacity:1}
+  .toast .t-ico{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:none;
+    background:var(--success);color:#fff}
+  .toast .t-ico svg{width:12px;height:12px}
+  .toast.warn .t-ico{background:var(--amber)}
+
+  @media (max-width:360px){
+    .port .code{font-size:29px}
+    .sz-value{font-size:28px}
+    .path{width:88px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+  }
+</style>
+</head>
+<body>
+<div class="sky"></div>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="grain" aria-hidden="true"></div>
+
+<main class="phone">
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 1.5 19.4 12l10.6.1-8.5 6.4 3.2 10.5L16 22.6 7.3 29l3.2-10.5L2 12.1l10.6-.1z" fill="url(#bg1)"/>
+        <defs><linearGradient id="bg1" x1="2" y1="2" x2="30" y2="30"><stop stop-color="#14c79a"/><stop offset="1" stop-color="#1f6fe0"/></linearGradient></defs>
+      </svg>
+      <div><b>NORTHLINE</b><small>POLAR ROUTES</small></div>
+    </div>
+    <div class="datechip">SAT · 14 MAR</div>
+  </header>
+
+  <article class="pass" id="pass" aria-label="Boarding pass for flight NL 482">
+    <div class="pass-head">
+      <div class="flight-id">
+        <div class="flight-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.5 15.5v-2l-8.5-5V3.2a1.2 1.2 0 0 0-2.4 0v5.3l-8.5 5v2l8.5-2.6v5.4l-2.3 1.6v1.6l3.5-1 3.5 1v-1.6l-2.3-1.6v-5.4z"/></svg>
+        </div>
+        <div>
+          <h1>NL 482</h1>
+          <p>Boarding pass · Economy</p>
+        </div>
+      </div>
+      <button class="status" id="statusBtn" aria-pressed="false" title="Tap to toggle delay simulation">
+        <span class="dot"></span><span id="statusText">On time</span><span class="hint">TAP</span>
+      </button>
+    </div>
+
+    <section class="route">
+      <div class="route-grid">
+        <div class="port">
+          <div class="code">LIS</div>
+          <div class="city">Lisbon</div>
+          <div class="time">06:40<small>local</small></div>
+        </div>
+        <div class="path">
+          <span class="dur">4h 15m</span>
+          <svg viewBox="0 0 110 52" fill="none" aria-hidden="true">
+            <path id="arc" d="M6 40 Q 55 -6 104 40" stroke="var(--line)" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round"/>
+            <circle cx="6" cy="40" r="3.5" fill="var(--teal)"/>
+            <circle cx="104" cy="40" r="3.5" fill="var(--ice)"/>
+            <g>
+              <path d="M0 -7 L2 -2 L8 0 L2 2 L0 7 L-2 2 L-8 0 L-2 -2 Z" fill="var(--magenta)" transform="scale(1.05)"/>
+              <animateMotion dur="6s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+                <mpath href="#arc"/>
+              </animateMotion>
+            </g>
+          </svg>
+        </div>
+        <div class="port arr">
+          <div class="code">KEF</div>
+          <div class="city">Reykjavík</div>
+          <div class="time">09:55<small>local</small></div>
+        </div>
+      </div>
+      <div class="route-meta">
+        <span class="tag">SAT 14 MAR</span>
+        <span class="tag">NONSTOP</span>
+        <span class="tag">ECONOMY</span>
+      </div>
+    </section>
+
+    <div class="banner" id="banner" aria-live="polite">
+      <div>
+        <div class="banner-inner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+          <div>Delayed — new boarding 06:50
+            <small>Your departure is being held. Gate B17 unchanged — please stay nearby.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="scanzone" aria-label="Key gate information">
+      <div class="sz-grid">
+        <div class="sz-cell">
+          <div class="sz-label">Gate</div>
+          <div class="sz-value">B17</div>
+        </div>
+        <div class="sz-cell sz-boarding">
+          <div class="sz-label">Boarding</div>
+          <div class="sz-value"><span class="sz-old" id="oldBoarding" hidden>06:05</span><span id="bigBoarding">06:05</span></div>
+        </div>
+        <div class="sz-cell minor">
+          <div class="sz-label">Seat</div>
+          <div class="sz-value">23A<small>Window</small></div>
+        </div>
+        <div class="sz-cell minor">
+          <div class="sz-label">Group</div>
+          <div class="sz-value">3</div>
+        </div>
+      </div>
+      <div class="sz-note">
+        <span>Gate closes <b id="gateClose">06:25</b></span>
+        <span>Boarding ends <b id="boardEnd">06:25</b></span>
+      </div>
+    </section>
+
+    <div class="timeline" aria-label="Journey progress">
+      <div class="step done"><div class="pt"></div><div class="sl">Check-in</div><div class="st">Done</div></div>
+      <div class="step done"><div class="pt"></div><div class="sl">Security</div><div class="st">Done</div></div>
+      <div class="step active" id="stepBoarding"><div class="pt"></div><div class="sl">Boarding</div><div class="st" id="tlBoarding">06:05</div></div>
+      <div class="step"><div class="pt"></div><div class="sl">Departure</div><div class="st">06:40</div></div>
+    </div>
+
+    <div class="perf" aria-hidden="true"><span class="notch l"></span><span class="notch r"></span></div>
+
+    <section class="codearea" aria-label="Scan code">
+      <div class="qr-wrap">
+        <svg id="qr" viewBox="0 0 29 29" shape-rendering="crispEdges" role="img" aria-label="Boarding barcode"></svg>
+        <div class="scanline" aria-hidden="true"></div>
+      </div>
+      <div class="code-caption">Scan at the gate</div>
+      <div class="ref-strip">
+        <div class="mini-bars" id="miniBars" aria-hidden="true"></div>
+        <span class="ref">K7Q2ZP</span>
+        <div class="mini-bars" id="miniBars2" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="details">
+      <h2>Trip details</h2>
+      <div class="drow"><span class="k">Passenger</span><span class="v">QUINT / MARA MS</span></div>
+      <div class="drow"><span class="k">Flight</span><span class="v">NL 482<span class="sub">· Northline</span></span></div>
+      <div class="drow"><span class="k">Date</span><span class="v">Saturday, 14 Mar</span></div>
+      <div class="drow"><span class="k">Departs</span><span class="v">06:40<span class="sub">LIS local</span></span></div>
+      <div class="drow"><span class="k">Arrives</span><span class="v">09:55<span class="sub">KEF local</span></span></div>
+      <div class="drow"><span class="k">Duration</span><span class="v">4h 15m</span></div>
+      <div class="drow"><span class="k">Boarding</span><span class="v" id="detailBoarding">06:05</span></div>
+      <div class="drow"><span class="k">Cabin</span><span class="v">Economy<span class="sub">· Seat 23A, window</span></span></div>
+      <div class="drow"><span class="k">Booking ref</span><span class="v mono">K7Q2ZP</span></div>
+      <div class="drow"><span class="k">Ticket</span><span class="v mono">157 2214 889 301</span></div>
+    </section>
+  </article>
+
+  <div class="wallet">
+    <button class="wallet-btn" id="walletBtn">
+      <svg class="w-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="14" rx="3"/><path d="M2.5 10h19M6 3.5h12M7 15.5h4"/></svg>
+      <svg class="w-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>
+      <span class="spinner" aria-hidden="true"></span>
+      <span id="walletLabel">Add to Wallet</span>
+    </button>
+    <p class="footnote">NORTHLINE AIR · FLY NORTH, FLY CALM</p>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="t-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg></span>
+  <span id="toastText">Boarding pass saved to your wallet.</span>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- deterministic QR-style pattern ---------- */
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  var rand = mulberry32(482157);
+  var N = 29, grid = [];
+  for(var y=0;y<N;y++){grid.push([]);for(var x=0;x<N;x++)grid[y].push(rand()<0.46)}
+  function finder(cx,cy){
+    for(var y=-1;y<8;y++)for(var x=-1;x<8;x++){
+      var gx=cx+x,gy=cy+y;if(gx<0||gy<0||gx>=N||gy>=N)continue;
+      var inOuter=(x>=0&&x<7&&y>=0&&y<7);
+      var ring=inOuter&&(x===0||x===6||y===0||y===6);
+      var core=(x>=2&&x<=4&&y>=2&&y<=4);
+      grid[gy][gx]=ring||core;
+    }
+  }
+  finder(0,0);finder(N-7,0);finder(0,N-7);
+  for(var i=8;i<N-8;i++){grid[6][i]=i%2===0;grid[i][6]=i%2===0}
+  /* alignment block bottom-right */
+  for(var ay=20;ay<25;ay++)for(var ax=20;ax<25;ax++){
+    grid[ay][ax]=(ax===20||ax===24||ay===20||ay===24||(ax===22&&ay===22));
+  }
+  var svg=document.getElementById('qr'), rects='';
+  for(var yy=0;yy<N;yy++)for(var xx=0;xx<N;xx++){
+    if(grid[yy][xx])rects+='<rect x="'+xx+'" y="'+yy+'" width="1" height="1" fill="currentColor"/>';
+  }
+  svg.innerHTML=rects;
+
+  /* mini 1D bars flanking the booking ref */
+  function bars(el,seed){
+    var r=mulberry32(seed),h='';
+    for(var i=0;i<18;i++){h+='<i style="height:'+(8+Math.floor(r()*15))+'px;width:'+(r()<.3?3:2)+'px"></i>'}
+    el.innerHTML=h;
+  }
+  bars(document.getElementById('miniBars'),7);
+  bars(document.getElementById('miniBars2'),21);
+
+  /* ---------- delay state ---------- */
+  var delayed=false;
+  var pass=document.getElementById('pass'),
+      statusBtn=document.getElementById('statusBtn'),
+      statusText=document.getElementById('statusText'),
+      bigBoarding=document.getElementById('bigBoarding'),
+      oldBoarding=document.getElementById('oldBoarding'),
+      gateClose=document.getElementById('gateClose'),
+      boardEnd=document.getElementById('boardEnd'),
+      tlBoarding=document.getElementById('tlBoarding'),
+      stepBoarding=document.getElementById('stepBoarding'),
+      detailBoarding=document.getElementById('detailBoarding');
+
+  function render(){
+    pass.classList.toggle('is-delayed',delayed);
+    statusBtn.classList.toggle('delayed',delayed);
+    statusBtn.setAttribute('aria-pressed',String(delayed));
+    statusText.textContent=delayed?'Delayed':'On time';
+    bigBoarding.textContent=delayed?'06:50':'06:05';
+    oldBoarding.hidden=!delayed;
+    gateClose.textContent=delayed?'07:05':'06:25';
+    boardEnd.textContent=delayed?'07:05':'06:25';
+    tlBoarding.textContent=delayed?'06:50':'06:05';
+    stepBoarding.classList.toggle('warn',delayed);
+    detailBoarding.textContent=delayed?'06:50 (was 06:05)':'06:05';
+  }
+  statusBtn.addEventListener('click',function(){
+    delayed=!delayed;render();
+    showToast(delayed?'Delay applied — boarding now 06:50.':'Flight back on time — boarding 06:05.',delayed);
+  });
+  render();
+
+  /* ---------- wallet ---------- */
+  var walletBtn=document.getElementById('walletBtn'),
+      walletLabel=document.getElementById('walletLabel'),
+      added=false,busy=false;
+  walletBtn.addEventListener('pointerdown',function(){walletBtn.classList.add('pressed')});
+  ['pointerup','pointerleave','pointercancel'].forEach(function(ev){
+    walletBtn.addEventListener(ev,function(){walletBtn.classList.remove('pressed')});
+  });
+  walletBtn.addEventListener('click',function(){
+    if(busy)return;
+    if(added){showToast('This pass is already in your wallet.');return}
+    busy=true;
+    walletBtn.classList.add('loading');
+    walletLabel.textContent='Adding…';
+    setTimeout(function(){
+      busy=false;added=true;
+      walletBtn.classList.remove('loading');
+      walletBtn.classList.add('added');
+      walletLabel.textContent='Added to Wallet';
+      showToast('Boarding pass saved to your wallet.');
+    },900);
+  });
+
+  /* ---------- toast ---------- */
+  var toast=document.getElementById('toast'),
+      toastText=document.getElementById('toastText'),
+      toastTimer=null;
+  function showToast(msg,warn){
+    toastText.textContent=msg;
+    toast.classList.toggle('warn',!!warn);
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){toast.classList.remove('show')},2600);
+  }
+})();
+</script>
+</body>
+</html>
