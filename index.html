@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QoDuck Showcase</title>
+<style>
+  :root { --bg:#fafaf7; --fg:#1b1b1b; --muted:#6b6b6b; --card:#fff; --line:#e6e4dd; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#141414; --fg:#eee; --muted:#999; --card:#1d1d1d; --line:#2c2c2c; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 system-ui,-apple-system,sans-serif; }
+  header { max-width:1200px; margin:0 auto; padding:40px 16px 8px; }
+  h1 { margin:0 0 4px; font-size:28px; }
+  header p { margin:0; color:var(--muted); }
+  main { max-width:1200px; margin:0 auto; padding:24px 16px 64px; display:grid; gap:20px; grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr)); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; transition:transform .15s; }
+  .card a { color:inherit; text-decoration:none; }
+  .card:hover { transform:translateY(-2px); }
+  .card img, .ph { display:block; width:100%; aspect-ratio:16/10; object-fit:cover; object-position:top; background:var(--line); }
+  .meta { display:flex; justify-content:space-between; gap:8px; padding:10px 14px; }
+  .p { color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>QoDuck Showcase</h1>
+  <p>Single-file HTML pages built by qodercli + QoDuck from one prompt, no follow-up. Click a card to open the live page.</p>
+</header>
+<main>
+    <div class="card">
+      <a href="cases/citrus-pose/"><img src="cases/citrus-pose/thumb.png" alt="" loading="lazy"></a>
+      <div class="meta"><a href="cases/citrus-pose/">Citrus pose</a><a class="p" href="cases/citrus-pose/prompt.md">prompt</a></div>
+    </div>
+    <div class="card">
+      <a href="cases/cloud-animal/"><img src="cases/cloud-animal/thumb.png" alt="" loading="lazy"></a>
+      <div class="meta"><a href="cases/cloud-animal/">Cloud animal</a><a class="p" href="cases/cloud-animal/prompt.md">prompt</a></div>
+    </div>
+    <div class="card">
+      <a href="cases/pelican-bicycle-svg-animated/"><img src="cases/pelican-bicycle-svg-animated/thumb.png" alt="" loading="lazy"></a>
+      <div class="meta"><a href="cases/pelican-bicycle-svg-animated/">Pelican bicycle SVG animated</a><a class="p" href="cases/pelican-bicycle-svg-animated/prompt.md">prompt</a></div>
+    </div>
+    <div class="card">
+      <a href="cases/pelican-bicycle-svg-detailed/"><img src="cases/pelican-bicycle-svg-detailed/thumb.png" alt="" loading="lazy"></a>
+      <div class="meta"><a href="cases/pelican-bicycle-svg-detailed/">Pelican bicycle SVG detailed</a><a class="p" href="cases/pelican-bicycle-svg-detailed/prompt.md">prompt</a></div>
+    </div>
+    <div class="card">
+      <a href="cases/pelican-bicycle-threejs/"><img src="cases/pelican-bicycle-threejs/thumb.png" alt="" loading="lazy"></a>
+      <div class="meta"><a href="cases/pelican-bicycle-threejs/">Pelican bicycle three.js</a><a class="p" href="cases/pelican-bicycle-threejs/prompt.md">prompt</a></div>
+    </div>
+    <div class="card">
+      <a href="cases/pirate-ship-sunset-3d/"><img src="cases/pirate-ship-sunset-3d/thumb.png" alt="" loading="lazy"></a>
+      <div class="meta"><a href="cases/pirate-ship-sunset-3d/">Pirate ship sunset 3D</a><a class="p" href="cases/pirate-ship-sunset-3d/prompt.md">prompt</a></div>
+    </div>
+    <div class="card">
+      <a href="cases/rubiks-cube-3d/"><img src="cases/rubiks-cube-3d/thumb.png" alt="" loading="lazy"></a>
+      <div class="meta"><a href="cases/rubiks-cube-3d/">Rubik&#x27;s cube 3D</a><a class="p" href="cases/rubiks-cube-3d/prompt.md">prompt</a></div>
+    </div>
+</main>
+</body>
+</html>

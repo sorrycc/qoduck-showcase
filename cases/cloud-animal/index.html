@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cloud Lamb</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    background:#0d1a2b;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+    font-family:ui-rounded,"Segoe UI",system-ui,-apple-system,"Helvetica Neue",sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #stage{
+    position:relative;
+    background:#4b8fd4 url("cloudy-sky.png") center/cover no-repeat;
+    overflow:hidden;
+  }
+  #art,#pen{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+  #pen{overflow:visible}
+  #replay{
+    position:absolute;top:14px;right:14px;
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 15px 8px 12px;
+    font:600 13px/1 inherit;letter-spacing:.02em;
+    color:#f7f2e7;
+    background:rgba(23,41,64,.32);
+    border:1.6px solid rgba(247,242,231,.7);
+    border-radius:999px;
+    cursor:pointer;
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+    transition:background .18s ease,transform .18s ease,border-color .18s ease;
+  }
+  #replay:hover{background:rgba(23,41,64,.55);border-color:#f7f2e7;transform:translateY(-1px)}
+  #replay:active{transform:translateY(0) scale(.97)}
+  #replay:focus-visible{outline:2px solid #ffd98a;outline-offset:3px}
+  #replay svg{width:14px;height:14px;flex:none}
+  @media (max-width:520px){#replay{top:10px;right:10px;padding:7px 13px 7px 10px;font-size:12px}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg id="art" viewBox="0 0 898 1309" preserveAspectRatio="xMidYMid meet" role="img" aria-label="A lamb drawn by hand into the cumulus clouds above a green tree canopy"></svg>
+
+  <svg id="pen" viewBox="0 0 898 1309" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <defs>
+      <filter id="penShadow" x="-70%" y="-70%" width="260%" height="260%">
+        <feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#12283f" flood-opacity=".35"/>
+      </filter>
+    </defs>
+    <g id="penG" opacity="0">
+      <g filter="url(#penShadow)">
+        <g transform="rotate(34) scale(.82)">
+          <path d="M0 0 L-4.6 -15 L4.6 -15 Z" fill="#3b322c"/>
+          <path d="M-4.6 -15 L-8.4 -33 L8.4 -33 L4.6 -15 Z" fill="#e6c79a"/>
+          <path d="M-8.4 -33 L-8.4 -104 L8.4 -104 L8.4 -33 Z" fill="#f0b429"/>
+          <path d="M2.4 -33 L2.4 -104 L8.4 -104 L8.4 -33 Z" fill="#cf9013"/>
+          <path d="M-8.4 -104 L-8.4 -114 L8.4 -114 L8.4 -104 Z" fill="#c9cdd4"/>
+          <path d="M-8.4 -114 Q-8.4 -127 0 -127 Q8.4 -127 8.4 -114 Z" fill="#e79a9c"/>
+          <path d="M-8.4 -33 L-8.4 -114 M8.4 -33 L8.4 -114" fill="none" stroke="#4a3b2c" stroke-width="1.6" opacity=".5"/>
+          <path d="M-4.6 -15 L4.6 -15" fill="none" stroke="#4a3b2c" stroke-width="1.4" opacity=".45"/>
+        </g>
+      </g>
+    </g>
+  </svg>
+
+  <button id="replay" type="button" aria-label="Replay the drawing">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 4v7h-7"/>
+    </svg>
+    Replay
+  </button>
+</div>
+
+<script>
+(function(){
+"use strict";
+const NS="http://www.w3.org/2000/svg";
+const art=document.getElementById("art");
+const penG=document.getElementById("penG");
+const stage=document.getElementById("stage");
+
+/* ---------------- geometry ---------------- */
+const f=n=>Math.round(n*100)/100;
+function rng(seed){let a=seed>>>0;return function(){a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+
+function smoothClosed(pts){
+  const n=pts.length;
+  let d="M "+f(pts[0][0])+" "+f(pts[0][1]);
+  for(let i=0;i<n;i++){
+    const p0=pts[(i-1+n)%n],p1=pts[i],p2=pts[(i+1)%n],p3=pts[(i+2)%n];
+    d+=" C "+f(p1[0]+(p2[0]-p0[0])/6)+" "+f(p1[1]+(p2[1]-p0[1])/6)+" "+
+        f(p2[0]-(p3[0]-p1[0])/6)+" "+f(p2[1]-(p3[1]-p1[1])/6)+" "+
+        f(p2[0])+" "+f(p2[1]);
+  }
+  return d+" Z";
+}
+function smoothOpen(pts){
+  if(pts.length<3)return "M "+pts.map(p=>f(p[0])+" "+f(p[1])).join(" L ");
+  const p=[pts[0],...pts,pts[pts.length-1]];
+  let d="M "+f(pts[0][0])+" "+f(pts[0][1]);
+  for(let i=1;i<p.length-2;i++){
+    const a=p[i-1],b=p[i],c=p[i+1],e=p[i+2];
+    d+=" C "+f(b[0]+(c[0]-a[0])/6)+" "+f(b[1]+(c[1]-a[1])/6)+" "+
+        f(c[0]-(e[0]-b[0])/6)+" "+f(c[1]-(e[1]-b[1])/6)+" "+
+        f(c[0])+" "+f(c[1]);
+  }
+  return d;
+}
+function wobble(pts,amp,seed){
+  const r=rng(seed);
+  const p1=r()*6.283,p2=r()*6.283,p3=r()*6.283;
+  const k1=.041+r()*.014,k2=.11+r()*.04,k3=.27+r()*.09;
+  return pts.map((p,i)=>{
+    const t=i*5.2;
+    const nx=Math.sin(t*k1+p1)*.62+Math.sin(t*k2+p2)*.28+Math.sin(t*k3+p3)*.14;
+    const ny=Math.cos(t*k1*1.09+p2)*.62+Math.cos(t*k2*.91+p3)*.28+Math.cos(t*k3+p1)*.14;
+    return [p[0]+nx*amp,p[1]+ny*amp];
+  });
+}
+function shrink(pts,k){
+  let cx=0,cy=0;pts.forEach(p=>{cx+=p[0];cy+=p[1];});
+  cx/=pts.length;cy/=pts.length;
+  return pts.map(p=>[cx+(p[0]-cx)*k,cy+(p[1]-cy)*k]);
+}
+/* a clockwise polygon grows a run of soft outward arcs: cumulus scallops */
+function cloudArcs(pts,opt){
+  const o=Object.assign({chord:34,seed:1,drift:3},opt||{});
+  const r=rng(o.seed);
+  let d="M "+f(pts[0][0])+" "+f(pts[0][1]);
+  const n=pts.length;
+  for(let i=0;i<n;i++){
+    const a=pts[i],b=pts[(i+1)%n];
+    const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
+    if(len<.01)continue;
+    const nx=dy/len,ny=-dx/len;
+    const count=Math.max(1,Math.round(len/o.chord));
+    for(let k=1;k<=count;k++){
+      const t=k/count;
+      const c=len/count;
+      const theta=(112+r()*58)*Math.PI/180;
+      const rad=c/(2*Math.sin(theta/2));
+      const off=(k===count&&i===n-1)?0:(r()-.5)*o.drift;
+      const ex=a[0]+dx*t+nx*off, ey=a[1]+dy*t+ny*off;
+      d+=" A "+f(rad)+" "+f(rad)+" 0 0 1 "+f(ex)+" "+f(ey);
+    }
+  }
+  return d+" Z";
+}
+/* resample any path and re-smooth it with a slow hand tremor */
+function hand(d,seed,amp){
+  const probe=document.createElementNS(NS,"path");
+  probe.setAttribute("d",d);
+  art.appendChild(probe);
+  const L=probe.getTotalLength();
+  const closed=/z\s*$/i.test(d.trim());
+  const step=Math.max(3.5,Math.min(7,L/300));
+  const pts=[];
+  for(let s=0;s<L;s+=step){const p=probe.getPointAtLength(s);pts.push([p.x,p.y]);}
+  if(!closed){const p=probe.getPointAtLength(L);pts.push([p.x,p.y]);}
+  art.removeChild(probe);
+  const w=wobble(pts,amp==null?1.5:amp,seed);
+  return closed?smoothClosed(w):smoothOpen(w);
+}
+function spiral(cx,cy,r,turns,dir,seed){
+  const pts=[];const steps=Math.round(turns*30);
+  const a0=(seed%9)*.63;
+  for(let i=0;i<=steps;i++){
+    const t=i/steps;
+    const ang=dir*(t*turns*6.283)+a0;
+    const rad=r*(1-t*.8);
+    pts.push([cx+Math.cos(ang)*rad*1.06,cy+Math.sin(ang)*rad]);
+  }
+  return smoothOpen(wobble(pts,1.1,seed));
+}
+function ellipsePath(cx,cy,rx,ry,rot,seed){
+  const pts=[];const c=Math.cos(rot||0),s=Math.sin(rot||0);
+  for(let i=0;i<28;i++){
+    const a=i/28*6.283,x=Math.cos(a)*rx,y=Math.sin(a)*ry;
+    pts.push([cx+x*c-y*s,cy+x*s+y*c]);
+  }
+  return smoothClosed(wobble(pts,1.2,seed));
+}
+
+/* ---------------- palette ---------------- */
+const INK="#3b302a", INK_SOFT="#5d4b40";
+const WOOL="#fff7e8", SHADE="#9fb4dc", SHADE_DEEP="#7f97c8";
+const PINK="#e5949a", HOOF="#8d6a49";
+
+/* ---------------- the animal, traced on the two cloud masses ---------------- */
+const HEAD_PTS=shrink([[292,428],[352,436],[404,462],[444,498],[470,540],[486,586],[478,626],[452,664],[414,694],[372,716],[326,738],[276,752],[228,754],[186,742],[148,722],[116,696],[98,660],[100,616],[116,572],[142,528],[176,486],[214,452],[250,434]],.975);
+const BODY_PTS=shrink([[352,742],[386,700],[430,672],[478,656],[530,646],[578,634],[620,646],[656,672],[686,706],[706,748],[716,796],[706,842],[724,884],[752,928],[748,972],[716,1006],[664,1026],[600,1036],[534,1038],[470,1030],[412,1012],[366,982],[330,942],[306,896],[296,846],[300,796],[320,762]],.98);
+
+const HEAD_SKETCH=hand(cloudArcs(shrink(HEAD_PTS,1.014),{chord:37,seed:11,drift:4}),91,2.4);
+const BODY_SKETCH=hand(cloudArcs(shrink(BODY_PTS,1.014),{chord:39,seed:29,drift:4}),92,2.4);
+const HEAD_D=hand(cloudArcs(HEAD_PTS,{chord:37,seed:11,drift:4}),12,1.4);
+const BODY_D=hand(cloudArcs(BODY_PTS,{chord:39,seed:29,drift:4}),30,1.4);
+const TAIL_D=hand(cloudArcs([[706,746],[744,728],[780,734],[796,758],[784,786],[752,796],[720,786],[704,768]],{chord:26,seed:33,drift:3}),34,1.2);
+
+const EAR_D=hand("M 444 500 C 476 470 520 464 548 480 C 570 493 566 519 542 531 C 512 546 470 540 448 522 Z",5);
+const EAR_IN_D=hand("M 462 503 C 486 484 518 480 538 491 C 552 499 548 514 532 521 C 508 531 478 526 464 515 Z",6);
+const TUFT_D=hand("M 236 452 C 244 424 268 408 292 414 C 310 419 316 438 306 450 C 322 430 350 428 362 442 C 374 456 366 476 348 480",9);
+
+const EYE_D=ellipsePath(238,566,18,20,-.08,13);
+const PUPIL_D=ellipsePath(240,570,11.5,13,-.08,14);
+const GLINT_D=ellipsePath(232,559,4.6,5,0,15);
+const LID_D=hand("M 214 548 C 226 535 248 533 261 543",16);
+const BROW_D=hand("M 212 524 C 228 514 250 514 263 522",17);
+
+const MUZZLE_D=hand("M 112 636 C 138 620 176 626 192 650 C 206 672 198 704 172 716 C 146 728 116 716 104 692",21);
+const NOSE_D=hand("M 130 656 C 142 648 158 650 164 660 C 170 671 158 684 146 683 C 134 682 124 668 130 656 Z",22);
+const MOUTH_D=hand("M 147 684 L 148 700 M 148 700 C 140 712 126 712 119 703 M 148 700 C 156 712 170 711 176 701",23);
+const CHEEK_D=ellipsePath(272,648,27,15,-.12,24);
+
+
+const LEGS=[
+  {a:[584,1006],b:[598,1148],bow:10,hoof:[600,1156]},
+  {a:[652,1000],b:[672,1140],bow:12,hoof:[674,1148]},
+  {a:[404,996],b:[382,1172],bow:-12,hoof:[380,1180]},
+  {a:[468,1020],b:[452,1180],bow:-8,hoof:[450,1188]}
+];
+const LEG_PATHS=LEGS.map((l,i)=>{
+  const [x1,y1]=l.a,[x2,y2]=l.b;
+  const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);
+  const nx=-dy/L,ny=dx/L,w=11;
+  return hand(
+    "M "+(x1+nx*w)+" "+(y1+ny*w)+
+    " C "+(x1+l.bow+nx*w)+" "+(y1+dy*.45)+" "+(x2+nx*w*.7)+" "+(y2-dy*.25)+" "+(x2+nx*w*.7)+" "+y2+
+    " L "+(x2-nx*w*.7)+" "+y2+
+    " C "+(x2-nx*w*.7)+" "+(y2-dy*.25)+" "+(x1+l.bow-nx*w)+" "+(y1+dy*.45)+" "+(x1-nx*w)+" "+(y1-ny*w),
+    60+i,1.1);
+});
+const HOOF_PATHS=LEGS.map((l,i)=>hand(
+  "M "+(l.hoof[0]-13)+" "+(l.hoof[1]-12)+
+  " C "+(l.hoof[0]-15)+" "+(l.hoof[1]+4)+" "+(l.hoof[0]-9)+" "+(l.hoof[1]+10)+" "+l.hoof[0]+" "+(l.hoof[1]+10)+
+  " C "+(l.hoof[0]+9)+" "+(l.hoof[1]+10)+" "+(l.hoof[0]+15)+" "+(l.hoof[1]+4)+" "+(l.hoof[0]+13)+" "+(l.hoof[1]-12)+" Z",
+  70+i,1));
+const HOOF_SPLIT=LEGS.map((l,i)=>hand("M "+l.hoof[0]+" "+(l.hoof[1]-5)+" L "+l.hoof[0]+" "+(l.hoof[1]+9),80+i,.8));
+
+const CURLS=[
+  [392,806,27,1.15,1],[470,762,24,1.1,-1],[556,742,21,1.05,1],[634,782,26,1.15,-1],
+  [676,864,22,1.1,1],[664,946,25,1.05,-1],[588,986,24,1.15,1],[500,996,22,1.1,-1],
+  [420,946,26,1.15,1],[356,884,22,1.1,-1],[452,872,29,1.2,1],[548,864,26,1.15,-1],
+  [610,918,23,1.1,1],[398,712,19,1.05,-1],[596,700,19,1.05,1],[692,790,18,1.0,-1]
+].map((c,i)=>spiral(c[0],c[1],c[2],c[3],c[4],100+i*3));
+const HEAD_CURLS=[
+  [318,486,25,1.1,1],[386,528,22,1.05,-1],[404,606,24,1.1,1],[330,668,22,1.05,-1],
+  [258,700,20,1.0,1],[176,556,19,1.05,-1],[152,616,16,.95,1],[300,592,23,1.1,1],
+  [238,480,20,1.05,-1],[444,566,18,1.0,1],[356,470,18,1.0,1]
+].map((c,i)=>spiral(c[0],c[1],c[2],c[3],c[4],200+i*3));
+
+const HEAD_SHADE_D=hand("M 112 678 C 152 722 222 748 292 742 C 352 736 406 704 446 662 C 430 712 382 742 320 754 C 244 770 158 738 112 678 Z",301,1.2);
+const BODY_SHADE_D=hand("M 318 924 C 368 984 452 1022 542 1026 C 628 1030 702 1002 744 958 C 730 1006 660 1034 566 1042 C 460 1050 366 1006 318 924 Z",302,1.2);
+const NECK_SHADE_D=hand("M 320 780 C 356 744 402 712 452 690 C 472 704 472 728 452 742 C 412 764 374 794 350 818 C 330 812 318 796 320 780 Z",303,1.2);
+const TAIL_SHADE_D=hand("M 712 770 C 736 790 768 792 790 776 C 780 794 748 802 724 792 C 714 786 710 778 712 770 Z",304,1);
+
+/* ---------------- layers ---------------- */
+function mk(tag,attrs,parent){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);
+  (parent||art).appendChild(e);
+  return e;
+}
+const defs=mk("defs",{});
+const washLayer=mk("g",{});
+const lineLayer=mk("g",{});
+
+let clipN=0;
+function bboxOf(d){
+  const p=mk("path",{d:d,fill:"none",stroke:"none",visibility:"hidden"},art);
+  const b=p.getBBox();
+  art.removeChild(p);
+  return b;
+}
+/* colour is laid down by a broad brush scribbling inside the shape */
+function makeWash(clipD,color,opacity,blend){
+  const id="wc"+(++clipN);
+  const cp=mk("clipPath",{id:id},defs);
+  mk("path",{d:clipD},cp);
+  const b=bboxOf(clipD);
+  const brush=Math.max(24,Math.min(130,Math.min(b.width,b.height)*.62));
+  const pad=brush*.6;
+  const x=b.x-pad,y=b.y-pad,w=b.width+pad*2,h=b.height+pad*2;
+  const rows=Math.max(1,Math.ceil(h/(brush*.52)));
+  const pts=[];
+  for(let i=0;i<rows;i++){
+    const yy=y+h*(i+.5)/rows;
+    if(i%2===0)pts.push([x,yy],[x+w,yy+h/rows*.22]);
+    else pts.push([x+w,yy],[x,yy+h/rows*.22]);
+  }
+  const g=mk("g",{"clip-path":"url(#"+id+")"},washLayer);
+  if(blend)g.style.mixBlendMode=blend;
+  const el=mk("path",{
+    d:smoothOpen(pts),fill:"none",stroke:color,"stroke-width":f(brush),
+    "stroke-linecap":"round","stroke-linejoin":"round",opacity:opacity
+  },g);
+  return el;
+}
+
+/* ---------------- the score ---------------- */
+const steps=[];
+const S=o=>steps.push(Object.assign({kind:"stroke"},o));
+const P=o=>steps.push(Object.assign({kind:"paint"},o));
+
+/* a light pencil search for the shape, then the clouds are warmed into wool, then ink */
+S({d:HEAD_SKETCH,w:2,color:"#5c6f8a",speed:1100,op:.3});
+S({d:BODY_SKETCH,w:2,color:"#5c6f8a",speed:1100,op:.3});
+P({clip:BODY_D,color:WOOL,opacity:.2,speed:2100});
+P({clip:HEAD_D,color:WOOL,opacity:.2,speed:2100});
+S({d:BODY_D,w:4.4,color:INK,speed:660,op:.94});
+S({d:HEAD_D,w:4.4,color:INK,speed:660,op:.94});
+
+/* ear, forelock, the join between head and body */
+P({clip:EAR_IN_D,color:PINK,opacity:.8,speed:520});
+S({d:EAR_D,w:3.8,color:INK,speed:540});
+S({d:EAR_IN_D,w:2.4,color:INK_SOFT,speed:660,op:.8});
+S({d:TUFT_D,w:3.6,color:INK,speed:540});
+
+/* the face */
+S({d:MUZZLE_D,w:3.2,color:INK_SOFT,speed:580,op:.85});
+P({clip:NOSE_D,color:INK,opacity:.92,speed:420});
+S({d:NOSE_D,w:3,color:INK,speed:720});
+S({d:MOUTH_D,w:3,color:INK,speed:640});
+S({d:BROW_D,w:2.6,color:INK_SOFT,speed:720,op:.65});
+S({d:EYE_D,w:3,color:INK,speed:720});
+P({clip:PUPIL_D,color:"#2c2420",opacity:1,speed:420});
+S({d:PUPIL_D,w:2,color:INK,speed:820});
+P({clip:GLINT_D,color:"#ffffff",opacity:1,speed:380});
+S({d:LID_D,w:2.8,color:INK,speed:720,op:.9});
+P({clip:CHEEK_D,color:PINK,opacity:.45,speed:620});
+
+/* legs down to the treetops */
+for(let i=0;i<4;i++){
+  P({clip:LEG_PATHS[i],color:WOOL,opacity:.88,speed:820});
+  S({d:LEG_PATHS[i],w:3.4,color:INK,speed:640});
+}
+for(let i=0;i<4;i++){
+  P({clip:HOOF_PATHS[i],color:HOOF,opacity:.92,speed:520});
+  S({d:HOOF_PATHS[i],w:3,color:INK,speed:720});
+  S({d:HOOF_SPLIT[i],w:2.2,color:"#4b3626",speed:820,op:.8});
+}
+
+/* tail */
+P({clip:TAIL_D,color:WOOL,opacity:.35,speed:820});
+S({d:TAIL_D,w:3.8,color:INK,speed:620});
+S({d:spiral(752,762,17,1.05,1,310),w:2.6,color:INK_SOFT,speed:620,op:.72});
+
+/* light falls from the upper left: shade the undersides */
+P({clip:HEAD_SHADE_D,color:SHADE,opacity:.42,speed:1200,blend:"multiply"});
+P({clip:BODY_SHADE_D,color:SHADE,opacity:.42,speed:1200,blend:"multiply"});
+P({clip:NECK_SHADE_D,color:SHADE_DEEP,opacity:.16,speed:1000,blend:"multiply"});
+P({clip:TAIL_SHADE_D,color:SHADE,opacity:.4,speed:900,blend:"multiply"});
+
+/* wool */
+CURLS.forEach((d,i)=>S({d:d,w:i%3===0?3:2.5,color:INK_SOFT,speed:540,op:.7}));
+HEAD_CURLS.forEach((d,i)=>S({d:d,w:i%3===0?2.8:2.3,color:INK_SOFT,speed:540,op:.64}));
+
+/* final accents */
+S({d:hand("M 128 660 C 136 653 146 651 154 653",401,.8),w:2.4,color:"#ffffff",speed:600,op:.85});
+S({d:hand("M 470 494 C 492 483 516 481 534 487",402,.8),w:2.2,color:"#ffffff",speed:600,op:.6});
+steps.push({kind:"hold",ms:240});
+
+/* ---------------- realise ---------------- */
+const items=steps.map(s=>{
+  if(s.kind==="hold")return {kind:"hold",ms:s.ms};
+  let el;
+  if(s.kind==="stroke"){
+    el=mk("path",{
+      d:s.d,fill:"none",stroke:s.color,"stroke-width":s.w,
+      "stroke-linecap":"round","stroke-linejoin":"round",
+      opacity:s.op==null?1:s.op
+    },lineLayer);
+  }else{
+    el=makeWash(s.clip,s.color,s.opacity,s.blend);
+  }
+  const len=el.getTotalLength();
+  el.style.strokeDasharray=len+" "+(len+1);
+  el.style.strokeDashoffset=len;
+  return {kind:s.kind,el:el,len:len,ms:Math.max(160,len/s.speed*1000)};
+});
+
+/* ---------------- animation ---------------- */
+const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const SPEED=reduce?6:1.5;
+let raf=0,idx=0,t0=0,lastT=0;
+let penPos={x:449,y:1290},penTarget={x:449,y:1290},penOpacity=0,penWant=0;
+
+function movePen(dt){
+  const k=1-Math.pow(.0016,dt/1000);
+  penPos.x+=(penTarget.x-penPos.x)*k;
+  penPos.y+=(penTarget.y-penPos.y)*k;
+  penOpacity+=(penWant-penOpacity)*(1-Math.pow(.002,dt/1000));
+  penG.setAttribute("transform","translate("+f(penPos.x)+" "+f(penPos.y)+")");
+  penG.setAttribute("opacity",f(penOpacity));
+}
+function reset(){
+  cancelAnimationFrame(raf);
+  items.forEach(it=>{if(it.el)it.el.style.strokeDashoffset=it.len;});
+  idx=0;t0=0;lastT=0;penOpacity=0;penWant=0;penPos={x:449,y:1290};
+  penG.setAttribute("opacity","0");
+  raf=requestAnimationFrame(tick);
+}
+function tick(t){
+  if(!lastT)lastT=t;
+  const dt=Math.min(64,t-lastT);lastT=t;
+  if(idx>=items.length){
+    penWant=0;movePen(dt);
+    if(penOpacity>.008){raf=requestAnimationFrame(tick);}
+    else{penG.setAttribute("opacity","0");raf=0;}
+    return;
+  }
+  const it=items[idx];
+  if(!t0){
+    t0=t;
+    if(it.kind!=="hold"){
+      const p=it.el.getPointAtLength(0);
+      penTarget={x:p.x,y:p.y};
+      if(penOpacity<.05)penPos={x:p.x,y:p.y+45};
+      penWant=1;
+    }
+  }
+  const dur=(it.kind==="hold"?it.ms:it.ms)/SPEED;
+  const raw=Math.min(1,(t-t0)/dur);
+  if(it.kind==="hold"){movePen(dt);if(raw>=1){idx++;t0=0;}raf=requestAnimationFrame(tick);return;}
+  const e=raw*raw*(3-2*raw);
+  it.el.style.strokeDashoffset=f(it.len*(1-e));
+  const p=it.el.getPointAtLength(Math.max(0,Math.min(it.len,it.len*e)));
+  penTarget={x:p.x,y:p.y};
+  penWant=raw>.98?0:1;
+  movePen(dt);
+  if(raw>=1){it.el.style.strokeDashoffset=0;idx++;t0=0;}
+  raf=requestAnimationFrame(tick);
+}
+
+document.getElementById("replay").addEventListener("click",reset);
+window.addEventListener("keydown",e=>{if(e.key==="r"||e.key==="R")reset();});
+
+function fit(){
+  const vw=window.innerWidth,vh=window.innerHeight,ratio=898/1309;
+  let h=vh,w=h*ratio;
+  if(w>vw){w=vw;h=w/ratio;}
+  stage.style.width=w+"px";
+  stage.style.height=h+"px";
+}
+window.addEventListener("resize",fit,{passive:true});
+window.addEventListener("orientationchange",fit);
+fit();
+
+const img=new Image();
+let started=false;
+function begin(){if(started)return;started=true;lastT=0;raf=requestAnimationFrame(tick);}
+img.onload=begin;img.onerror=begin;
+img.src="cloudy-sky.png";
+setTimeout(begin,1200);
+})();
+</script>
+</body>
+</html>

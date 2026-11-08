@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Segment Solo — a pose grown from one citrus slice</title>
+<style>
+  :root{
+    --zest:#FFB300;
+    --zest-deep:#E07A0C;
+    --zest-light:#FFD24A;
+    --blood:#D63A16;
+    --leaf:#3F8F4F;
+    --pith:#FBF3D8;
+    --info:#2B6C8F;
+    --warn:#E8A33D;
+    --danger:#C6371C;
+    --ink:#2E1B0E;
+    --ink-soft:#6B5138;
+    --bg:#F2F0EB;
+    --surface:#FBF9F4;
+    --overlay:#FFFFFF;
+    --line:#E2D9C6;
+    --line-cool:#D8DCD6;
+    --scrim:rgba(46,27,14,.52);
+    --rail:340px;
+    --head:66px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 620px at 12% -8%, #FFF6DF 0%, rgba(255,246,223,0) 62%),
+      radial-gradient(900px 700px at 104% 12%, #FFE7C4 0%, rgba(255,231,196,0) 60%),
+      linear-gradient(178deg,#F5F2EA 0%,#EFEBE1 46%,#E9E7DE 100%);
+    color:var(--ink);
+    font-family:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:radial-gradient(rgba(120,86,40,.16) .6px, transparent .7px);
+    background-size:4px 4px;opacity:.5;mix-blend-mode:multiply;
+  }
+  /* ---------- scrollbar in the artifact's own language ---------- */
+  *{scrollbar-width:thin;scrollbar-color:var(--zest-deep) #EDE6D6}
+  ::-webkit-scrollbar{width:11px;height:11px}
+  ::-webkit-scrollbar-track{background:#EDE6D6;border-left:1px solid var(--line)}
+  ::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg,var(--zest-light),var(--zest-deep));
+    border:2px solid #EDE6D6;border-radius:9px;
+  }
+  ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#FFC94A,var(--blood))}
+  ::-webkit-scrollbar-corner{background:#EDE6D6}
+
+  /* ---------- fixed header ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;height:var(--head);z-index:40;
+    display:flex;align-items:center;gap:22px;padding:0 22px;
+    background:linear-gradient(180deg,rgba(251,249,244,.96),rgba(251,249,244,.86));
+    backdrop-filter:blur(14px) saturate(1.2);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 1px 0 rgba(255,255,255,.7),0 10px 30px -22px rgba(46,27,14,.5);
+  }
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .brand svg{flex:none;display:block}
+  .brand b{
+    font-family:Georgia,"Times New Roman",serif;font-weight:600;
+    font-size:19px;letter-spacing:.2px;white-space:nowrap;
+  }
+  .brand span{
+    font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);border-left:1px solid var(--line);padding-left:11px;
+  }
+  nav{display:flex;gap:4px;margin-left:auto}
+  nav a{
+    position:relative;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);text-decoration:none;padding:9px 12px;border-radius:8px;
+    transition:color .18s,background .18s;
+  }
+  nav a:hover{color:var(--ink);background:#F3E9D2}
+  nav a[aria-current="true"]{color:var(--ink);background:#F7E9C8}
+  nav a[aria-current="true"]::after{
+    content:"";position:absolute;left:12px;right:12px;bottom:3px;height:2px;border-radius:2px;
+    background:linear-gradient(90deg,var(--zest),var(--blood));
+  }
+  .head-act{display:flex;gap:8px;align-items:center}
+  button,select,input[type=range]{font-family:inherit}
+  .btn{
+    cursor:pointer;border:1px solid var(--line);border-radius:10px;
+    background:linear-gradient(180deg,#FFFFFF,#F6EFDF);
+    color:var(--ink);font-size:12px;font-weight:600;letter-spacing:.04em;
+    padding:9px 13px;display:inline-flex;align-items:center;gap:7px;
+    transition:transform .12s,box-shadow .18s,border-color .18s,background .18s;
+    box-shadow:0 1px 0 #fff inset,0 2px 6px -4px rgba(46,27,14,.5);
+  }
+  .btn:hover{border-color:var(--zest-deep);box-shadow:0 4px 14px -6px rgba(224,122,12,.7);transform:translateY(-1px)}
+  .btn:active{transform:translateY(1px) scale(.99)}
+  .btn:focus-visible{outline:2px solid var(--info);outline-offset:2px}
+  .btn.primary{
+    background:linear-gradient(180deg,#FFC22E,#E88A08);border-color:#C9720A;color:#33200C;
+    box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 6px 18px -8px rgba(224,122,12,.95);
+  }
+  .btn.primary:hover{background:linear-gradient(180deg,#FFCF4E,#E07A0C)}
+  .btn.ghost{background:transparent}
+  .btn svg{display:block}
+
+  /* ---------- layout ---------- */
+  main{position:relative;z-index:1;padding-top:var(--head)}
+  .studio{
+    display:grid;grid-template-columns:minmax(0,1fr) var(--rail);
+    gap:26px;padding:26px 26px 34px;align-items:start;
+    max-width:1680px;margin:0 auto;
+  }
+  #artwork,#controls,#notes{scroll-margin-top:calc(var(--head) + 18px)}
+
+  /* ---------- stage ---------- */
+  .stage-wrap{min-width:0}
+  .stage-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:0 4px 14px}
+  .stage-head h1{
+    margin:0;font-family:Georgia,"Times New Roman",serif;font-weight:500;
+    font-size:clamp(26px,3.4vw,42px);line-height:1.02;letter-spacing:-.015em;
+  }
+  .stage-head h1 em{font-style:italic;color:var(--zest-deep)}
+  .stage-head p{
+    margin:0 0 4px;max-width:46ch;font-size:13px;line-height:1.55;color:var(--ink-soft);
+  }
+  .stage{
+    position:relative;border-radius:20px;overflow:hidden;
+    border:1px solid var(--line);
+    background:
+      radial-gradient(120% 90% at 50% 0%,#FFFFFF 0%,#F7F3E8 55%,#EFE9DA 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.9) inset,
+      0 40px 80px -50px rgba(46,27,14,.55),
+      0 4px 14px -8px rgba(46,27,14,.3);
+    padding:clamp(12px,2.2vw,26px);
+    display:flex;justify-content:center;align-items:center;
+    min-height:420px;width:fit-content;max-width:100%;margin-inline:auto;
+  }
+  .stage::after{
+    content:"";position:absolute;inset:0;pointer-events:none;border-radius:20px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.6) inset;
+  }
+  .mat{
+    position:relative;width:min(100%, calc((100vh - var(--head) - 178px) * 0.7333));
+    display:flex;justify-content:center;
+    transition:width .35s cubic-bezier(.2,.8,.2,1);
+  }
+  #art{
+    display:block;width:100%;height:auto;
+    filter:drop-shadow(0 24px 40px rgba(46,27,14,.13));
+  }
+  .stage-foot{
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+    margin:12px 6px 0;font-size:11.5px;color:var(--ink-soft);
+  }
+  .stage-foot .dot{width:5px;height:5px;border-radius:50%;background:var(--zest-deep)}
+  .tag{
+    font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    border:1px solid var(--line);border-radius:999px;padding:4px 9px;background:#FDFAF2;
+  }
+  .zoomread{margin-left:auto;font-variant-numeric:tabular-nums}
+
+  /* ---------- control rail ---------- */
+  .rail{
+    position:sticky;top:calc(var(--head) + 26px);
+    border:1px solid var(--line);border-radius:18px;
+    background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(250,246,236,.97));
+    box-shadow:0 1px 0 #fff inset,0 26px 50px -40px rgba(46,27,14,.6);
+    display:flex;flex-direction:column;overflow:hidden;
+    max-height:calc(100vh - var(--head) - 52px);
+  }
+  .rail-top{
+    padding:15px 17px 13px;border-bottom:1px solid var(--line);
+    background:linear-gradient(120deg,#FFF7E4,#FDF3DC 55%,#F6EBD2);
+  }
+  .rail-top h2{
+    margin:0;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#7A5A2E;
+  }
+  .rail-top p{margin:6px 0 0;font-size:11.5px;line-height:1.5;color:var(--ink-soft)}
+  .rail-body{overflow-y:auto;padding:6px 17px 17px;flex:1}
+  .group{padding:14px 0 4px;border-bottom:1px dashed var(--line)}
+  .group:last-child{border-bottom:0}
+  .group > h3{
+    margin:0 0 10px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--zest-deep);display:flex;align-items:center;gap:8px;
+  }
+  .group > h3::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .ctl{margin:0 0 13px}
+  .ctl label{
+    display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    font-size:12px;font-weight:600;margin-bottom:6px;color:#4A3319;
+  }
+  .ctl label .val{
+    font-weight:600;font-size:11px;font-variant-numeric:tabular-nums;color:#8A6428;
+    background:#F7EDD6;border:1px solid #EADFC4;border-radius:6px;padding:1px 6px;
+  }
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;cursor:pointer;margin:0;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:6px;border-radius:6px;border:1px solid #E3D7BC;
+    background:linear-gradient(90deg,#FFE9AE,#F2D79A);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;
+    background:radial-gradient(circle at 34% 30%,#FFDE7A,#E07A0C 72%);
+    border:2px solid #FFFDF6;box-shadow:0 2px 6px -1px rgba(160,88,8,.75);
+    transition:transform .12s;
+  }
+  input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.12)}
+  input[type=range]:active::-webkit-slider-thumb{transform:scale(.94);background:radial-gradient(circle at 34% 30%,#FFC24A,#D63A16 78%)}
+  input[type=range]::-moz-range-track{height:6px;border-radius:6px;background:#F2D79A;border:1px solid #E3D7BC}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#E07A0C;border:2px solid #FFFDF6}
+  input[type=range]:focus-visible{outline:2px solid var(--info);outline-offset:4px;border-radius:8px}
+  select{
+    width:100%;padding:9px 10px;border-radius:9px;border:1px solid var(--line);
+    background:linear-gradient(180deg,#fff,#F8F2E4);color:var(--ink);font-size:12px;font-weight:600;
+    cursor:pointer;appearance:none;
+    background-image:linear-gradient(180deg,#fff,#F8F2E4);
+  }
+  select:hover{border-color:var(--zest-deep)}
+  select:focus-visible{outline:2px solid var(--info);outline-offset:2px}
+  .selwrap{position:relative}
+  .selwrap::after{
+    content:"";position:absolute;right:12px;top:50%;width:7px;height:7px;pointer-events:none;
+    border-right:2px solid var(--zest-deep);border-bottom:2px solid var(--zest-deep);
+    transform:translateY(-70%) rotate(45deg);
+  }
+  .switch{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-size:12px;font-weight:600;color:#4A3319;margin-bottom:11px;cursor:pointer;
+  }
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .track{
+    flex:none;width:42px;height:23px;border-radius:999px;border:1px solid #E0D3B6;
+    background:#EFE6D2;position:relative;transition:background .2s,border-color .2s;
+  }
+  .track::after{
+    content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;
+    background:#FFFDF7;box-shadow:0 1px 4px rgba(46,27,14,.4);transition:transform .2s cubic-bezier(.3,1.4,.4,1);
+  }
+  .switch input:checked + .track{background:linear-gradient(90deg,var(--zest),var(--zest-deep));border-color:#C9720A}
+  .switch input:checked + .track::after{transform:translateX(19px)}
+  .switch input:focus-visible + .track{outline:2px solid var(--info);outline-offset:3px}
+  .rail-foot{
+    border-top:1px solid var(--line);padding:13px 17px;
+    background:linear-gradient(180deg,#FBF6EA,#F4EBD8);display:grid;gap:8px;
+  }
+  .row{display:flex;gap:8px}
+  .row .btn{flex:1;justify-content:center}
+  .swatches{display:flex;gap:5px;margin-top:2px}
+  .swatches i{
+    flex:1;height:16px;border-radius:4px;border:1px solid rgba(46,27,14,.16);
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset;
+  }
+
+  /* ---------- notes ---------- */
+  .notes{
+    position:relative;border-top:1px solid var(--line);
+    background:linear-gradient(180deg,#EFEDE4 0%,#E8EBE3 48%,#EDE7DA 100%);
+    padding:52px 26px 64px;
+  }
+  .notes-in{max-width:1680px;margin:0 auto;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.6fr);gap:34px}
+  .notes-title{position:sticky;top:calc(var(--head) + 30px);align-self:start}
+  .notes-title h2{
+    margin:0 0 12px;font-family:Georgia,serif;font-weight:500;font-size:clamp(22px,2.6vw,32px);line-height:1.1;
+  }
+  .notes-title p{margin:0;font-size:13px;line-height:1.65;color:var(--ink-soft);max-width:34ch}
+  .cards{display:grid;gap:16px}
+  .card{
+    border:1px solid var(--line);border-radius:16px;padding:20px 22px;
+    background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(253,250,242,.9));
+    box-shadow:0 20px 40px -34px rgba(46,27,14,.6);
+    opacity:0;transform:translateY(22px);
+    transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1);
+  }
+  .card.in{opacity:1;transform:none}
+  .card h3{
+    margin:0 0 8px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--zest-deep);
+  }
+  .card p{margin:0;font-size:13.5px;line-height:1.72;color:#4A3728}
+  .card p + p{margin-top:9px}
+  .card b{color:var(--ink)}
+  .measure{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .measure span{
+    font-size:11px;font-variant-numeric:tabular-nums;color:#6B5138;
+    border:1px solid var(--line);background:#FDFAF1;border-radius:7px;padding:5px 9px;
+  }
+  footer{
+    padding:22px 26px 40px;text-align:center;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:#8A7659;
+  }
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,26px);z-index:60;
+    display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;
+    background:linear-gradient(180deg,#33210F,#201307);color:#FFF3D6;
+    font-size:12.5px;font-weight:600;letter-spacing:.02em;
+    border:1px solid rgba(255,201,74,.4);
+    box-shadow:0 20px 40px -18px rgba(0,0,0,.7);
+    opacity:0;pointer-events:none;transition:opacity .25s,transform .35s cubic-bezier(.2,.9,.2,1);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast i{width:8px;height:8px;border-radius:50%;background:var(--leaf);box-shadow:0 0 10px var(--leaf)}
+  .toast.err i{background:var(--danger);box-shadow:0 0 10px var(--danger)}
+
+  /* ---------- entrance ---------- */
+  .rise{opacity:0;transform:translateY(16px);animation:rise .8s cubic-bezier(.2,.8,.2,1) forwards}
+  .d1{animation-delay:.05s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}.d4{animation-delay:.4s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .mat{opacity:0;animation:pop 1.1s cubic-bezier(.2,.8,.2,1) .18s forwards}
+  @keyframes pop{from{opacity:0;transform:translateY(24px) scale(.975)}to{opacity:1;transform:none}}
+
+  @media (min-width:1200px){
+    .stage-wrap{display:grid;grid-template-columns:236px minmax(0,1fr);column-gap:28px;align-items:start}
+    .stage-head{grid-column:1;grid-row:1;display:block;margin:8px 0 0;position:sticky;top:calc(var(--head) + 30px)}
+    .stage-head h1{font-size:34px;margin-bottom:14px}
+    .stage-head p{max-width:none;font-size:12.5px}
+    .stage{grid-column:2;grid-row:1}
+    .stage-foot{grid-column:1/-1;grid-row:2}
+  }
+  @media (max-width:1080px){
+    :root{--rail:300px}
+    .studio{gap:18px;padding:20px}
+  }
+  @media (max-width:900px){
+    .studio{grid-template-columns:minmax(0,1fr)}
+    .rail{position:static;max-height:none}
+    .rail-body{overflow:visible}
+    .mat{width:100%}
+    .notes-in{grid-template-columns:minmax(0,1fr)}
+    .notes-title{position:static}
+    nav{display:none}
+    .head-act{margin-left:auto}
+  }
+  @media (max-width:560px){
+    :root{--head:60px}
+    header{padding:0 14px;gap:10px}
+    .brand span{display:none}
+    .brand b{font-size:16px}
+    .studio{padding:16px 14px 24px}
+    .stage{border-radius:16px;padding:10px}
+    .head-act .btn span{display:none}
+    .head-act .btn{padding:9px 11px}
+    .notes{padding:36px 16px 44px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .rise,.mat{animation:none;opacity:1;transform:none}
+    .card{opacity:1;transform:none;transition:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+      <defs>
+        <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#FFD24A"/><stop offset="1" stop-color="#E07A0C"/>
+        </linearGradient>
+      </defs>
+      <path d="M2 9 A11 11 0 0 0 24 9 Z" fill="url(#bg1)" stroke="#C9720A" stroke-width="1"/>
+      <path d="M4.6 9.6 A8.4 8.4 0 0 0 21.4 9.6 Z" fill="#FFF6DC"/>
+      <path d="M6.2 10.2 A6.8 6.8 0 0 0 19.8 10.2 Z" fill="#FFC01A"/>
+      <path d="M13 10.4 L13 17 M13 10.4 L7.6 14.6 M13 10.4 L18.4 14.6" stroke="#FFF6DC" stroke-width="1.1" fill="none"/>
+    </svg>
+    <b>Segment&nbsp;Solo</b>
+    <span>Citrus pose study</span>
+  </div>
+  <nav>
+    <a href="#artwork" data-nav="artwork" aria-current="true">Artwork</a>
+    <a href="#controls" data-nav="controls">Studio</a>
+    <a href="#notes" data-nav="notes">Notes</a>
+  </nav>
+  <div class="head-act">
+    <button class="btn ghost" id="copyTop" title="Copy the live SVG markup">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4.5" y="4.5" width="8" height="8" rx="1.6"/><path d="M9.5 2.2H2.6A1.1 1.1 0 0 0 1.5 3.3v6.9"/></svg>
+      <span>Copy SVG</span>
+    </button>
+    <button class="btn primary" id="svgTop" title="Download the artwork as SVG">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 1.6v8.2M3.8 6.8 7 10l3.2-3.2M1.8 12.2h10.4"/></svg>
+      <span>Download</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="studio" id="artwork">
+    <div class="stage-wrap">
+      <div class="stage-head">
+        <h1 class="rise d1">One slice,<br><em>one arabesque.</em></h1>
+        <p class="rise d2">The cut face is the waistline. The rind is the hem, falling just below the knee. Everything the dancer does is measured from the fruit that was actually on the table.</p>
+      </div>
+
+      <div class="stage rise d3">
+        <div class="mat" id="mat">
+<!-- ============================ ARTWORK ============================ -->
+<svg id="art" viewBox="0 0 1100 1500" width="1100" height="1500" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="artTitle artDesc">
+  <title id="artTitle">Segment Solo — a dancer whose skirt is a half slice of orange</title>
+  <desc id="artDesc">A ballet dancer rises en pointe from the curved rind of a half orange slice. The flat cut edge of the slice forms her waistline; the golden segments and cream pith ring form a bell skirt. Light from the glowing fruit rims her dark silhouette from below.</desc>
+  <style>
+    .shimmer{animation:shim 7.5s ease-in-out infinite}
+    .shimmer2{animation:shim2 9.5s ease-in-out infinite}
+    .breathe{animation:bre 8s ease-in-out infinite}
+    @keyframes shim{0%,100%{opacity:.34}50%{opacity:.62}}
+    @keyframes shim2{0%,100%{opacity:.20}45%{opacity:.44}}
+    @keyframes bre{0%,100%{opacity:.85}50%{opacity:1}}
+    .still .shimmer,.still .shimmer2,.still .breathe{animation:none}
+    @media (prefers-reduced-motion:reduce){.shimmer,.shimmer2,.breathe{animation:none}}
+  </style>
+  <defs>
+    <!-- backdrop -->
+    <linearGradient id="paper" x1="0" y1="0" x2="0.35" y2="1">
+      <stop id="paperA" offset="0" stop-color="#FAF8F4"/>
+      <stop id="paperB" offset="0.55" stop-color="#F4F2ED"/>
+      <stop id="paperC" offset="1" stop-color="#EDEAE1"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFC94A" stop-opacity="0.85"/>
+      <stop offset="0.45" stop-color="#FFB300" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#FF9E00" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vig" cx="0.5" cy="0.46" r="0.72">
+      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#3A2A12" stop-opacity="0.05"/>
+    </radialGradient>
+
+    <!-- fruit -->
+    <linearGradient id="peelG" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop id="peelA" offset="0" stop-color="#F7B733"/>
+      <stop id="peelB" offset="0.5" stop-color="#EFA415"/>
+      <stop id="peelC" offset="1" stop-color="#DE8C0B"/>
+    </linearGradient>
+    <linearGradient id="pithG" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#FFFBEC"/>
+      <stop offset="0.5" stop-color="#FCF0C8"/>
+      <stop offset="1" stop-color="#F3E0A2"/>
+    </linearGradient>
+    <radialGradient id="fleshA" cx="0.5" cy="0.02" r="0.98">
+      <stop id="flA0" offset="0" stop-color="#FFD85E"/>
+      <stop id="flA1" offset="0.34" stop-color="#FFC016"/>
+      <stop id="flA2" offset="0.76" stop-color="#FFAB00"/>
+      <stop id="flA3" offset="1" stop-color="#F29200"/>
+    </radialGradient>
+    <radialGradient id="fleshB" cx="0.5" cy="0.02" r="0.98">
+      <stop id="flB0" offset="0" stop-color="#FFD048"/>
+      <stop id="flB1" offset="0.36" stop-color="#FFB80A"/>
+      <stop id="flB2" offset="0.78" stop-color="#F9A000"/>
+      <stop id="flB3" offset="1" stop-color="#E98C00"/>
+    </radialGradient>
+    <linearGradient id="wetSweep" x1="0.15" y1="0" x2="0.75" y2="0.9">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.40"/>
+      <stop offset="0.42" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="deepSide" x1="0.9" y1="0.2" x2="0.2" y2="1">
+      <stop offset="0" stop-color="#C87A00" stop-opacity="0.34"/>
+      <stop offset="0.55" stop-color="#C87A00" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#C87A00" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- figure -->
+    <linearGradient id="inkG" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop id="inkA" offset="0" stop-color="#4A2C14"/>
+      <stop id="inkB" offset="0.55" stop-color="#2E1B0E"/>
+      <stop id="inkC" offset="1" stop-color="#1A0E05"/>
+    </linearGradient>
+    <linearGradient id="bodiceG" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#E8542A"/>
+      <stop offset="0.55" stop-color="#CE3A16"/>
+      <stop offset="1" stop-color="#9C2409"/>
+    </linearGradient>
+    <linearGradient id="satinG" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#FFFAEA"/>
+      <stop offset="0.5" stop-color="#F6E7C0"/>
+      <stop offset="1" stop-color="#DFC68C"/>
+    </linearGradient>
+    <linearGradient id="upG" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#FFB300" stop-opacity="0.92"/>
+      <stop offset="0.22" stop-color="#FFC22E" stop-opacity="0.5"/>
+      <stop offset="0.55" stop-color="#FFD24A" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#FFE79A" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="softShadow" x="-40%" y="-40%" width="180%" height="200%">
+      <feGaussianBlur id="shadowBlur" stdDeviation="18"/>
+    </filter>
+    <filter id="floorBlur" x="-60%" y="-120%" width="220%" height="340%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+    <filter id="contactBlur" x="-80%" y="-200%" width="260%" height="500%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <filter id="rimBlur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="membraneBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+    <filter id="grainF" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="7" result="n"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+
+    <!-- ============ FIGURE GEOMETRY (fill inherited) ============ -->
+    <g id="legShapes">
+      <!-- supporting leg, en pointe -->
+      <path d="M528,928 L490,928 C475,974 469,1030 478,1071 C485,1106 500,1141 504,1181 L529,1181 C529,1141 524,1106 524,1071 C524,1030 531,974 528,928 Z"/>
+      <!-- working leg, petit retiré crossing to the supporting ankle -->
+      <path d="M664,948 C691,976 710,1010 707,1039 C703,1066 662,1104 619,1134 C596,1150 574,1162 558,1170 L546,1148 C570,1134 597,1114 622,1093 C652,1068 676,1043 673,1023 C670,1002 652,978 637,964 Z"/>
+    </g>
+
+    <g id="torsoShapes">
+      <!-- neck -->
+      <path d="M531,376 L572,390 C573,414 577,436 584,454 L518,449 C526,426 530,400 531,376 Z"/>
+      <!-- torso: sloped shoulders, ribcage, drawn-in waist -->
+      <path d="M470,478 C486,461 508,451 526,449 L585,454 C607,457 629,466 641,482 C649,500 641,528 635,552 C629,578 617,600 611,624 L496,624 C490,600 480,578 474,552 C468,528 462,496 470,478 Z"/>
+      <!-- raised arm (viewer left): shoulder -> elbow -> wrist -->
+      <path d="M456,480 C435,441 411,393 399,357 C391,333 396,316 411,298 C425,281 443,262 457,243 L481,255 C468,277 453,301 445,321 C438,338 443,354 453,374 C467,402 487,441 497,468 Z"/>
+      <!-- raised hand, fingers softened into a ballet port de bras -->
+      <path d="M452,254 C458,236 472,219 488,208 C496,202 506,203 507,211 C508,220 498,229 489,237 C481,245 473,255 468,265 Z"/>
+      <path d="M461,249 C469,244 479,245 481,251 C483,257 476,262 468,261 Z"/>
+      <!-- extended arm (viewer right): soft elbow, wrist dropping toward the rind tip -->
+      <path d="M624,458 C684,462 738,478 782,496 C818,512 848,540 874,566 L858,586 C836,562 808,538 776,524 C734,508 682,496 628,492 Z"/>
+      <!-- extended hand, fingertips a breath above the zest -->
+      <path d="M856,562 C878,568 900,580 916,592 C925,598 923,608 913,605 C901,602 889,595 879,591 C869,587 857,585 849,584 Z"/>
+      <path d="M861,571 C870,573 877,579 875,585 C873,591 864,589 858,583 Z"/>
+      <!-- hair mass + classical bun -->
+      <path d="M551,268 C589,268 606,296 604,326 C603,340 598,346 596,352 C592,340 588,330 578,322 C566,312 546,308 530,314 C516,319 507,332 504,348 C500,338 496,326 497,314 C499,288 519,268 551,268 Z"/>
+      <path d="M590,276 C606,270 622,280 624,296 C626,312 614,324 599,322 C589,320 583,312 582,302 C581,290 583,279 590,276 Z"/>
+      <!-- head, three-quarter profile facing the extended hand -->
+      <path d="M552,276 C577,278 594,298 595,322 C596,330 592,334 595,339 L604,353 C607,358 602,362 596,363 C592,365 594,370 592,374 C590,379 594,381 590,385 C585,393 577,399 565,401 C551,403 539,396 533,386 C519,378 505,357 505,331 C505,301 522,274 552,276 Z"/>
+    </g>
+
+    <mask id="figMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1100" height="1500">
+      <rect x="0" y="0" width="1100" height="1500" fill="#000"/>
+      <use href="#legShapes" fill="#fff"/>
+      <use href="#torsoShapes" fill="#fff"/>
+    </mask>
+
+    <clipPath id="artClip"><rect x="0" y="0" width="1100" height="1500" rx="0"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#artClip)">
+    <rect id="paperRect" x="0" y="0" width="1100" height="1500" fill="url(#paper)"/>
+
+    <!-- the fruit is the only light source in the room -->
+    <g id="haloG" class="breathe">
+      <ellipse cx="550" cy="700" rx="560" ry="470" fill="url(#halo)"/>
+    </g>
+
+    <!-- floor contact -->
+    <ellipse id="floorShadow" cx="521" cy="1290" rx="104" ry="14" fill="#6B5128" opacity="0.3" filter="url(#floorBlur)"/>
+    <ellipse cx="519" cy="1288" rx="23" ry="5" fill="#4A3418" opacity="0.45" filter="url(#contactBlur)"/>
+
+    <!-- cast shadow of the slice on the paper: the same half disc, offset -->
+    <g id="castG" filter="url(#softShadow)" opacity="0.34">
+      <path id="castPath" d="M174,636 C310,628 470,632 550,644 C650,630 810,630 948,640 A388 386 0 0 1 174,636 Z" fill="#7A5C2C"/>
+    </g>
+
+    <!-- legs pass behind the fruit: the rind is the hem -->
+    <use href="#legShapes" fill="url(#inkG)"/>
+    <!-- pointe shoes -->
+    <g id="shoes">
+      <!-- working foot, pointed against the supporting ankle -->
+      <path d="M556,1146 C548,1163 537,1179 527,1188 C520,1194 511,1190 514,1181 C519,1167 529,1151 537,1138 Z" fill="url(#satinG)"/>
+      <path d="M527,1188 C520,1194 511,1190 514,1181 C517,1177 522,1179 524,1183 Z" fill="#D9BE84"/>
+      <!-- supporting shoe, en pointe -->
+      <path d="M502,1174 C497,1210 499,1252 508,1278 C513,1291 526,1291 531,1278 C537,1252 536,1210 531,1174 Z" fill="url(#satinG)"/>
+      <path d="M508,1272 C512,1284 526,1284 530,1272 C531,1279 529,1287 520,1289 C511,1290 507,1281 508,1272 Z" fill="#D9BE84"/>
+      <path d="M505,1188 C503,1216 504,1248 510,1272" stroke="#FFFFFF" stroke-width="2.6" fill="none" opacity="0.55" stroke-linecap="round"/>
+      <!-- ribbons crossing the calf -->
+      <g fill="url(#satinG)">
+        <path d="M492,1104 C505,1113 519,1122 529,1126 L529,1135 C517,1131 502,1122 489,1112 Z"/>
+        <path d="M529,1108 C518,1116 503,1128 494,1138 L497,1147 C507,1136 521,1124 529,1118 Z"/>
+        <path d="M498,1152 C509,1158 521,1163 530,1165 L530,1173 C519,1171 506,1166 496,1160 Z"/>
+        <path d="M500,1168 C510,1172 521,1175 531,1176 L531,1183 C520,1182 508,1179 498,1175 Z"/>
+      </g>
+      <g stroke="#C9A96A" stroke-width="1" fill="none" opacity="0.5">
+        <path d="M492,1104 C505,1113 519,1122 529,1126"/>
+        <path d="M529,1108 C518,1116 503,1128 494,1138"/>
+      </g>
+      <!-- knot -->
+      <path d="M531,1158 C538,1153 546,1155 546,1161 C546,1166 539,1168 533,1165 Z M533,1166 C540,1168 545,1173 542,1178 C538,1182 532,1178 531,1172 Z" fill="url(#satinG)"/>
+    </g>
+
+    <!-- ================= THE SLICE (built to the photograph) ================= -->
+    <g id="slice"></g>
+
+    <!-- waist sits into the cut face -->
+    <ellipse id="waistShadow" cx="551" cy="631" rx="76" ry="13" fill="#B07C10" opacity="0.3" filter="url(#membraneBlur)"/>
+
+    <!-- ================= THE DANCER ================= -->
+    <use href="#torsoShapes" fill="url(#inkG)"/>
+
+    <!-- leotard bodice: seams radiate from the same core the skirt does -->
+    <g id="bodice">
+      <path d="M500,498 C503,481 507,466 513,455 L526,458 C519,470 514,484 512,500 Z" fill="url(#bodiceG)"/>
+      <path d="M596,498 C596,482 594,468 590,457 L603,455 C609,468 611,484 611,500 Z" fill="url(#bodiceG)"/>
+      <path d="M478,506 C494,494 512,493 528,501 C540,507 550,514 556,521 C564,511 578,500 594,498 C612,496 629,500 637,511 C641,531 630,556 624,578 C618,600 613,612 609,624 L498,624 C494,610 486,592 480,570 C474,546 472,520 478,506 Z" fill="url(#bodiceG)"/>
+      <g stroke="#FFC98A" stroke-width="1.6" fill="none" opacity="0.4">
+        <path d="M553,622 C551,590 549,550 551,518"/>
+        <path d="M553,622 C535,592 513,556 501,524"/>
+        <path d="M553,622 C571,592 593,556 607,522"/>
+        <path d="M553,622 C525,596 495,566 483,540"/>
+        <path d="M553,622 C581,596 611,566 625,540"/>
+      </g>
+      <path d="M478,506 C494,494 512,493 528,501 C540,507 550,514 556,521 C564,511 578,500 594,498 C612,496 629,500 637,511 C620,504 600,503 586,507 C572,511 562,519 556,527 C549,518 538,510 524,505 C507,499 490,500 478,506 Z" fill="#FF8A4C" opacity="0.55"/>
+      <path d="M498,624 L609,624 C608,617 607,612 606,608 L501,608 C500,613 499,618 498,624 Z" fill="#7E1C06" opacity="0.45"/>
+    </g>
+
+    <!-- hair sheen -->
+    <path d="M513,299 C528,283 552,277 574,283" stroke="#C98A2E" stroke-width="3" fill="none" opacity="0.45" stroke-linecap="round"/>
+    <path d="M596,283 C608,283 616,291 617,301" stroke="#C98A2E" stroke-width="2.4" fill="none" opacity="0.4" stroke-linecap="round"/>
+    <!-- fingers, kept quiet inside the silhouette -->
+    <g stroke="#7A5228" stroke-width="1.3" fill="none" opacity="0.4" stroke-linecap="round">
+      <path d="M470,240 C480,229 490,219 499,213"/>
+      <path d="M477,249 C487,238 496,228 504,221"/>
+      <path d="M872,573 C886,581 898,589 908,596"/>
+      <path d="M866,581 C880,589 892,596 902,601"/>
+    </g>
+
+    <!-- light climbing from the fruit onto the body -->
+    <g id="uplightG">
+      <rect x="0" y="0" width="1100" height="1500" fill="url(#upG)" mask="url(#figMask)" opacity="0.55"/>
+    </g>
+    <g id="rimG" fill="none" stroke="#FFC94A" stroke-linecap="round" filter="url(#rimBlur)" opacity="0.75">
+      <path d="M501,618 C534,626 574,626 604,618" stroke-width="6"/>
+      <path d="M479,556 C486,584 494,606 499,620" stroke-width="4"/>
+      <path d="M630,560 C623,586 613,606 606,620" stroke-width="4"/>
+      <path d="M537,388 C548,398 561,401 573,398" stroke-width="3.4"/>
+      <path d="M643,489 C687,496 737,512 777,527 C813,542 839,563 857,584" stroke-width="3.6"/>
+      <path d="M462,477 C444,441 419,394 407,359" stroke-width="3"/>
+      <path d="M481,1008 C474,1046 476,1070 484,1096" stroke-width="4"/>
+      <path d="M676,1010 C694,1024 700,1040 694,1054" stroke-width="3.4"/>
+      <path d="M619,1132 C596,1150 574,1162 558,1170" stroke-width="3"/>
+    </g>
+    <g id="rimCrisp" fill="none" stroke="#FFE9A8" stroke-linecap="round" opacity="0.6">
+      <path d="M504,619 C534,626 572,626 601,619" stroke-width="2"/>
+      <path d="M645,489 C688,496 737,512 776,527" stroke-width="1.5"/>
+      <path d="M539,390 C549,398 561,401 571,399" stroke-width="1.4"/>
+    </g>
+
+    <!-- grain -->
+    <rect id="grainRect" x="0" y="0" width="1100" height="1500" filter="url(#grainF)" opacity="0.07" style="mix-blend-mode:multiply"/>
+    <rect x="0" y="0" width="1100" height="1500" fill="url(#vig)"/>
+
+    <!-- construction guides -->
+    <g id="guides" opacity="0" style="transition:opacity .3s">
+      <g fill="none" stroke="#2B6C8F" stroke-width="1.6" stroke-dasharray="7 7" opacity="0.85">
+        <circle cx="550" cy="620" r="390"/>
+        <circle cx="550" cy="620" r="331"/>
+        <path d="M120,620 H980"/>
+        <path d="M550,190 V1330"/>
+        <path d="M160,272 H940 M160,1290 H940"/>
+      </g>
+      <g fill="#2B6C8F" font-family="Helvetica,Arial,sans-serif" font-size="17" letter-spacing="1.5">
+        <text x="164" y="606">cut edge = waist</text>
+        <text x="762" y="1004">rind = hem, below knee</text>
+        <text x="566" y="262">crown</text>
+        <text x="566" y="1322">pointe / floor</text>
+        <text x="958" y="668">r 390</text>
+      </g>
+      <g fill="#D63A16">
+        <circle cx="550" cy="620" r="5"/><circle cx="160" cy="620" r="4"/><circle cx="940" cy="620" r="4"/>
+        <circle cx="550" cy="1010" r="4"/><circle cx="521" cy="1288" r="4"/>
+      </g>
+    </g>
+
+    <!-- gallery caption, drawn inside the artwork so exports keep it -->
+    <g id="caption" font-family="Georgia,'Times New Roman',serif" fill="#6B5138">
+      <text x="70" y="1418" font-size="27" font-style="italic">Segment Solo</text>
+      <text x="70" y="1447" font-family="Helvetica,Arial,sans-serif" font-size="14" letter-spacing="3.4">POSE STUDY N&#176;1 &#183; CITRUS SINENSIS &#183; HALF DISC, R390</text>
+      <path d="M70,1392 H1030" stroke="#C9B48A" stroke-width="1.2"/>
+      <text x="1030" y="1447" text-anchor="end" font-family="Helvetica,Arial,sans-serif" font-size="14" letter-spacing="2.6" id="capState">6 SEGMENTS</text>
+    </g>
+  </g>
+</svg>
+<!-- ========================== /ARTWORK =========================== -->
+        </div>
+      </div>
+
+      <div class="stage-foot rise d4">
+        <span class="tag">Vector, self-contained</span>
+        <span class="dot"></span>
+        <span>Half disc · 780 × 390 · flat edge uppermost</span>
+        <span class="dot"></span>
+        <span>Six segments, cream pith ring, gland-dotted zest</span>
+        <span class="zoomread" id="zoomRead">100%</span>
+      </div>
+    </div>
+
+    <!-- ======================= CONTROL RAIL ======================= -->
+    <aside class="rail rise d2" id="controls">
+      <div class="rail-top">
+        <h2>Studio controls</h2>
+        <p>Every dial is live. Defaults are measured from the slice: six segments, a 15% pith ring, zest at 42°.</p>
+      </div>
+      <div class="rail-body">
+
+        <div class="group">
+          <h3>Light from the fruit</h3>
+          <div class="ctl">
+            <label for="glow">Bloom <span class="val" id="glowV">100%</span></label>
+            <input type="range" id="glow" min="0" max="160" value="100">
+          </div>
+          <div class="ctl">
+            <label for="rim">Rim on the body <span class="val" id="rimV">75%</span></label>
+            <input type="range" id="rim" min="0" max="130" value="75">
+          </div>
+          <div class="ctl">
+            <label for="shadow">Shadow softness <span class="val" id="shadowV">18</span></label>
+            <input type="range" id="shadow" min="2" max="46" value="18">
+          </div>
+        </div>
+
+        <div class="group">
+          <h3>The slice itself</h3>
+          <div class="ctl">
+            <label for="segs">Segments <span class="val" id="segsV">6</span></label>
+            <input type="range" id="segs" min="4" max="9" value="6">
+          </div>
+          <div class="ctl">
+            <label for="rind">Pith ring <span class="val" id="rindV">15%</span></label>
+            <input type="range" id="rind" min="6" max="24" value="15">
+          </div>
+          <div class="ctl">
+            <label for="juice">Juice vesicles <span class="val" id="juiceV">1500</span></label>
+            <input type="range" id="juice" min="200" max="3200" step="50" value="1500">
+          </div>
+          <div class="ctl">
+            <label for="gloss">Wet gloss <span class="val" id="glossV">70%</span></label>
+            <input type="range" id="gloss" min="0" max="130" value="70">
+          </div>
+          <div class="ctl">
+            <label for="hue">Zest hue <span class="val" id="hueV">0°</span></label>
+            <input type="range" id="hue" min="-16" max="16" value="0">
+          </div>
+        </div>
+
+        <div class="group">
+          <h3>Stage &amp; ink</h3>
+          <div class="ctl">
+            <label for="backdrop">Backdrop</label>
+            <div class="selwrap">
+              <select id="backdrop">
+                <option value="cream">Studio cream — as photographed</option>
+                <option value="night">Zest night — the fruit glows</option>
+                <option value="linen">Pith linen — warm paper</option>
+                <option value="sage">Leaf sage — cool counterpoint</option>
+              </select>
+            </div>
+          </div>
+          <div class="ctl">
+            <label for="ink">Figure ink</label>
+            <div class="selwrap">
+              <select id="ink">
+                <option value="espresso">Espresso</option>
+                <option value="blood">Blood orange</option>
+                <option value="leaf">Deep leaf</option>
+                <option value="pith">Pith cream</option>
+                <option value="blue">Pith blue</option>
+              </select>
+            </div>
+          </div>
+          <div class="ctl">
+            <label for="grain">Paper grain <span class="val" id="grainV">7%</span></label>
+            <input type="range" id="grain" min="0" max="34" value="7">
+          </div>
+          <div class="ctl">
+            <label for="zoom">Artwork scale <span class="val" id="zoomV">100%</span></label>
+            <input type="range" id="zoom" min="60" max="130" value="100">
+          </div>
+        </div>
+
+        <div class="group">
+          <h3>Display</h3>
+          <label class="switch" for="guidesT">Construction guides
+            <input type="checkbox" id="guidesT"><span class="track"></span>
+          </label>
+          <label class="switch" for="motionT">Juice shimmer
+            <input type="checkbox" id="motionT" checked><span class="track"></span>
+          </label>
+          <label class="switch" for="capT">Gallery caption
+            <input type="checkbox" id="capT" checked><span class="track"></span>
+          </label>
+        </div>
+
+      </div>
+      <div class="rail-foot">
+        <div class="row">
+          <button class="btn" id="reset">Reset to photo</button>
+          <button class="btn" id="rand">Randomise</button>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="dlSvg">SVG</button>
+          <button class="btn" id="dlPng">PNG ×2</button>
+          <button class="btn" id="copySvg">Copy</button>
+        </div>
+        <div class="swatches" id="swatches" title="Live palette"></div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ============================ NOTES ============================ -->
+  <section class="notes" id="notes">
+    <div class="notes-in">
+      <div class="notes-title">
+        <h2>How the body was<br>fitted to the fruit</h2>
+        <p>Nothing here is a generic orange. The silhouette, the segment count, the pith width and every hue were read off the single slice in the photograph, then used as the pattern for a pose.</p>
+        <div class="measure">
+          <span>780 × 390 px</span><span>ratio 2 : 1</span><span>r = 390</span><span>6 segments</span><span>pith 15%</span><span>zest 42°</span><span>7.8 heads</span>
+        </div>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <h3>01 — The cut edge is a waist</h3>
+          <p>The slice is a <b>half disc, flat side up</b>. That straight edge is the only horizontal in the whole object, so it becomes the one place a body can plausibly enter it: the waistline. The torso is seated into the notch at the centre of the cut face, where the photograph shows the pale core and its short strands.</p>
+          <p>Because the flat edge is the widest part, the skirt reads as a classical tutu plate seen slightly from above — wide at the hip, curving away below.</p>
+        </article>
+        <article class="card">
+          <h3>02 — The rind sets the hem, the hem sets the pose</h3>
+          <p>At <b>390 units of radius</b> against a 128-unit head, the curve lands just below the knee. That single measurement dictates everything downstream: only the calves can show, so the dancer stands <b>en pointe on one leg</b> with the other in a petit retiré, its shin crossing below the hem to the supporting ankle.</p>
+          <p>The right arm reaches out until the fingertips hover a hand's width above the rind's tip — the body's widest gesture is bounded by the fruit's widest point.</p>
+        </article>
+        <article class="card">
+          <h3>03 — Colour and light come from the flesh</h3>
+          <p>The flesh runs <b>#FFD85E → #F29200</b> from core to rind, the pith ring is a cream <b>#FCF0C8</b>, and the zest carries the photograph's dotted oil glands. The leotard is the one invented hue — blood orange — and its seams radiate from the waist core, continuing the same radial system the membranes run down into the skirt.</p>
+          <p>The figure is dark so the fruit can act as the room's only lamp: amber light climbs the calves, the underside of the jaw and the lower edge of the extended arm. Turn the bloom down and the dancer falls back into silhouette.</p>
+        </article>
+        <article class="card">
+          <h3>04 — Built to stand alone</h3>
+          <p>One HTML file. Every mark is vector geometry — the vesicles are seeded, the gradients are declared, the grain is a filter. No photograph is embedded, linked or traced, and nothing is fetched from the network.</p>
+          <p>Exports carry the current state: the SVG downloads with the segment count, pith width, ink and backdrop you have dialled in, and the PNG renders at twice the artboard.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer>Segment Solo · pose study N°1 · drawn from one half slice</footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><i></i><span id="toastMsg">Ready</span></div>
+
+<script>
+(function(){
+  "use strict";
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const art = document.getElementById('art');
+  const sliceG = document.getElementById('slice');
+  const CX = 550, CY = 620, R = 390;
+
+  const DEFAULTS = {
+    glow:100, rim:75, shadow:18, segs:6, rind:15, juice:1500,
+    gloss:70, hue:0, grain:7, zoom:100,
+    backdrop:'cream', ink:'espresso', guides:false, motion:true, caption:true
+  };
+  const S = Object.assign({}, DEFAULTS);
+
+  const BACKDROPS = {
+    cream:{a:'#FAF8F4',b:'#F4F2ED',c:'#EDEAE1',ink:'espresso',halo:1,cap:'#6B5138',rule:'#C9B48A',shadow:'#7A5C2C',shadowOp:.34},
+    night:{a:'#241705',b:'#1A1004',c:'#0D0801',ink:'pith',halo:1.5,cap:'#E4C98C',rule:'#7A5A22',shadow:'#000000',shadowOp:.55},
+    linen:{a:'#F6EEDC',b:'#EFE5CE',c:'#E2D4B6',ink:'espresso',halo:.85,cap:'#6B5138',rule:'#C0A876',shadow:'#7A5C2C',shadowOp:.32},
+    sage:{a:'#E6EBE2',b:'#DCE3D8',c:'#CBD5C6',ink:'leaf',halo:.9,cap:'#4A5B44',rule:'#A9B7A2',shadow:'#4E5B44',shadowOp:.3}
+  };
+  const INKS = {
+    espresso:['#4A2C14','#2E1B0E','#1A0E05'],
+    blood:['#C4441C','#9C2409','#5E1404'],
+    leaf:['#3B6B45','#24462C','#10240F'],
+    pith:['#FFF8E4','#F3E2B8','#D8BC85'],
+    blue:['#33506F','#22374F','#0E1A28']
+  };
+
+  /* ---------- helpers ---------- */
+  const el = (n,attrs)=>{const e=document.createElementNS(SVGNS,n);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;};
+  const f = n => Math.round(n*100)/100;
+  function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function hsl(hex,dh,ds,dl){
+    let r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+    const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0,l=(mx+mn)/2;
+    if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);
+      h=mx===r?((g-b)/d+(g<b?6:0)):mx===g?((b-r)/d+2):((r-g)/d+4);h/=6;}
+    h=(h*360+dh+360)%360;s=Math.min(1,Math.max(0,s+(ds||0)/100));l=Math.min(1,Math.max(0,l+(dl||0)/100));
+    const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;
+    let rr,gg,bb;const seg=Math.floor(h/60)%6;
+    [[c,x,0],[x,c,0],[0,c,x],[0,x,c],[x,0,c],[c,0,x]][seg]&&([rr,gg,bb]=[[c,x,0],[x,c,0],[0,c,x],[0,x,c],[x,0,c],[c,0,x]][seg]);
+    const to=v=>('0'+Math.round((v+m)*255).toString(16)).slice(-2);
+    return '#'+to(rr)+to(gg)+to(bb);
+  }
+  // half disc, flat edge on top, faint organic wobble + a notch at the core
+  function halfDisc(r,dip,dy){
+    const y=CY+(dy||0), lx=CX-r, rx=CX+r;
+    return `M ${f(lx)},${f(y-2)} C ${f(CX-r*.62)},${f(y-8)} ${f(CX-r*.26)},${f(y-4)} ${f(CX-13)},${f(y+1)}`
+      + ` Q ${CX},${f(y+dip)} ${f(CX+15)},${f(y+1)}`
+      + ` C ${f(CX+r*.34)},${f(y-6)} ${f(CX+r*.72)},${f(y-3)} ${f(rx)},${f(y+2)}`
+      + ` A ${f(r)},${f(r*.992)} 0 0 1 ${f(lx)},${f(y-2)} Z`;
+  }
+  const pt=(a,rr)=>[CX+Math.cos(a)*rr, CY+Math.sin(a)*rr];
+
+  /* ---------- build the slice ---------- */
+  let builtKey='';
+  function buildSlice(force){
+    const key=[S.segs,S.rind,S.juice,S.hue].join('|');
+    if(!force && key===builtKey) return;
+    builtKey=key;
+    while(sliceG.firstChild) sliceG.removeChild(sliceG.firstChild);
+
+    const rnd = mulberry(20260901);
+    const rf = R*(1-S.rind/100);      // flesh radius
+    const rp = R-9;                   // pith radius (thin zest outside)
+    const n = S.segs;
+    const dh = S.hue;
+
+    // zest / peel
+    sliceG.appendChild(el('path',{d:halfDisc(R,7,0),fill:'url(#peelG)'}));
+    // oil glands along the zest
+    let glands='';
+    for(let i=0;i<150;i++){
+      const a=Math.PI*(i/149)*0.995+0.008;
+      const [x,y]=pt(a,R-4.2-rnd()*2.4);
+      glands+=`M ${f(x)},${f(y)} l ${f(rnd()*1.2-.6)},${f(rnd()*1.2-.6)} `;
+    }
+    sliceG.appendChild(el('path',{d:glands,stroke:hsl('#C87A05',dh,0,-4),'stroke-width':2.6,'stroke-linecap':'round',fill:'none',opacity:.5}));
+    // pith
+    sliceG.appendChild(el('path',{d:halfDisc(rp,9,2),fill:'url(#pithG)'}));
+    sliceG.appendChild(el('path',{d:halfDisc(rp,9,2),fill:'none',stroke:'#EAD79A','stroke-width':1.2,opacity:.7}));
+
+    // flesh base
+    const fleshD = halfDisc(rf,16,4);
+    sliceG.appendChild(el('path',{d:fleshD,fill:'url(#fleshA)'}));
+
+    const clip = el('clipPath',{id:'fleshClip'});
+    clip.appendChild(el('path',{d:fleshD}));
+    sliceG.appendChild(clip);
+    const inner = el('g',{'clip-path':'url(#fleshClip)'});
+    sliceG.appendChild(inner);
+
+    // wedges: slightly alternating flesh tone, membranes between
+    const A0=0.028, A1=Math.PI-0.028;
+    const bounds=[];
+    for(let i=0;i<=n;i++) bounds.push(A0+(A1-A0)*i/n);
+    for(let i=0;i<n;i++){
+      const a=bounds[i]+0.012, b=bounds[i+1]-0.012;
+      const [x0,y0]=pt(a,6),[x1,y1]=pt(a,rf+14),[x2,y2]=pt(b,rf+14),[x3,y3]=pt(b,6);
+      const d=`M ${f(x0)},${f(y0)} L ${f(x1)},${f(y1)} A ${f(rf+14)},${f(rf+14)} 0 0 1 ${f(x2)},${f(y2)} L ${f(x3)},${f(y3)} Z`;
+      inner.appendChild(el('path',{d,fill:i%2?'url(#fleshB)':'url(#fleshA)',opacity:.95}));
+      // each carpel swells in the middle and sinks at its membranes
+      const mid=(a+b)/2, [bx,by]=pt(mid,rf*0.58);
+      inner.appendChild(el('ellipse',{cx:f(bx),cy:f(by),rx:f(rf*0.42),ry:f(rf*0.13),
+        transform:`rotate(${f(mid*180/Math.PI)} ${f(bx)} ${f(by)})`,fill:'#FFE07A',opacity:.16,filter:'url(#membraneBlur)'}));
+      let shade='';
+      [a,b].forEach(ang=>{
+        const [sx,sy]=pt(ang,12),[ex,ey]=pt(ang,rf+10);
+        shade+=`M ${f(sx)},${f(sy)} L ${f(ex)},${f(ey)} `;
+      });
+      inner.appendChild(el('path',{d:shade,stroke:'#D98A00', 'stroke-width':9,fill:'none',opacity:.16,filter:'url(#membraneBlur)'}));
+    }
+
+    // juice vesicles — radial capsules, three luminance buckets
+    let light='',mid='',dark='',streak='';
+    const count=S.juice;
+    for(let i=0;i<count;i++){
+      const seg=Math.floor(rnd()*n);
+      const a=bounds[seg]+0.03+(bounds[seg+1]-bounds[seg]-0.06)*rnd();
+      const rr=14+Math.pow(rnd(),.72)*(rf-20);
+      const [x,y]=pt(a,rr);
+      const len=6+rnd()*11*(0.5+rr/rf*0.8);
+      const ja=a+(rnd()-.5)*0.17;
+      const dx=Math.cos(ja)*len, dy=Math.sin(ja)*len;
+      const s=`M ${f(x-dx/2)},${f(y-dy/2)} L ${f(x+dx/2)},${f(y+dy/2)} `;
+      const t=rnd();
+      if(t<0.36) light+=s; else if(t<0.74) mid+=s; else dark+=s;
+      if(rnd()<0.055){
+        const L=22+rnd()*30;
+        streak+=`M ${f(x)},${f(y)} L ${f(x+Math.cos(a)*L)},${f(y+Math.sin(a)*L)} `;
+      }
+    }
+    inner.appendChild(el('path',{d:streak,stroke:'#FFF0B8','stroke-width':2.2,'stroke-linecap':'round',fill:'none',opacity:.16}));
+    inner.appendChild(el('path',{d:dark,stroke:hsl('#D98600',dh,4,-4),'stroke-width':2.4,'stroke-linecap':'round',fill:'none',opacity:.32}));
+    inner.appendChild(el('path',{d:mid,stroke:hsl('#FFCE33',dh,0,4),'stroke-width':2.2,'stroke-linecap':'round',fill:'none',opacity:.34}));
+    inner.appendChild(el('path',{d:light,stroke:'#FFF3C8','stroke-width':2,'stroke-linecap':'round',fill:'none',opacity:.42}));
+
+    // membranes
+    let mem='',glow='';
+    for(let i=1;i<n;i++){
+      const a=bounds[i];
+      const [x1,y1]=pt(a,10),[x2,y2]=pt(a,rf+6);
+      const mx=(x1+x2)/2+Math.cos(a+Math.PI/2)*(rnd()-.5)*14;
+      const my=(y1+y2)/2+Math.sin(a+Math.PI/2)*(rnd()-.5)*14;
+      const d=`M ${f(x1)},${f(y1)} Q ${f(mx)},${f(my)} ${f(x2)},${f(y2)} `;
+      mem+=d; glow+=d;
+    }
+    inner.appendChild(el('path',{d:glow,stroke:'#FFFBE8','stroke-width':9,fill:'none',opacity:.22,filter:'url(#membraneBlur)'}));
+    inner.appendChild(el('path',{d:mem,stroke:'#FFF3CE','stroke-width':3.4,fill:'none',opacity:.9,'stroke-linecap':'round'}));
+    inner.appendChild(el('path',{d:mem,stroke:'#FFFFFF','stroke-width':1.1,fill:'none',opacity:.6}));
+
+    // wet sweep + far-side falloff
+    const glossK=S.gloss/100;
+    inner.appendChild(el('path',{d:fleshD,fill:'url(#deepSide)'}));
+    inner.appendChild(el('path',{d:fleshD,fill:'url(#wetSweep)',opacity:f(glossK*0.5)}));
+
+    // specular highlights, the wet look of the photograph
+    let spec='';
+    for(let i=0;i<Math.round(70*glossK);i++){
+      const a=0.12+rnd()*(Math.PI-0.24);
+      const rr=30+Math.pow(rnd(),.6)*(rf-46);
+      const [x,y]=pt(a,rr);
+      const L=3+rnd()*11, ja=a+(rnd()-.5)*0.5;
+      spec+=`M ${f(x)},${f(y)} L ${f(x+Math.cos(ja)*L)},${f(y+Math.sin(ja)*L)} `;
+    }
+    inner.appendChild(el('path',{d:spec,stroke:'#FFFFFF','stroke-width':3.1,'stroke-linecap':'round',fill:'none',opacity:f(.55*glossK),class:'shimmer'}));
+    const blobs=el('g',{class:'shimmer2',opacity:.22});
+    [[398,742,58,20,-28],[300,690,34,13,-14],[640,800,46,16,26],[760,700,30,12,18],[520,880,40,14,4]].forEach(b=>{
+      blobs.appendChild(el('ellipse',{cx:b[0],cy:b[1],rx:b[2],ry:b[3],fill:'#FFFFFF',opacity:.4,transform:`rotate(${b[4]} ${b[0]} ${b[1]})`,filter:'url(#membraneBlur)'}));
+    });
+    inner.appendChild(blobs);
+
+    // the pale core at the centre of the cut face, with its short strands
+    const core=el('g',{});
+    core.appendChild(el('path',{d:'M 536,616 C 546,610 560,610 572,617 C 580,622 578,634 568,640 C 558,646 546,644 539,637 C 533,631 531,620 536,616 Z',fill:'#FFFBEC',opacity:.96}));
+    core.appendChild(el('path',{d:'M 543,624 C 550,632 556,640 559,652 M 556,620 C 560,632 564,640 568,650 M 566,622 C 570,630 576,636 582,642',stroke:'#FFFDF2','stroke-width':3,fill:'none',opacity:.85,'stroke-linecap':'round'}));
+    sliceG.appendChild(core);
+
+    // rind inner edge shading + outer zest highlight
+    sliceG.appendChild(el('path',{d:halfDisc(rp,9,2),fill:'none',stroke:'#FFFFFF','stroke-width':2,opacity:.35}));
+    sliceG.appendChild(el('path',{d:`M ${f(CX-R+6)},${f(CY+8)} A ${f(R-5)},${f(R-5)} 0 0 0 ${f(CX+R-8)},${f(CY+16)}`,fill:'none',stroke:'#FFE08A','stroke-width':2.4,opacity:.4}));
+
+    document.getElementById('capState').textContent = n+' SEGMENTS';
+    paintFruitColors();
+  }
+
+  function paintFruitColors(){
+    const dh=S.hue;
+    const set=(id,c)=>document.getElementById(id).setAttribute('stop-color',c);
+    set('peelA',hsl('#F7B733',dh,0,0)); set('peelB',hsl('#EFA415',dh,0,0)); set('peelC',hsl('#DE8C0B',dh,0,0));
+    set('flA0',hsl('#FFD85E',dh,0,0)); set('flA1',hsl('#FFC016',dh,0,0)); set('flA2',hsl('#FFAB00',dh,0,0)); set('flA3',hsl('#F29200',dh,0,0));
+    set('flB0',hsl('#FFD048',dh,0,0)); set('flB1',hsl('#FFB80A',dh,0,0)); set('flB2',hsl('#F9A000',dh,0,0)); set('flB3',hsl('#E98C00',dh,0,0));
+  }
+
+  /* ---------- live paint ---------- */
+  function paint(){
+    buildSlice(false);
+    const bd=BACKDROPS[S.backdrop];
+    document.getElementById('paperA').setAttribute('stop-color',bd.a);
+    document.getElementById('paperB').setAttribute('stop-color',bd.b);
+    document.getElementById('paperC').setAttribute('stop-color',bd.c);
+
+    const gk=S.glow/100;
+    document.getElementById('haloG').setAttribute('opacity',f(Math.min(1,gk*bd.halo*0.9)));
+    document.getElementById('haloG').setAttribute('transform',`translate(${f(550-550*(0.86+gk*0.2))},${f(700-700*(0.86+gk*0.2))}) scale(${f(0.86+gk*0.2)})`);
+    document.getElementById('uplightG').setAttribute('opacity',f(Math.min(1.2,S.rim/100*(0.55+gk*0.45))));
+    document.getElementById('rimG').setAttribute('opacity',f(S.rim/100));
+    document.getElementById('rimCrisp').setAttribute('opacity',f(S.rim/100*0.8));
+
+    document.getElementById('shadowBlur').setAttribute('stdDeviation',S.shadow);
+    const cast=document.getElementById('castG');
+    cast.setAttribute('opacity',f(bd.shadowOp*(0.6+S.shadow/70)));
+    cast.querySelectorAll('[fill]').forEach(p=>p.setAttribute('fill',bd.shadow));
+    document.getElementById('floorShadow').setAttribute('opacity',f(bd.shadowOp*0.95));
+
+    const ink=INKS[S.ink];
+    document.getElementById('inkA').setAttribute('stop-color',ink[0]);
+    document.getElementById('inkB').setAttribute('stop-color',ink[1]);
+    document.getElementById('inkC').setAttribute('stop-color',ink[2]);
+
+    document.getElementById('grainRect').setAttribute('opacity',f(S.grain/100));
+    document.getElementById('guides').setAttribute('opacity',S.guides?1:0);
+    document.getElementById('caption').setAttribute('opacity',S.caption?1:0);
+    document.getElementById('caption').querySelectorAll('text').forEach(t=>t.setAttribute('fill',bd.cap));
+    document.getElementById('caption').querySelector('path').setAttribute('stroke',bd.rule);
+    art.classList.toggle('still',!S.motion);
+
+    const mat=document.getElementById('mat');
+    mat.style.width = window.innerWidth<=900
+      ? Math.min(100,S.zoom)+'%'
+      : `min(100%, calc((100vh - var(--head) - 178px) * ${f(0.7333*S.zoom/100)}))`;
+    document.getElementById('zoomRead').textContent=S.zoom+'%';
+
+    // live palette strip
+    const sw=document.getElementById('swatches');
+    const cols=[hsl('#FFC521',S.hue,0,0),hsl('#FEB200',S.hue,0,0),hsl('#DE8C0B',S.hue,0,0),'#FCF0C8',INKS[S.ink][1],'#CE3A16',bd.b];
+    if(sw.children.length!==cols.length){sw.innerHTML=cols.map(()=>'<i></i>').join('');}
+    cols.forEach((c,i)=>{sw.children[i].style.background=c;sw.children[i].title=c;});
+  }
+
+  /* ---------- controls ---------- */
+  const ranges=['glow','rim','shadow','segs','rind','juice','gloss','hue','grain','zoom'];
+  const fmt={glow:v=>v+'%',rim:v=>v+'%',shadow:v=>String(v),segs:v=>String(v),rind:v=>v+'%',
+             juice:v=>String(v),gloss:v=>v+'%',hue:v=>(v>0?'+':'')+v+'°',grain:v=>v+'%',zoom:v=>v+'%'};
+  function syncInputs(){
+    ranges.forEach(k=>{
+      const inp=document.getElementById(k);
+      inp.value=S[k];
+      document.getElementById(k+'V').textContent=fmt[k](S[k]);
+    });
+    document.getElementById('backdrop').value=S.backdrop;
+    document.getElementById('ink').value=S.ink;
+    document.getElementById('guidesT').checked=S.guides;
+    document.getElementById('motionT').checked=S.motion;
+    document.getElementById('capT').checked=S.caption;
+  }
+  ranges.forEach(k=>{
+    document.getElementById(k).addEventListener('input',e=>{
+      S[k]=parseInt(e.target.value,10);
+      document.getElementById(k+'V').textContent=fmt[k](S[k]);
+      paint();
+    });
+  });
+  document.getElementById('backdrop').addEventListener('change',e=>{
+    S.backdrop=e.target.value;
+    S.ink=BACKDROPS[S.backdrop].ink;
+    if(S.backdrop==='night'){S.glow=132;S.rim=96;}
+    else if(S.glow>120){S.glow=100;S.rim=75;}
+    syncInputs();paint();
+  });
+  document.getElementById('ink').addEventListener('change',e=>{S.ink=e.target.value;paint();});
+  [['guidesT','guides'],['motionT','motion'],['capT','caption']].forEach(([id,key])=>{
+    document.getElementById(id).addEventListener('change',e=>{S[key]=e.target.checked;paint();});
+  });
+  document.getElementById('reset').addEventListener('click',()=>{
+    Object.assign(S,DEFAULTS);builtKey='';syncInputs();paint();toast('Restored to the photograph’s measurements');
+  });
+  document.getElementById('rand').addEventListener('click',()=>{
+    const pick=a=>a[Math.floor(Math.random()*a.length)];
+    const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+    S.backdrop=pick(Object.keys(BACKDROPS));
+    S.ink=S.backdrop==='night'?'pith':pick(['espresso','blood','leaf','blue']);
+    S.segs=ri(5,8);S.rind=ri(10,20);S.juice=ri(900,2600);S.hue=ri(-10,10);
+    S.glow=S.backdrop==='night'?ri(110,160):ri(60,130);
+    S.rim=ri(45,120);S.gloss=ri(40,120);S.shadow=ri(8,38);S.grain=ri(4,24);
+    builtKey='';syncInputs();paint();toast('New variation — '+S.segs+' segments, '+S.rind+'% pith');
+  });
+
+  /* ---------- export ---------- */
+  function serialize(){
+    const c=art.cloneNode(true);
+    c.setAttribute('xmlns',SVGNS);
+    c.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
+    c.removeAttribute('id');
+    c.removeAttribute('style');
+    c.setAttribute('width','1100');c.setAttribute('height','1500');
+    // <use href> is SVG2; add xlink for older readers
+    c.querySelectorAll('use').forEach(u=>{
+      const h=u.getAttribute('href');
+      if(h) u.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',h);
+    });
+    if(!S.motion) c.classList.add('still');
+    return '<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(c);
+  }
+  function download(blob,name){
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+  }
+  function stamp(){return 'segment-solo-'+S.segs+'seg-'+S.backdrop;}
+  function getSVG(){download(new Blob([serialize()],{type:'image/svg+xml;charset=utf-8'}),stamp()+'.svg');toast('SVG saved with the current settings');}
+  async function copySVG(){
+    const txt=serialize();
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(txt);}
+      else{
+        const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+        document.body.appendChild(ta);ta.select();
+        const ok=document.execCommand('copy');ta.remove();if(!ok)throw new Error('copy blocked');
+      }
+      toast('Live SVG markup copied — '+(txt.length/1024).toFixed(0)+' KB');
+    }catch(err){
+      const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();
+      let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+      ta.remove();
+      ok?toast('Live SVG markup copied'):toast('Clipboard unavailable — use SVG download','err');
+    }
+  }
+  function getPNG(){
+    const txt=serialize();
+    const url=URL.createObjectURL(new Blob([txt],{type:'image/svg+xml;charset=utf-8'}));
+    const img=new Image();
+    toast('Rendering PNG at 2200 × 3000…');
+    img.onload=()=>{
+      try{
+        const cv=document.createElement('canvas');cv.width=2200;cv.height=3000;
+        const ctx=cv.getContext('2d');
+        ctx.drawImage(img,0,0,2200,3000);
+        cv.toBlob(b=>{
+          URL.revokeObjectURL(url);
+          if(b){download(b,stamp()+'@2x.png');toast('PNG saved — 2200 × 3000');}
+          else toast('PNG encoding failed — use SVG','err');
+        },'image/png');
+      }catch(e){URL.revokeObjectURL(url);toast('PNG export blocked — use SVG','err');}
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);toast('PNG export blocked — use SVG','err');};
+    img.src=url;
+  }
+  document.getElementById('dlSvg').addEventListener('click',getSVG);
+  document.getElementById('svgTop').addEventListener('click',getSVG);
+  document.getElementById('dlPng').addEventListener('click',getPNG);
+  document.getElementById('copySvg').addEventListener('click',copySVG);
+  document.getElementById('copyTop').addEventListener('click',copySVG);
+
+  /* ---------- toast ---------- */
+  let tT;
+  function toast(msg,kind){
+    const t=document.getElementById('toast');
+    document.getElementById('toastMsg').textContent=msg;
+    t.classList.toggle('err',kind==='err');
+    t.classList.add('show');
+    clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2600);
+  }
+
+  /* ---------- nav state + card reveals ---------- */
+  const secs=['artwork','controls','notes'].map(id=>document.getElementById(id));
+  const links=Array.from(document.querySelectorAll('nav a'));
+  function navState(){
+    const y=window.scrollY+window.innerHeight*0.34;
+    const [artS,ctlS,noteS]=secs;
+    let cur='artwork';
+    if(noteS.offsetTop<=y) cur='notes';
+    else if(window.innerWidth<=900&&ctlS.offsetTop<=y) cur='controls';
+    links.forEach(a=>a.setAttribute('aria-current',String(a.dataset.nav===cur)));
+  }
+  let rT;
+  window.addEventListener('resize',()=>{navState();clearTimeout(rT);rT=setTimeout(paint,120);},{passive:true});
+  window.addEventListener('scroll',navState,{passive:true});
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.15});
+    document.querySelectorAll('.card').forEach((c,i)=>{c.style.transitionDelay=(i%2*90)+'ms';io.observe(c);});
+  }else document.querySelectorAll('.card').forEach(c=>c.classList.add('in'));
+
+  /* ---------- go ---------- */
+  syncInputs();
+  buildSlice(true);
+  paint();
+  navState();
+  window.__solo={S:state=>Object.assign(S,state||{}),paint:()=>{builtKey='';paint();},serialize};
+})();
+</script>
+</body>
+</html>
