@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spoke — Network Operations</title>
+<style>
+:root{
+  color-scheme: light dark;
+  --bg:#f4f3ee;
+  --bg-tint:rgba(14,122,95,.06);
+  --surface:#ffffff;
+  --surface-2:#f0efe8;
+  --overlay:#ffffff;
+  --border:#dcdbd0;
+  --border-strong:#c8c7ba;
+  --text:#1c2420;
+  --text-2:#5b665f;
+  --text-3:#8a948c;
+  --primary:#0e7a5f;
+  --primary-strong:#0a5c48;
+  --primary-soft:rgba(14,122,95,.12);
+  --blue:#2f6fed;
+  --amber:#c77d0a;
+  --amber-soft:rgba(217,144,10,.14);
+  --danger:#d33a3a;
+  --danger-soft:rgba(211,58,58,.09);
+  --success:#178a50;
+  --scrim:rgba(28,36,32,.4);
+  --shadow:0 1px 2px rgba(28,36,32,.05),0 8px 24px -18px rgba(28,36,32,.35);
+  --shadow-pop:0 4px 10px rgba(28,36,32,.10),0 16px 40px -16px rgba(28,36,32,.35);
+  --d0:#0f8a6d; --d1:#2f6fed; --d2:#d98f0a; --d3:#9256d9; --d4:#e05a3a;
+  --radius:14px;
+  --toolbar-h:60px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0c1210;
+    --bg-tint:rgba(52,211,153,.05);
+    --surface:#141c18;
+    --surface-2:#1b2620;
+    --overlay:#1a2420;
+    --border:#26332c;
+    --border-strong:#35443c;
+    --text:#e6efe9;
+    --text-2:#9db0a5;
+    --text-3:#6d7f74;
+    --primary:#3ad39a;
+    --primary-strong:#6ce4b8;
+    --primary-soft:rgba(58,211,154,.14);
+    --blue:#6ea0ff;
+    --amber:#f0a63a;
+    --amber-soft:rgba(240,166,58,.14);
+    --danger:#f26d6d;
+    --danger-soft:rgba(242,109,109,.10);
+    --success:#4cd07d;
+    --scrim:rgba(0,0,0,.55);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.7);
+    --shadow-pop:0 4px 12px rgba(0,0,0,.45),0 20px 50px -16px rgba(0,0,0,.75);
+    --d0:#3ad39a; --d1:#6ea0ff; --d2:#f0a63a; --d3:#bb8ef2; --d4:#f2785a;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1100px 480px at 85% -140px, var(--bg-tint), transparent 70%),
+    radial-gradient(900px 420px at -10% 0, rgba(47,111,237,.05), transparent 65%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+}
+::selection{background:var(--primary-soft)}
+*{scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+.wrap{max-width:1400px;margin:0 auto;padding:0 28px}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+
+/* ---------- header ---------- */
+.masthead{padding:26px 0 18px}
+.masthead .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:12px}
+.logo svg{display:block}
+.logo-name{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.logo-name em{font-style:normal;color:var(--primary)}
+.masthead-meta{margin-left:auto;text-align:right;color:var(--text-2);font-size:13px;line-height:1.4}
+.masthead-meta strong{color:var(--text);font-weight:600}
+.pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--success);margin-right:6px;box-shadow:0 0 0 3px var(--primary-soft)}
+
+/* ---------- toolbar ---------- */
+.toolbar{
+  position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.toolbar-inner{display:flex;align-items:center;gap:14px;min-height:var(--toolbar-h);flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+.field{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)}
+.field select{
+  appearance:none;-webkit-appearance:none;
+  background:var(--surface) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" fill="none" stroke="%23888f88" stroke-width="1.6" stroke-linecap="round"/></svg>') no-repeat right 12px center;
+  border:1px solid var(--border-strong);border-radius:10px;
+  padding:7px 32px 7px 12px;font-size:14px;font-weight:600;color:var(--text);
+  cursor:pointer;min-width:160px;
+}
+.field select:hover{border-color:var(--primary)}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:3px;gap:2px}
+.seg button{
+  border:0;background:transparent;border-radius:8px;padding:6px 14px;
+  font-size:13.5px;font-weight:600;color:var(--text-2);cursor:pointer;white-space:nowrap;
+  transition:background .15s,color .15s;
+}
+.seg button:hover{color:var(--text)}
+.seg button.active{background:var(--surface);color:var(--primary-strong);box-shadow:var(--shadow)}
+.filter-summary{margin-left:auto;font-size:13px;color:var(--text-3)}
+
+/* ---------- layout ---------- */
+main{padding:22px 0 10px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+.kpi{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 18px 14px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.kpi::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--kpi-accent,var(--primary));opacity:.9}
+.kpi-label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
+.kpi-value{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.15;margin:6px 0 4px}
+.kpi-value small{font-size:16px;font-weight:600;color:var(--text-3);letter-spacing:0}
+.kpi-sub{font-size:12.5px;color:var(--text-3);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.delta{font-weight:700;font-size:12px;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.delta.good{color:var(--success);background:color-mix(in srgb, var(--success) 13%, transparent)}
+.delta.bad{color:var(--danger);background:var(--danger-soft)}
+.delta.flat{color:var(--text-2);background:var(--surface-2)}
+
+.grid-main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-head{display:flex;align-items:baseline;gap:12px;padding:16px 20px 6px;flex-wrap:wrap}
+.card-head h2{margin:0;font-size:16px;font-weight:700;letter-spacing:-.01em}
+.card-sub{font-size:12.5px;color:var(--text-3)}
+.card-head .spacer{margin-left:auto}
+.chart-body{height:280px;padding:6px 12px 12px;position:relative}
+.chart-body svg{display:block;width:100%;height:100%}
+#districtChart{padding:8px 16px 14px}
+#districtChart svg{display:block;width:100%}
+
+/* ---------- tooltip ---------- */
+.tooltip{
+  position:fixed;z-index:90;pointer-events:none;opacity:0;transform:translateY(4px);
+  transition:opacity .12s,transform .12s;
+  background:var(--overlay);border:1px solid var(--border-strong);border-radius:10px;
+  box-shadow:var(--shadow-pop);padding:9px 12px;font-size:12.5px;line-height:1.5;max-width:240px;
+}
+.tooltip.show{opacity:1;transform:translateY(0)}
+.tooltip .tt-title{font-weight:700;font-size:12px;color:var(--text-2);margin-bottom:2px}
+.tooltip .tt-row{display:flex;justify-content:space-between;gap:16px}
+.tooltip .tt-row b{font-weight:700}
+.tooltip .swatch{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+
+/* ---------- table ---------- */
+.table-card{margin-bottom:26px;scroll-margin-top:calc(var(--toolbar-h) + 16px)}
+.kpi[role="button"]:hover{border-color:var(--amber)}
+.kpi[role="button"]:active{transform:translateY(1px)}
+.table-tools{display:flex;align-items:center;gap:12px;padding:0 20px 12px;flex-wrap:wrap}
+.toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-2);user-select:none}
+.toggle input{position:absolute;opacity:0;width:0}
+.toggle .track{width:34px;height:20px;border-radius:20px;background:var(--surface-2);border:1px solid var(--border-strong);position:relative;transition:background .15s;flex:none}
+.toggle .track::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--text-3);transition:left .15s,background .15s}
+.toggle input:checked + .track{background:var(--primary-soft);border-color:var(--primary)}
+.toggle input:checked + .track::after{left:16px;background:var(--primary)}
+.toggle input:focus-visible + .track{outline:2px solid var(--primary);outline-offset:2px}
+.table-count{font-size:12.5px;color:var(--text-3);margin-left:auto}
+.mobile-sort{display:none;gap:8px;align-items:center}
+.mobile-sort select{
+  appearance:none;background:var(--surface-2);border:1px solid var(--border-strong);border-radius:9px;
+  padding:6px 10px;font-size:13px;font-weight:600;cursor:pointer;
+}
+.mobile-sort button{background:var(--surface-2);border:1px solid var(--border-strong);border-radius:9px;padding:6px 10px;cursor:pointer;font-size:13px}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:820px}
+thead th{
+  text-align:left;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--text-2);padding:10px 14px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:var(--surface-2);cursor:pointer;user-select:none;white-space:nowrap;position:relative;
+}
+thead th:hover{color:var(--text)}
+thead th .arrow{display:inline-block;width:12px;color:var(--primary);font-size:10px}
+thead th.num,td.num{text-align:right}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{transition:background .12s}
+tbody tr:hover{background:var(--primary-soft)}
+tbody tr:last-child td{border-bottom:0}
+tbody tr.att-empty{box-shadow:inset 3px 0 0 var(--danger);background:var(--danger-soft)}
+tbody tr.att-empty:hover{background:color-mix(in srgb, var(--danger) 14%, transparent)}
+tbody tr.att-full{box-shadow:inset 3px 0 0 var(--amber);background:var(--amber-soft)}
+tbody tr.att-full:hover{background:color-mix(in srgb, var(--amber) 16%, transparent)}
+.station-name{font-weight:600}
+.district-tag{display:inline-flex;align-items:center;gap:6px;color:var(--text-2)}
+.district-tag i{width:8px;height:8px;border-radius:2px;flex:none}
+.fillbar{display:inline-block;width:74px;height:7px;border-radius:4px;background:var(--surface-2);border:1px solid var(--border);vertical-align:middle;overflow:hidden;margin-right:8px}
+.fillbar i{display:block;height:100%;border-radius:3px;background:var(--primary)}
+.fillbar.warn i{background:var(--amber)}
+.fillbar.crit i{background:var(--danger)}
+.chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 9px;border-radius:20px;text-transform:uppercase}
+.chip.ok{color:var(--text-2);background:var(--surface-2)}
+.chip.empty{color:var(--danger);background:var(--danger-soft)}
+.chip.full{color:var(--amber);background:var(--amber-soft)}
+.empty-state{padding:36px 20px;text-align:center;color:var(--text-3)}
+.legend{display:flex;gap:16px;padding:10px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text-3);flex-wrap:wrap}
+.legend .chip{font-size:10px}
+footer{padding:8px 0 30px;color:var(--text-3);font-size:12.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  .grid-main{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:768px){
+  .wrap{padding:0 16px}
+  .masthead{padding:18px 0 12px}
+  .masthead-meta{display:none}
+  .chart-body{height:230px}
+  .filter-summary{display:none}
+  .kpi-value{font-size:26px}
+}
+@media (max-width:640px){
+  .kpis{gap:10px}
+  .kpi{padding:12px 14px 10px}
+  .kpi-value{font-size:23px;margin:4px 0 2px}
+  .kpi-sub{font-size:11.5px}
+  .toolbar-inner{gap:10px}
+  .field select{min-width:0;flex:1}
+  .field{flex:1}
+  .seg button{padding:6px 10px;font-size:12.5px}
+  .mobile-sort{display:flex}
+  .table-card{scroll-margin-top:120px}
+  .table-scroll{overflow:visible}
+  table{min-width:0}
+  thead{display:none}
+  table,tbody,tr,td{display:block}
+  tbody tr{
+    border:1px solid var(--border);border-radius:12px;margin:0 16px 10px;padding:10px 14px;
+    display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;background:var(--surface);
+  }
+  tbody tr.att-empty{border-left:3px solid var(--danger)}
+  tbody tr.att-full{border-left:3px solid var(--amber)}
+  tbody td{border:0;padding:2px 0;white-space:normal;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px}
+  tbody td::before{content:attr(data-label);color:var(--text-3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  tbody td.cell-name{grid-column:1/-1;font-size:15px;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:4px}
+  tbody td.cell-name::before{display:none}
+  tbody td.cell-status{grid-column:1/-1;justify-content:flex-start;margin-top:4px}
+  tbody td.cell-status::before{margin-right:auto}
+  .empty-state{margin:0 16px}
+  .legend{padding:10px 16px}
+}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <div class="logo">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="17" fill="none" stroke="var(--primary)" stroke-width="3"/>
+        <g stroke="var(--primary)" stroke-width="1.6" opacity=".8">
+          <line x1="20" y1="3" x2="20" y2="37"/>
+          <line x1="3" y1="20" x2="37" y2="20"/>
+          <line x1="8" y1="8" x2="32" y2="32"/>
+          <line x1="32" y1="8" x2="8" y2="32"/>
+        </g>
+        <circle cx="20" cy="20" r="4.5" fill="var(--primary)"/>
+      </svg>
+      <div>
+        <div class="logo-name">Spoke<em>.</em> <span style="font-weight:500;color:var(--text-2);font-size:16px">Network Operations</span></div>
+      </div>
+    </div>
+    <div class="masthead-meta">
+      <div><span class="pulse-dot"></span><strong>40 stations</strong> · 5 districts · simulated feed</div>
+      <div>Data through <strong id="dataThrough">—</strong></div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap toolbar-inner">
+    <label class="field"><span>District</span>
+      <select id="districtFilter" aria-label="Filter by district"></select>
+    </label>
+    <div class="seg" role="group" aria-label="Date range" id="rangeSeg">
+      <button type="button" data-range="7" class="active" aria-pressed="true">Last 7 days</button>
+      <button type="button" data-range="14" aria-pressed="false">Last 14 days</button>
+    </div>
+    <span class="filter-summary" id="filterSummary"></span>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="kpis" aria-label="Network summary">
+    <article class="kpi" style="--kpi-accent:var(--primary)">
+      <div class="kpi-label">Total trips</div>
+      <div class="kpi-value" id="kpiTrips">—</div>
+      <div class="kpi-sub" id="kpiTripsSub"></div>
+    </article>
+    <article class="kpi" style="--kpi-accent:var(--blue)">
+      <div class="kpi-label">Daily average</div>
+      <div class="kpi-value" id="kpiAvg">—</div>
+      <div class="kpi-sub" id="kpiAvgSub"></div>
+    </article>
+    <article class="kpi" style="--kpi-accent:var(--d3)">
+      <div class="kpi-label">Bikes available</div>
+      <div class="kpi-value" id="kpiBikes">—</div>
+      <div class="kpi-sub" id="kpiBikesSub"></div>
+    </article>
+    <article class="kpi" id="kpiAttentionCard" style="--kpi-accent:var(--amber);cursor:pointer" role="button" tabindex="0" title="Show the stations that need attention">
+      <div class="kpi-label">Needs attention</div>
+      <div class="kpi-value" id="kpiAttention">—</div>
+      <div class="kpi-sub" id="kpiAttentionSub"></div>
+    </article>
+  </section>
+
+  <section class="grid-main">
+    <div class="card">
+      <div class="card-head">
+        <h2>Trips over time</h2>
+        <span class="card-sub" id="tripsChartSub"></span>
+      </div>
+      <div class="chart-body" id="tripsChart" aria-label="Daily trip totals chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h2>Trips by district</h2>
+        <span class="card-sub">click a bar to filter</span>
+      </div>
+      <div id="districtChart" aria-label="Trip totals by district"></div>
+    </div>
+  </section>
+
+  <section class="card table-card">
+    <div class="card-head">
+      <h2>Stations</h2>
+      <span class="card-sub">click a column to sort</span>
+    </div>
+    <div class="table-tools">
+      <label class="toggle">
+        <input type="checkbox" id="attentionOnly">
+        <span class="track"></span>
+        Needs attention only
+      </label>
+      <div class="mobile-sort">
+        <select id="mobileSortKey" aria-label="Sort stations by"></select>
+        <button type="button" id="mobileSortDir" aria-label="Toggle sort direction">↓</button>
+      </div>
+      <span class="table-count" id="tableCount"></span>
+    </div>
+    <div class="table-scroll">
+      <table id="stationTable">
+        <thead><tr id="stationHead"></tr></thead>
+        <tbody id="stationBody"></tbody>
+      </table>
+    </div>
+    <div class="legend">
+      <span><span class="chip empty">Empty</span> no bikes to rent</span>
+      <span><span class="chip full">Full</span> no docks to return</span>
+      <span>Fill bar shows bikes ÷ capacity</span>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Spoke bike-share · fictional network, seeded dataset — identical on every load</span>
+    <span>Hourly counts · Oct 25 – Nov 7, 2026</span>
+  </div>
+</footer>
+<div class="tooltip" id="tooltip" role="status" aria-hidden="true"></div>
+<script>
+'use strict';
+/* ---------- seeded data ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const rand = mulberry32(0x5eed2026);
+const rint = (lo,hi)=>lo+Math.floor(rand()*(hi-lo+1));
+const pick = arr=>arr[Math.floor(rand()*arr.length)];
+
+const DAYS = 14;
+const ANCHOR = new Date(2026,10,7); // last complete day: Nov 7, 2026
+const dayDates = Array.from({length:DAYS},(_,i)=>{
+  const d=new Date(ANCHOR); d.setDate(d.getDate()-(DAYS-1-i)); return d;
+});
+const dayLabels = dayDates.map(d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric'}));
+const dayLongLabels = dayDates.map(d=>d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}));
+const isWeekend = dayDates.map(d=>d.getDay()===0||d.getDay()===6);
+const RAIN_DAY = 5; // a wet Friday visibly dampens the whole network
+
+const DISTRICTS = [
+  {name:'Old Harbor', color:'var(--d0)', hex:'#0f8a6d'},
+  {name:'Midtown',    color:'var(--d1)', hex:'#2f6fed'},
+  {name:'Riverside',  color:'var(--d2)', hex:'#d98f0a'},
+  {name:'University', color:'var(--d3)', hex:'#9256d9'},
+  {name:'Northgate',  color:'var(--d4)', hex:'#e05a3a'},
+];
+const STATION_NAMES = [
+  ['Ferry Landing','Wharf Street','Customs House','Pier Nine','Saltworks Lane','Marina Gate','Drydock Avenue','Beacon Quay'],
+  ['Central Exchange','Market Square','Cathedral Row','Foundry Street','Grand Arcade','Postal Yard','Civic Plaza','Lantern Alley'],
+  ['Willow Bank','Boathouse Row','Millrace Path','Otter Creek','Lock & Weir','Meadow Loop','Ferry Cross','Alder Point'],
+  ['Campus Gate','Library Mall','Science Quad','Observatory Hill','Student Union','Botanic Walk','Lecture Lane','Stadium West'],
+  ['Northgate Depot','Cedar Junction','Hilltop Terrace','Granary Row','Orchard End','Summit Avenue','Birch Hollow','Railway Arches'],
+];
+
+// hourly demand shapes, indexed 0..23 (normalized weights)
+function profile(kind,h){
+  const g=(c,w)=>Math.exp(-((h-c)*(h-c))/(2*w*w));
+  if(kind==='commuter')  return .04 + 1.00*g(8,1.4) + .95*g(18,1.7) + .30*g(13,2.6);
+  if(kind==='leisure')   return .03 + .85*g(14,3.2) + .35*g(19,2.2);
+  if(kind==='campus')    return .03 + .70*g(10,2.4) + .65*g(15,2.6) + .50*g(19,1.6);
+  return .05 + .80*g(7.5,1.5) + .75*g(18,2.2) + .20*g(12,2.5); // residential
+}
+const WEEKEND_FACTOR = {commuter:.42, leisure:1.4, campus:.38, residential:.95};
+
+const stations = [];
+for(let di=0; di<5; di++){
+  for(let si=0; si<8; si++){
+    const id = di*8+si;
+    const capacity = rint(12,30);
+    let kind = pick(['commuter','commuter','leisure','campus','residential','residential']);
+    // a few stations are chronically starved (always empty) or saturated (always full)
+    let chronic = null;
+    if(id===3 || id===22) chronic='empty';
+    if(id===10 || id===31) chronic='full';
+    if(chronic) kind = chronic==='empty' ? 'commuter' : 'residential';
+
+    const scale = (capacity*1.6 + rint(8,34)) * (chronic ? .3 : 1);
+    const hourly = new Array(DAYS*24).fill(0);
+    for(let d=0; d<DAYS; d++){
+      const wknd = isWeekend[d];
+      let dayF = (0.86 + rand()*0.28) * (wknd ? WEEKEND_FACTOR[kind] : 1);
+      if(d===RAIN_DAY) dayF *= .58;
+      if(d===RAIN_DAY+1) dayF *= .82;
+      const weights=[]; let wsum=0;
+      for(let h=0; h<24; h++){
+        let w = profile(kind,h) * (wknd && kind==='commuter' ? (h>=10&&h<=17 ? 1.5 : .6) : 1);
+        w *= .7 + rand()*.6;
+        weights.push(w); wsum+=w;
+      }
+      const dayTotal = scale*dayF;
+      for(let h=0; h<24; h++) hourly[d*24+h] = Math.max(0, Math.round(dayTotal*weights[h]/wsum));
+    }
+    const daily=[]; for(let d=0; d<DAYS; d++){let s=0;for(let h=0;h<24;h++)s+=hourly[d*24+h];daily.push(s);}
+
+    let bikes, bikesPrev;
+    if(chronic==='empty'){ bikes=0; bikesPrev=0; }
+    else if(chronic==='full'){ bikes=capacity; bikesPrev=capacity; }
+    else {
+      bikes=Math.max(1,Math.min(capacity-1,Math.round(capacity*(.18+rand()*.64))));
+      bikesPrev=Math.max(0,Math.min(capacity,Math.round(capacity*(.14+rand()*.72))));
+    }
+    stations.push({id, name:STATION_NAMES[di][si], district:di, capacity, kind, chronic, hourly, daily, bikes, bikesPrev});
+  }
+}
+
+/* ---------- state & helpers ---------- */
+const state = { district:'all', range:7, sortKey:'trips', sortDir:-1, attentionOnly:false };
+const fmt = new Intl.NumberFormat('en-US');
+const $ = id=>document.getElementById(id);
+const windowStart = ()=>DAYS-state.range;
+const filteredStations = ()=>state.district==='all' ? stations : stations.filter(s=>s.district===+state.district);
+const stationTrips = s=>{let t=0;for(let d=windowStart();d<DAYS;d++)t+=s.daily[d];return t;};
+const statusOf = s=>s.bikes===0?'empty':(s.bikes===s.capacity?'full':'ok');
+const statusPrev = s=>s.bikesPrev===0?'empty':(s.bikesPrev===s.capacity?'full':'ok');
+const dailyTotals = list=>{const out=new Array(DAYS).fill(0);for(const s of list)for(let d=0;d<DAYS;d++)out[d]+=s.daily[d];return out;};
+function pctChange(cur,prev){ return prev===0 ? (cur>0?100:0) : (cur-prev)/prev*100; }
+function deltaHTML(pct,goodWhenUp=true,suffix='%'){
+  const flat=Math.abs(pct)<0.05;
+  const good=flat?null:(pct>0)===goodWhenUp;
+  const cls=flat?'flat':(good?'good':'bad');
+  const arrow=flat?'·':(pct>0?'▲':'▼');
+  return `<span class="delta ${cls}">${arrow} ${Math.abs(pct).toFixed(1)}${suffix}</span>`;
+}
+/* ---------- tooltip ---------- */
+const tooltip = $('tooltip');
+function showTooltip(html,x,y){
+  tooltip.innerHTML=html;
+  tooltip.classList.add('show');
+  tooltip.setAttribute('aria-hidden','false');
+  const r=tooltip.getBoundingClientRect();
+  let tx=x+14, ty=y+14;
+  if(tx+r.width>window.innerWidth-8) tx=x-r.width-14;
+  if(ty+r.height>window.innerHeight-8) ty=y-r.height-14;
+  tooltip.style.left=Math.max(8,tx)+'px';
+  tooltip.style.top=Math.max(8,ty)+'px';
+}
+function hideTooltip(){ tooltip.classList.remove('show'); tooltip.setAttribute('aria-hidden','true'); }
+
+/* ---------- KPIs ---------- */
+function renderKPIs(){
+  const list=filteredStations();
+  const totals=dailyTotals(list);
+  const start=windowStart();
+  const rangeTotal=totals.slice(start).reduce((a,b)=>a+b,0);
+  const last7=totals.slice(DAYS-7).reduce((a,b)=>a+b,0);
+  const prev7=totals.slice(DAYS-14,DAYS-7).reduce((a,b)=>a+b,0);
+  const wow=pctChange(last7,prev7);
+
+  $('kpiTrips').textContent=fmt.format(rangeTotal);
+  $('kpiTripsSub').innerHTML=`${deltaHTML(wow)} vs prior week`;
+
+  $('kpiAvg').textContent=fmt.format(Math.round(rangeTotal/state.range));
+  const peakIdx=start+totals.slice(start).indexOf(Math.max(...totals.slice(start)));
+  $('kpiAvgSub').innerHTML=`${deltaHTML(wow)} vs prior week · peak ${dayLabels[peakIdx]}`;
+
+  const bikes=list.reduce((a,s)=>a+s.bikes,0);
+  const cap=list.reduce((a,s)=>a+s.capacity,0);
+  const bikesPrev=list.reduce((a,s)=>a+s.bikesPrev,0);
+  const fillPct=cap?bikes/cap*100:0, prevPct=cap?bikesPrev/cap*100:0;
+  $('kpiBikes').innerHTML=`${fmt.format(bikes)} <small>/ ${fmt.format(cap)}</small>`;
+  $('kpiBikesSub').innerHTML=`${deltaHTML(fillPct-prevPct,true,' pts')} ${fillPct.toFixed(0)}% of docks · vs last wk`;
+
+  const att=list.filter(s=>statusOf(s)!=='ok');
+  const attPrev=list.filter(s=>statusPrev(s)!=='ok');
+  const nEmpty=att.filter(s=>statusOf(s)==='empty').length;
+  const nFull=att.length-nEmpty;
+  $('kpiAttention').textContent=att.length;
+  const diff=att.length-attPrev.length;
+  const attDelta = diff===0
+    ? '<span class="delta flat">· 0</span>'
+    : `<span class="delta ${diff<0?'good':'bad'}">${diff>0?'▲':'▼'} ${Math.abs(diff)}</span>`;
+  $('kpiAttentionSub').innerHTML=`${attDelta} ${nEmpty} empty · ${nFull} full · vs last wk`;
+
+  $('tripsChartSub').textContent=`${dayLabels[start]} – ${dayLabels[DAYS-1]} · daily totals`;
+  $('filterSummary').textContent=`${list.length} stations · ${state.district==='all'?'all districts':DISTRICTS[+state.district].name} · last ${state.range} days`;
+}
+/* ---------- charts (hand-drawn SVG) ---------- */
+function niceMax(v){
+  if(v<=0) return 10;
+  const mag=Math.pow(10,Math.floor(Math.log10(v)));
+  for(const m of [1,1.5,2,2.5,3,4,5,6,8,10]) if(v<=m*mag) return m*mag;
+  return 10*mag;
+}
+
+function drawTripsChart(){
+  const el=$('tripsChart');
+  const w=el.clientWidth-24, h=el.clientHeight-18;
+  if(w<60||h<60) return;
+  const totals=dailyTotals(filteredStations());
+  const start=windowStart();
+  const vals=totals.slice(start), n=vals.length;
+  const pad={l:50,r:16,t:18,b:30};
+  const pw=w-pad.l-pad.r, ph=h-pad.t-pad.b;
+  const yMax=niceMax(Math.max(...vals)*1.12);
+  const X=i=>pad.l+(n===1?pw/2:i/(n-1)*pw);
+  const Y=v=>pad.t+ph-(v/yMax)*ph;
+
+  let grid='',bands='';
+  for(let g=0; g<=4; g++){
+    const v=yMax*g/4, y=Y(v);
+    grid+=`<line x1="${pad.l}" y1="${y}" x2="${w-pad.r}" y2="${y}" stroke="var(--border)" stroke-width="1" ${g===0?'':'stroke-dasharray="3 4"'}/>`;
+    grid+=`<text x="${pad.l-8}" y="${y+4}" text-anchor="end" font-size="11" fill="var(--text-3)">${fmt.format(Math.round(v))}</text>`;
+  }
+  const half=n>1?pw/(n-1)/2:pw/2;
+  for(let i=0;i<n;i++){
+    if(isWeekend[start+i]) bands+=`<rect x="${X(i)-half}" y="${pad.t}" width="${half*2}" height="${ph}" fill="var(--surface-2)" opacity=".55"/>`;
+  }
+  const line=vals.map((v,i)=>`${i?'L':'M'}${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join(' ');
+  const area=`${line} L${X(n-1).toFixed(1)} ${Y(0)} L${X(0).toFixed(1)} ${Y(0)} Z`;
+  const labelEvery = w<460 ? (n>7?2:1) : (n>10&&w<680?2:1);
+  let xlabels='';
+  for(let i=0;i<n;i++){
+    if(i%labelEvery!==0 && i!==n-1) continue;
+    xlabels+=`<text x="${X(i)}" y="${h-8}" text-anchor="middle" font-size="11" fill="var(--text-3)">${dayLabels[start+i]}</text>`;
+  }
+  let dots='',rainMark='';
+  for(let i=0;i<n;i++){
+    dots+=`<circle cx="${X(i)}" cy="${Y(vals[i])}" r="3.2" fill="var(--surface)" stroke="var(--primary)" stroke-width="2"/>`;
+    if(start+i===RAIN_DAY){
+      rainMark=`<circle cx="${X(i)}" cy="${Y(vals[i])-12}" r="3" fill="var(--amber)"/>
+      <text x="${X(i)}" y="${Y(vals[i])-20}" text-anchor="middle" font-size="10" fill="var(--amber)">rain</text>`;
+    }
+  }
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Daily trip totals">
+    <defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="var(--primary)" stop-opacity=".32"/>
+      <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/>
+    </linearGradient></defs>
+    ${bands}${grid}
+    <path d="${area}" fill="url(#areaGrad)"/>
+    <path d="${line}" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}${rainMark}${xlabels}
+    <line id="tcGuide" x1="0" y1="${pad.t}" x2="0" y2="${pad.t+ph}" stroke="var(--text-3)" stroke-width="1" stroke-dasharray="3 3" visibility="hidden"/>
+    <circle id="tcFocus" r="5.5" fill="var(--primary)" stroke="var(--surface)" stroke-width="2" visibility="hidden"/>
+    <rect id="tcHit" x="${pad.l-half}" y="${pad.t}" width="${pw+half*2}" height="${ph}" fill="transparent"/>
+  </svg>`;
+  const svg=el.firstChild, guide=$('tcGuide'), focus=$('tcFocus'), hit=$('tcHit');
+  function move(ev){
+    const r=svg.getBoundingClientRect();
+    const sx=(ev.clientX-r.left)*(w/r.width);
+    const i=Math.max(0,Math.min(n-1,Math.round((sx-pad.l)/(pw/(n-1)))));
+    guide.setAttribute('x1',X(i)); guide.setAttribute('x2',X(i)); guide.setAttribute('visibility','visible');
+    focus.setAttribute('cx',X(i)); focus.setAttribute('cy',Y(vals[i])); focus.setAttribute('visibility','visible');
+    const d=start+i;
+    const prevD=d>0?totals[d-1]:null;
+    const dod=prevD!==null?pctChange(vals[i],prevD):null;
+    showTooltip(
+      `<div class="tt-title">${dayLongLabels[d]}${isWeekend[d]?' · weekend':''}${d===RAIN_DAY?' · rain':''}</div>
+       <div class="tt-row"><span><span class="swatch" style="background:var(--primary)"></span>Trips</span><b>${fmt.format(vals[i])}</b></div>
+       ${dod!==null?`<div class="tt-row"><span>vs prev day</span><b>${dod>=0?'+':''}${dod.toFixed(1)}%</b></div>`:''}`,
+      ev.clientX,ev.clientY);
+  }
+  hit.addEventListener('pointermove',move);
+  hit.addEventListener('pointerdown',move);
+  hit.addEventListener('pointerleave',()=>{guide.setAttribute('visibility','hidden');focus.setAttribute('visibility','hidden');hideTooltip();});
+}
+
+function drawDistrictChart(){
+  const el=$('districtChart');
+  const w=el.clientWidth-32;
+  if(w<60) return;
+  const start=windowStart();
+  const perDistrict=DISTRICTS.map((_,di)=>{
+    const list=stations.filter(s=>s.district===di);
+    return list.reduce((a,s)=>a+stationTrips(s),0);
+  });
+  const netTotal=perDistrict.reduce((a,b)=>a+b,0);
+  const max=Math.max(...perDistrict,1);
+  const rowH=52, labelW=Math.min(104,Math.max(84,w*.3)), valueW=58;
+  const barX=labelW, barMaxW=Math.max(30,w-labelW-valueW);
+  const h=DISTRICTS.length*rowH+4;
+  let rows='';
+  DISTRICTS.forEach((d,di)=>{
+    const y=di*rowH+2;
+    const v=perDistrict[di];
+    const bw=Math.max(3,v/max*barMaxW);
+    const dim=state.district!=='all'&&+state.district!==di;
+    const sel=state.district!=='all'&&+state.district===di;
+    const share=netTotal?(v/netTotal*100):0;
+    rows+=`<g class="drow" data-di="${di}" opacity="${dim?.35:1}" style="cursor:pointer">
+      <text x="0" y="${y+18}" font-size="13" font-weight="600" fill="var(--text)">${d.name}</text>
+      <text x="0" y="${y+34}" font-size="11" fill="var(--text-3)">8 stations · ${share.toFixed(1)}%</text>
+      <rect x="${barX}" y="${y+12}" width="${barMaxW}" height="16" rx="8" fill="var(--surface-2)"/>
+      <rect x="${barX}" y="${y+12}" width="${bw}" height="16" rx="8" fill="${d.color}" ${sel?'stroke="var(--text)" stroke-width="1.5"':''}/>
+      <text x="${barX+barMaxW+10}" y="${y+25}" font-size="12.5" font-weight="700" fill="var(--text)">${fmt.format(v)}</text>
+      <rect class="dhit" data-di="${di}" x="0" y="${y}" width="${w}" height="${rowH}" fill="transparent"/>
+    </g>`;
+  });
+  el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" style="height:${h}px" role="img" aria-label="Trips by district">${rows}</svg>`;
+  el.querySelectorAll('.dhit').forEach(hit=>{
+    const di=+hit.dataset.di, d=DISTRICTS[di], v=perDistrict[di];
+    const list=stations.filter(s=>s.district===di);
+    const att=list.filter(s=>statusOf(s)!=='ok').length;
+    hit.addEventListener('pointermove',ev=>{
+      showTooltip(
+        `<div class="tt-title"><span class="swatch" style="background:${d.color}"></span>${d.name}</div>
+         <div class="tt-row"><span>Trips (${state.range}d)</span><b>${fmt.format(v)}</b></div>
+         <div class="tt-row"><span>Share of network</span><b>${netTotal?(v/netTotal*100).toFixed(1):'0.0'}%</b></div>
+         <div class="tt-row"><span>Avg / station</span><b>${fmt.format(Math.round(v/8))}</b></div>
+         <div class="tt-row"><span>Need attention</span><b>${att}</b></div>`,
+        ev.clientX,ev.clientY);
+    });
+    hit.addEventListener('pointerleave',hideTooltip);
+    hit.addEventListener('click',()=>{
+      state.district = state.district===String(di) ? 'all' : String(di);
+      $('districtFilter').value=state.district;
+      hideTooltip(); renderAll();
+    });
+  });
+}
+/* ---------- station table ---------- */
+const COLUMNS=[
+  {key:'name',    label:'Station',  num:false},
+  {key:'district',label:'District', num:false},
+  {key:'capacity',label:'Docks',    num:true},
+  {key:'bikes',   label:'Bikes',    num:true},
+  {key:'free',    label:'Free',     num:true},
+  {key:'fill',    label:'Fill',     num:false},
+  {key:'trips',   label:`Trips`,    num:true},
+  {key:'status',  label:'Status',   num:false},
+];
+const sortVal=(s,key)=>{
+  switch(key){
+    case 'name': return s.name.toLowerCase();
+    case 'district': return DISTRICTS[s.district].name;
+    case 'capacity': return s.capacity;
+    case 'bikes': return s.bikes;
+    case 'free': return s.capacity-s.bikes;
+    case 'fill': return s.bikes/s.capacity;
+    case 'trips': return stationTrips(s);
+    case 'status': return {empty:0,full:1,ok:2}[statusOf(s)];
+  }
+};
+function renderTableHead(){
+  $('stationHead').innerHTML=COLUMNS.map(c=>{
+    const active=state.sortKey===c.key;
+    const arrow=active?(state.sortDir===1?'▲':'▼'):'';
+    return `<th data-key="${c.key}" class="${c.num?'num':''}" aria-sort="${active?(state.sortDir===1?'ascending':'descending'):'none'}">${c.label} <span class="arrow">${arrow}</span></th>`;
+  }).join('');
+  $('stationHead').querySelectorAll('th').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const k=th.dataset.key;
+      if(state.sortKey===k) state.sortDir*=-1;
+      else { state.sortKey=k; state.sortDir=(k==='name'||k==='district'||k==='status')?1:-1; }
+      syncMobileSort(); renderTableHead(); renderTableBody();
+    });
+  });
+}
+function renderTableBody(){
+  let list=filteredStations().map(s=>({s,trips:stationTrips(s)}));
+  if(state.attentionOnly) list=list.filter(r=>statusOf(r.s)!=='ok');
+  const dir=state.sortDir;
+  list.sort((a,b)=>{
+    const va=sortVal(a.s,state.sortKey), vb=sortVal(b.s,state.sortKey);
+    const c=va<vb?-1:va>vb?1:0;
+    return c!==0?c*dir:(a.s.id-b.s.id);
+  });
+  $('tableCount').textContent=`${list.length} of ${filteredStations().length} stations`;
+  if(!list.length){
+    $('stationBody').innerHTML=`<tr><td colspan="8"><div class="empty-state">No stations match the current filters.</div></td></tr>`;
+    return;
+  }
+  $('stationBody').innerHTML=list.map(({s,trips})=>{
+    const st=statusOf(s), fill=s.bikes/s.capacity*100;
+    const d=DISTRICTS[s.district];
+    const fillCls=st==='empty'?'crit':(st==='full'?'warn':'');
+    const chip=st==='ok'?'<span class="chip ok">OK</span>':st==='empty'?'<span class="chip empty">Empty</span>':'<span class="chip full">Full</span>';
+    return `<tr class="${st==='ok'?'':'att-'+st}">
+      <td class="cell-name" data-label="Station"><span class="station-name">${s.name}</span></td>
+      <td data-label="District"><span class="district-tag"><i style="background:${d.color}"></i>${d.name}</span></td>
+      <td class="num" data-label="Docks">${s.capacity}</td>
+      <td class="num" data-label="Bikes"><b>${s.bikes}</b></td>
+      <td class="num" data-label="Free">${s.capacity-s.bikes}</td>
+      <td data-label="Fill"><span class="fillbar ${fillCls}" title="${fill.toFixed(0)}% full"><i style="width:${fill.toFixed(1)}%"></i></span>${fill.toFixed(0)}%</td>
+      <td class="num" data-label="Trips (${state.range}d)">${fmt.format(trips)}</td>
+      <td class="cell-status" data-label="Status">${chip}</td>
+    </tr>`;
+  }).join('');
+}
+function syncMobileSort(){
+  $('mobileSortKey').value=state.sortKey;
+  $('mobileSortDir').textContent=state.sortDir===1?'↑':'↓';
+}
+
+/* ---------- render & events ---------- */
+function renderAll(){
+  renderKPIs();
+  drawTripsChart();
+  drawDistrictChart();
+  renderTableHead();
+  renderTableBody();
+}
+function init(){
+  $('dataThrough').textContent=dayLongLabels[DAYS-1];
+  const sel=$('districtFilter');
+  sel.innerHTML=`<option value="all">All districts</option>`+DISTRICTS.map((d,i)=>`<option value="${i}">${d.name}</option>`).join('');
+  sel.addEventListener('change',()=>{state.district=sel.value;renderAll();});
+  $('rangeSeg').querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      state.range=+btn.dataset.range;
+      $('rangeSeg').querySelectorAll('button').forEach(b=>{
+        const on=b===btn; b.classList.toggle('active',on); b.setAttribute('aria-pressed',on);
+      });
+      renderAll();
+    });
+  });
+  $('attentionOnly').addEventListener('change',e=>{state.attentionOnly=e.target.checked;renderTableBody();});
+  const attCard=$('kpiAttentionCard');
+  const jumpToAttention=()=>{
+    state.attentionOnly=true;
+    $('attentionOnly').checked=true;
+    renderTableBody();
+    document.querySelector('.table-card').scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  attCard.addEventListener('click',jumpToAttention);
+  attCard.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();jumpToAttention();}});
+  $('mobileSortKey').innerHTML=COLUMNS.map(c=>`<option value="${c.key}">${c.label}</option>`).join('');
+  $('mobileSortKey').addEventListener('change',e=>{state.sortKey=e.target.value;renderTableHead();renderTableBody();});
+  $('mobileSortDir').addEventListener('click',()=>{state.sortDir*=-1;syncMobileSort();renderTableHead();renderTableBody();});
+  syncMobileSort();
+
+  let raf=null;
+  const ro=new ResizeObserver(()=>{
+    if(raf) cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(()=>{drawTripsChart();drawDistrictChart();});
+  });
+  ro.observe($('tripsChart'));
+  ro.observe($('districtChart'));
+  window.addEventListener('scroll',hideTooltip,{passive:true});
+  renderAll();
+}
+init();
+</script>
+</body>
+</html>
