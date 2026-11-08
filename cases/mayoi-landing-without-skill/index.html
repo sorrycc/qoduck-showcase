@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mayoi · A small, fast code editor written in Go</title>
+  <meta name="description" content="Mayoi is a native code editor written in Go. GPU-rendered UI through MyGo, no webview, no Electron, about 18 MB. Git, terminal, Vim mode, and split columns included.">
+  <meta name="theme-color" content="#17102f">
+  <meta property="og:title" content="Mayoi · Small app. Full workbench.">
+  <meta property="og:description" content="A small, fast code editor written in Go. Native GPU UI, no webview, no Electron, about 18 MB.">
+  <meta property="og:image" content="assets/columns.png">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="preload" href="assets/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/dm-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M4 17v3h16v-3"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="i-files" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/></symbol>
+    <symbol id="i-columns" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><path d="m5 7 5 5-5 5M13 17h6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 10 14M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"/></symbol>
+  </svg>
+
+  <div class="ambient" aria-hidden="true" data-allow-overflow>
+    <div class="ambient-grid"></div>
+    <div class="ambient-glow glow-a"></div>
+    <div class="ambient-glow glow-b"></div>
+    <div class="ambient-glow glow-c"></div>
+    <div class="pixel-field" id="pixel-field"></div>
+  </div>
+
+  <header class="site-header" id="top">
+    <nav class="nav container" aria-label="Primary">
+      <a class="brand" href="#top" aria-label="Mayoi home">
+        <img src="assets/mayoi-icon.png" alt="" width="36" height="36">
+        <span class="brand-name">Mayoi</span>
+        <span class="brand-jp">迷い</span>
+      </a>
+      <button class="nav-toggle icon-link" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Open navigation">
+        <svg class="icon"><use href="#i-menu"></use></svg>
+      </button>
+      <div class="nav-links" id="nav-links">
+        <a href="#editor" data-nav>The editor</a>
+        <a href="#why" data-nav>Why so small</a>
+        <a href="#tour" data-nav>Tour</a>
+        <a href="#install" data-nav>Install</a>
+      </div>
+      <div class="nav-actions">
+        <a class="icon-link" href="https://github.com/sorrycc/Mayoi" target="_blank" rel="noopener" aria-label="Mayoi on GitHub">
+          <svg class="icon icon-fill"><use href="#i-github"></use></svg>
+        </a>
+        <a class="button button-small" href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Download</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero container" id="editor" aria-labelledby="hero-title">
+      <div class="hero-copy" data-reveal>
+        <p class="eyebrow"><span class="pixel-dot"></span>迷い · Native code editor</p>
+        <h1 id="hero-title">Small app.<br><span class="gold-text">Full workbench.</span></h1>
+        <p class="lede">Mayoi is a small, fast code editor written in Go. It draws a native UI on the GPU with MyGo. No webview, no Electron. The packaged app is about 18 MB.</p>
+        <div class="hero-actions">
+          <a class="button" href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Download Mayoi <svg class="icon"><use href="#i-arrow"></use></svg></a>
+          <button class="button button-ghost" id="try-demo" type="button">Try the workbench <kbd>⌘P</kbd></button>
+        </div>
+        <ul class="hero-meta" aria-label="Availability">
+          <li>macOS 13+</li>
+          <li>Linux</li>
+          <li>Windows</li>
+          <li>MIT license</li>
+        </ul>
+      </div>
+
+      <div class="hero-demo" data-reveal>
+        <div class="demo-heading">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span>Interactive preview</span>
+          <span class="demo-note">Edits stay in this browser</span>
+        </div>
+
+        <div class="workbench" id="workbench" data-theme="dark" aria-label="Mayoi editor preview">
+          <div class="window-bar">
+            <img src="assets/mayoi-icon.png" alt="" width="20" height="20">
+            <span class="window-title">mayoi · ~/projects/hello</span>
+            <span class="window-badge">GPU UI</span>
+          </div>
+          <div class="workbench-body">
+            <div class="activity-rail" role="toolbar" aria-label="Preview views">
+              <button class="rail-button" id="rail-files" type="button" aria-label="Toggle explorer" aria-pressed="true" title="Explorer">
+                <svg class="icon"><use href="#i-files"></use></svg>
+              </button>
+              <button class="rail-button" id="rail-search" type="button" aria-label="Quick open" title="Quick open (⌘P)">
+                <svg class="icon"><use href="#i-search"></use></svg>
+              </button>
+              <button class="rail-button" id="rail-split" type="button" aria-label="Toggle split view" aria-pressed="true" title="Split view">
+                <svg class="icon"><use href="#i-columns"></use></svg>
+              </button>
+              <button class="rail-button" id="rail-terminal" type="button" aria-label="Toggle terminal" aria-pressed="false" title="Terminal">
+                <svg class="icon"><use href="#i-terminal"></use></svg>
+              </button>
+            </div>
+
+            <aside class="sidebar" id="sidebar" aria-label="Explorer">
+              <div class="sidebar-title">Explorer</div>
+              <div class="tree-root">hello-mayoi</div>
+              <ul class="file-tree" id="file-tree"></ul>
+              <div class="sidebar-foot"><span class="branch">main</span><span id="file-count">5 files</span></div>
+            </aside>
+
+            <div class="editor-area">
+              <div class="editors" id="editors">
+                <section class="editor-pane" data-pane="0" aria-label="Editor column 1">
+                  <div class="tab-bar" role="tablist" aria-label="Open files in column 1" data-tabs="0"></div>
+                  <div class="code-wrap" data-code-wrap="0">
+                    <div class="gutter" data-gutter="0" aria-hidden="true"></div>
+                    <div class="code-scroll" data-scroll="0">
+                      <pre class="highlight" data-highlight="0" aria-hidden="true"><code></code></pre>
+                      <textarea class="code-input" data-input="0" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Edit file in column 1"></textarea>
+                    </div>
+                  </div>
+                  <div class="md-preview" data-preview="0" hidden></div>
+                </section>
+                <section class="editor-pane" data-pane="1" aria-label="Editor column 2">
+                  <div class="tab-bar" role="tablist" aria-label="Open files in column 2" data-tabs="1"></div>
+                  <div class="code-wrap" data-code-wrap="1">
+                    <div class="gutter" data-gutter="1" aria-hidden="true"></div>
+                    <div class="code-scroll" data-scroll="1">
+                      <pre class="highlight" data-highlight="1" aria-hidden="true"><code></code></pre>
+                      <textarea class="code-input" data-input="1" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Edit file in column 2"></textarea>
+                    </div>
+                  </div>
+                  <div class="md-preview" data-preview="1" hidden></div>
+                </section>
+              </div>
+              <div class="terminal" id="terminal" hidden>
+                <div class="terminal-head"><span>Terminal</span><span>sample session</span></div>
+                <pre class="terminal-body"><span class="term-prompt">mayoi main &gt;</span> git status
+On branch main
+Changes not staged for commit:
+  <span class="term-modified">modified:   wrap.go</span>
+
+<span class="term-prompt">mayoi main &gt;</span> mayoi .
+<span class="term-dim">Opening hello-mayoi in Mayoi…</span>
+<span class="term-prompt">mayoi main &gt;</span> <span class="term-cursor"></span></pre>
+              </div>
+            </div>
+          </div>
+          <div class="status-bar">
+            <span class="status-branch">main</span>
+            <span data-status-file>main.go</span>
+            <span data-status-pos>Ln 1, Col 1</span>
+            <span>UTF-8</span>
+            <span data-status-lang>Go</span>
+            <span class="status-accent">Mayoi</span>
+          </div>
+
+          <div class="palette" id="palette" hidden>
+            <div class="palette-box" role="dialog" aria-modal="true" aria-label="Quick open">
+              <div class="palette-input-row">
+                <svg class="icon"><use href="#i-search"></use></svg>
+                <input id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Files, :line, @symbol, >command" aria-label="Quick open query" role="combobox" aria-expanded="true" aria-controls="palette-results" aria-autocomplete="list">
+                <kbd>esc</kbd>
+              </div>
+              <ul class="palette-results" id="palette-results" role="listbox" aria-label="Quick open results"></ul>
+              <div class="palette-foot"><span>↑↓ navigate</span><span>↵ open</span><span>fuzzy match</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-controls" aria-label="Preview controls">
+          <label class="control">Theme
+            <select id="control-theme">
+              <option value="dark">Mayoi dark</option>
+              <option value="light">Mayoi light</option>
+              <option value="purple-gold">Purple Gold</option>
+            </select>
+          </label>
+          <label class="control control-range">Code size
+            <input id="control-size" type="range" min="11" max="18" step="1" value="13">
+            <output id="size-output" for="control-size">13</output>
+          </label>
+          <label class="control-toggle"><input id="control-wrap" type="checkbox"><span>Wrap</span></label>
+          <label class="control-toggle"><input id="control-sidebar" type="checkbox" checked><span>Explorer</span></label>
+          <label class="control-toggle"><input id="control-split" type="checkbox" checked><span>Split</span></label>
+          <label class="control-toggle"><input id="control-terminal" type="checkbox"><span>Terminal</span></label>
+          <label class="control-toggle"><input id="control-markdown" type="checkbox"><span>MD preview</span></label>
+          <button class="control-button" id="control-reset" type="button">Reset</button>
+          <button class="control-button" id="control-export" type="button">Export file</button>
+        </div>
+        <p class="demo-hint">Press <kbd>⌘P</kbd> or <kbd>Ctrl P</kbd> inside the preview. Type <code>wrap</code>, hit Enter, then edit either column. The other follows.</p>
+      </div>
+    </section>
+
+    <section class="proof-strip" aria-label="Mayoi facts">
+      <div class="container proof-grid">
+        <div data-reveal><strong>~18 MB</strong><span>packaged app</span></div>
+        <div data-reveal><strong>Go + MyGo</strong><span>native GPU rendering</span></div>
+        <div data-reveal><strong>0</strong><span>webviews or Electron</span></div>
+        <div data-reveal><strong>MIT</strong><span>open source</span></div>
+      </div>
+    </section>
+
+    <section class="why container" id="why" aria-labelledby="why-title">
+      <div class="why-intro" data-reveal>
+        <p class="eyebrow">Why so small</p>
+        <h2 id="why-title">A code editor,<br>not a browser.</h2>
+        <p>Most editors ship a web runtime. Mayoi renders its interface on the GPU through MyGo, so the app stays close to the metal and out of your way.</p>
+        <a class="text-link" href="https://github.com/sorrycc/Mayoi/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Read the architecture notes <svg class="icon"><use href="#i-arrow"></use></svg></a>
+      </div>
+      <div class="why-grid">
+        <article class="feature-card feature-large" data-reveal>
+          <div class="feature-icon"><svg class="icon"><use href="#i-chip"></use></svg></div>
+          <h3>Native pixels, no web stack</h3>
+          <p>Go drives the UI. MyGo draws it on the GPU. There is no DOM to hydrate and no browser engine to carry around.</p>
+          <div class="render-pipeline" aria-label="Rendering pipeline: Go to MyGo to GPU to pixels">
+            <span>Go</span><i aria-hidden="true">→</i><span>MyGo</span><i aria-hidden="true">→</i><span>GPU</span><i aria-hidden="true">→</i><span class="pipeline-pixels">pixels</span>
+          </div>
+        </article>
+        <article class="feature-card" data-reveal>
+          <h3>The working day, built in</h3>
+          <p>Tabs, split columns, fuzzy open, project search, Git, and a Ghostty-based terminal. Remote SSH on macOS and Linux.</p>
+          <ul class="chip-list">
+            <li>Git graph + blame</li>
+            <li>Find in files</li>
+            <li>Port forwarding</li>
+          </ul>
+        </article>
+        <article class="feature-card" data-reveal>
+          <h3>Vim, properly</h3>
+          <p>Normal, insert, and visual modes. Motions, operators, text objects, counts, registers, macros, and <code>.</code> to repeat.</p>
+          <div class="vim-line"><span class="vim-mode">VISUAL</span><code>di"</code><span>change inside quotes</span></div>
+        </article>
+        <article class="feature-card" data-reveal>
+          <h3>Leaves it where you left it</h3>
+          <p>Autosave, per-tab undo, and windows that reopen with their columns, tabs, and carets. Settings sync through GitHub or Google.</p>
+        </article>
+        <article class="feature-card" data-reveal>
+          <h3>Previews beside the source</h3>
+          <p>Markdown, SVG, and Mermaid render next to the code. Mermaid blocks become diagrams. LaTeX becomes formulas.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="tour container" id="tour" aria-labelledby="tour-title">
+      <div class="section-head" data-reveal>
+        <div>
+          <p class="eyebrow">Tour</p>
+          <h2 id="tour-title">See the real thing.</h2>
+        </div>
+        <p>These are screenshots from Mayoi itself, not mockups.</p>
+      </div>
+      <div class="tour-tabs" role="tablist" aria-label="Mayoi tour" data-reveal>
+        <button class="tour-tab" role="tab" id="tour-tab-columns" type="button" aria-selected="true" aria-controls="tour-panel" data-tour="columns">Columns</button>
+        <button class="tour-tab" role="tab" id="tour-tab-palette" type="button" aria-selected="false" aria-controls="tour-panel" data-tour="command-palette" tabindex="-1">Command palette</button>
+        <button class="tour-tab" role="tab" id="tour-tab-markdown" type="button" aria-selected="false" aria-controls="tour-panel" data-tour="markdown-preview" tabindex="-1">Markdown preview</button>
+        <button class="tour-tab" role="tab" id="tour-tab-terminal" type="button" aria-selected="false" aria-controls="tour-panel" data-tour="terminal-tab" tabindex="-1">Terminal</button>
+      </div>
+      <figure class="tour-panel" id="tour-panel" role="tabpanel" aria-labelledby="tour-tab-columns" data-reveal>
+        <img id="tour-image" src="assets/columns.png" alt="Two columns of Go source in Mayoi" width="1600" height="857">
+        <figcaption id="tour-caption">Split the editor side by side and drag tabs between columns.</figcaption>
+      </figure>
+    </section>
+
+    <section class="install container" id="install" aria-labelledby="install-title">
+      <div class="install-card" data-reveal>
+        <div class="install-copy">
+          <p class="eyebrow">Install</p>
+          <h2 id="install-title">Put it on your machine.</h2>
+          <p>Signed and notarized on macOS. A shell command on Linux. Installers for Windows. Or build it from source.</p>
+          <a class="button" href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Get the latest release <svg class="icon"><use href="#i-download"></use></svg></a>
+          <p class="install-note">Mayoi checks for updates automatically.</p>
+        </div>
+        <div class="install-tabs-wrap">
+          <div class="os-tabs" role="tablist" aria-label="Install platform">
+            <button class="os-tab" role="tab" id="os-tab-macos" type="button" aria-selected="true" aria-controls="os-panel" data-os="macos">macOS</button>
+            <button class="os-tab" role="tab" id="os-tab-linux" type="button" aria-selected="false" aria-controls="os-panel" data-os="linux" tabindex="-1">Linux</button>
+            <button class="os-tab" role="tab" id="os-tab-windows" type="button" aria-selected="false" aria-controls="os-panel" data-os="windows" tabindex="-1">Windows</button>
+          </div>
+          <div class="os-panel" id="os-panel" role="tabpanel" aria-labelledby="os-tab-macos">
+            <div class="code-block">
+              <div class="code-block-head">
+                <span id="install-label">Homebrew · macOS 13+</span>
+                <button class="copy-button" id="copy-install" type="button" aria-label="Copy install commands">
+                  <svg class="icon"><use href="#i-copy"></use></svg><span>Copy</span>
+                </button>
+              </div>
+              <pre><code id="install-code">brew tap --custom-remote sorrycc/mayoi https://github.com/sorrycc/Mayoi.git
+brew trust sorrycc/mayoi
+brew install --cask mayoi</code></pre>
+            </div>
+            <p class="os-note" id="install-note">Recent Homebrew needs <code>brew trust</code> once. Older Homebrew can skip that line.</p>
+            <a class="text-link" id="install-alt" href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Or download the DMG <svg class="icon"><use href="#i-arrow"></use></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="source-row" data-reveal>
+        <span>Prefer source?</span>
+        <code>go run ./cmd/mayoi ~/some/project</code>
+        <a class="text-link" href="https://github.com/sorrycc/Mayoi/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Build instructions <svg class="icon"><use href="#i-external"></use></svg></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <a class="brand" href="#top" aria-label="Mayoi home">
+        <img src="assets/mayoi-icon.png" alt="" width="32" height="32">
+        <span class="brand-name">Mayoi</span>
+        <span class="brand-jp">迷い</span>
+      </a>
+      <p>A small, fast code editor written in Go.</p>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="https://github.com/sorrycc/Mayoi" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Releases</a>
+        <a href="https://github.com/sorrycc/Mayoi/blob/main/docs/FEATURES.md" target="_blank" rel="noopener">Features</a>
+        <a href="assets/LICENSE-Mayoi.txt">MIT license</a>
+      </nav>
+      <button class="icon-link" id="back-to-top" type="button" aria-label="Back to top">
+        <svg class="icon"><use href="#i-up"></use></svg>
+      </button>
+    </div>
+    <div class="container footer-base">
+      <span>Native GPU UI via <a href="https://github.com/egoist/mygo" target="_blank" rel="noopener">MyGo</a>.</span>
+      <span>The landing preview runs entirely in your browser.</span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

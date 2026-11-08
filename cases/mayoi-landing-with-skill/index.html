@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mayoi — a small, fast, native code editor</title>
+<meta name="description" content="Mayoi is a small, fast code editor written in Go. Native GPU UI, no webview, no Electron, about 18 MB. Vim mode, Git, a Ghostty terminal and remote SSH built in.">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Silkscreen:wght@400;700&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="primitives.css">
+<link rel="stylesheet" href="page.css">
+<script src="page.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+<header class="site-nav" id="top">
+  <div class="container nav">
+    <a class="brand" href="#top">
+      <img src="assets/icon.png" alt="" width="32" height="32">
+      <span class="brand-word">MAYOI</span>
+    </a>
+    <nav class="nav-sections" aria-label="Sections">
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#tour">Tour</a></li>
+        <li><a href="#themes">Themes</a></li>
+        <li><a href="#install">Install</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-ghost nav-palette" id="paletteBtn" aria-haspopup="dialog" aria-label="Open command palette">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>
+        <kbd>⌘P</kbd>
+      </button>
+      <button class="btn btn-ghost icon-btn" id="themeToggle" aria-label="Switch color theme">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="9" cy="9" r="3.5"/><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.3 3.3l1.4 1.4M13.3 13.3l1.4 1.4M14.7 3.3l-1.4 1.4M4.7 13.3l-1.4 1.4"/></svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 10.5A6.5 6.5 0 0 1 7.5 3 6.5 6.5 0 1 0 15 10.5Z"/></svg>
+      </button>
+      <a class="btn btn-ghost icon-btn" href="https://github.com/sorrycc/Mayoi" target="_blank" rel="noopener" aria-label="Mayoi on GitHub">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88 1.54-3.88 1.54-.52 1.33-1.28 1.68-1.28 1.68-1.05.72.08.74.08.74 1.16.08 1.77-1.19 1.77-1.19 1.03-1.77 2.7-1.26 3.36-.96.1.75.4 1.26.73 1.55 2.55-.29 5.23-1.28 5.23-5.7 0-1.26-.45-2.29-1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.68.8.56A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+      </a>
+      <a class="btn btn-primary nav-download" href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Download</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero">
+  <canvas id="pixelField" aria-hidden="true"></canvas>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container hero-inner">
+    <p class="eyebrow">迷い · NATIVE CODE EDITOR · v0.18.2</p>
+    <h1>A small, fast, native code editor.</h1>
+    <p class="lead">Mayoi draws its whole UI on the GPU in Go. No webview, no Electron — the packaged app is about 18 MB, with Vim mode, Git, a Ghostty terminal and remote SSH built in.</p>
+    <div class="cluster hero-cta">
+      <a class="btn btn-primary btn-lg" href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M8 1.5v8.5m0 0 3-3m-3 3-3-3M2 11v2.5h12V11"/></svg>
+        Download for macOS
+      </a>
+      <a class="btn btn-lg" href="#install">Other platforms</a>
+    </div>
+    <button class="palette-hint" id="heroPaletteBtn" aria-haspopup="dialog">
+      <kbd>⌘P</kbd>
+      <span>Try the command palette — it works on this page too.</span>
+    </button>
+    <figure class="shot-frame hero-shot">
+      <div class="shot-bar">
+        <span class="dots" aria-hidden="true"><i class="dot dot-a"></i><i class="dot dot-b"></i><i class="dot dot-c"></i></span>
+        <span class="shot-title">mayoi — ~/src/mayoi</span>
+        <span class="shot-bar-right">Go 1.27</span>
+      </div>
+      <img src="assets/columns.png" alt="Mayoi with three editor columns of Go source beside a live file tree" width="1600" height="857" fetchpriority="high">
+    </figure>
+    <p class="shot-caption muted">Three columns, a live file tree and the status line — one native window, drawn on the GPU.</p>
+  </div>
+</section>
+
+<section class="stats-band" aria-label="Mayoi in numbers">
+  <div class="container stats">
+    <span class="stats-chrome">mayoi v0.18.2</span>
+    <div class="stat"><span class="stat-value">18 MB</span><span class="stat-label">the whole packaged app</span></div>
+    <div class="stat"><span class="stat-value">0</span><span class="stat-label">webviews or Electron processes</span></div>
+    <div class="stat"><span class="stat-value">3</span><span class="stat-label">platforms: macOS, Linux, Windows</span></div>
+    <div class="stat"><span class="stat-value">MIT</span><span class="stat-label">open source, written in Go</span></div>
+    <span class="stats-chrome stats-end">UTF-8 · LF · Go</span>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="container">
+    <div class="sec-head"><span class="sec-index">01</span><h2>Everything you reach for, already inside.</h2></div>
+    <p class="lead sec-lead">Not a plugin marketplace. The tools a working day needs ship in the binary.</p>
+    <div class="feature-list">
+      <article class="feature-row">
+        <div class="feature-copy">
+          <h3>Vim mode that keeps its promises.</h3>
+          <p>Normal, insert and visual modes with motions, operators, text objects and counts. <code>.</code> repeats, registers and macros record, marks jump, and <code>:</code> runs real Ex commands.</p>
+          <ul class="tick-list">
+            <li>motions, operators, text objects, counts</li>
+            <li>registers, macros and marks</li>
+            <li><code>:s</code>, <code>:g</code> and <code>:normal</code></li>
+          </ul>
+        </div>
+        <figure class="shot-frame">
+          <div class="shot-bar"><span class="dots" aria-hidden="true"><i class="dot dot-a"></i><i class="dot dot-b"></i><i class="dot dot-c"></i></span><span class="shot-title">vim.go — visual mode</span></div>
+          <img src="assets/vim-visual.png" alt="Lines of Go selected in Vim visual mode inside Mayoi" width="1600" height="1000">
+        </figure>
+      </article>
+      <article class="feature-row">
+        <div class="feature-copy">
+          <h3>Git, from gutter to graph.</h3>
+          <p>Stage, commit, amend, undo, pull and push without leaving the window. Every change in one folded diff, inline or side by side, with changed words tinted.</p>
+          <ul class="tick-list">
+            <li>peek, revert or stage from a gutter mark</li>
+            <li>commit graph with branches, tags and blame</li>
+            <li>AI commit messages that leave your secrets out</li>
+          </ul>
+        </div>
+        <figure class="shot-frame">
+          <div class="shot-bar"><span class="dots" aria-hidden="true"><i class="dot dot-a"></i><i class="dot dot-b"></i><i class="dot dot-c"></i></span><span class="shot-title">source control — side by side</span></div>
+          <img src="assets/scm-diff-split.png" alt="Mayoi source control view with a side-by-side diff of every change" width="1600" height="1000">
+        </figure>
+      </article>
+      <article class="feature-row">
+        <div class="feature-copy">
+          <h3>The terminal is Ghostty's.</h3>
+          <p>libghostty-vt, the emulator behind Ghostty, in the bottom panel, at the side of the window, or in a tab of its own — beside the code it runs.</p>
+          <ul class="tick-list">
+            <li>panel, side, or its own tab</li>
+            <li>rename terminals from the tab menu</li>
+            <li>programs report progress to the project rail</li>
+          </ul>
+        </div>
+        <figure class="shot-frame">
+          <div class="shot-bar"><span class="dots" aria-hidden="true"><i class="dot dot-a"></i><i class="dot dot-b"></i><i class="dot dot-c"></i></span><span class="shot-title">zsh — in a tab</span></div>
+          <img src="assets/terminal-tab.png" alt="A Ghostty terminal in a Mayoi tab beside a column of code" width="1600" height="1000">
+        </figure>
+      </article>
+      <article class="feature-row">
+        <div class="feature-copy">
+          <h3>Remote SSH, nothing installed.</h3>
+          <p>Open a folder on another machine through the system's <code>ssh</code>. Explorer, search, Git and terminals run on the host; its ports forward back to your laptop.</p>
+          <ul class="tick-list">
+            <li>reads your <code>~/.ssh/config</code></li>
+            <li>host ports forward to this machine</li>
+            <li>recent hosts on the welcome page</li>
+          </ul>
+        </div>
+        <figure class="shot-frame">
+          <div class="shot-bar"><span class="dots" aria-hidden="true"><i class="dot dot-a"></i><i class="dot dot-b"></i><i class="dot dot-c"></i></span><span class="shot-title">ssh — dev@buildbox</span></div>
+          <img src="assets/remote-window.png" alt="A Mayoi window with a folder open on an SSH host" width="1600" height="1000">
+        </figure>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section tour-section" id="tour">
+  <div class="container tour-split">
+    <div class="tour-side">
+      <div class="sec-head"><span class="sec-index">02</span><h2>Take the tour.</h2></div>
+      <p class="muted tour-intro">Six stops, straight from the app's own screenshots. Pick one; the window follows.</p>
+      <div class="tour-tabs" role="tablist" aria-label="Tour stops" aria-orientation="vertical">
+        <button class="tour-tab" role="tab" id="tour-tab-0" aria-selected="true" aria-controls="tour-panel">Quick open &amp; palette</button>
+        <button class="tour-tab" role="tab" id="tour-tab-1" aria-selected="false" aria-controls="tour-panel" tabindex="-1">Find in files</button>
+        <button class="tour-tab" role="tab" id="tour-tab-2" aria-selected="false" aria-controls="tour-panel" tabindex="-1">Peek a change</button>
+        <button class="tour-tab" role="tab" id="tour-tab-3" aria-selected="false" aria-controls="tour-panel" tabindex="-1">Commit graph</button>
+        <button class="tour-tab" role="tab" id="tour-tab-4" aria-selected="false" aria-controls="tour-panel" tabindex="-1">Markdown preview</button>
+        <button class="tour-tab" role="tab" id="tour-tab-5" aria-selected="false" aria-controls="tour-panel" tabindex="-1">Project tabs</button>
+      </div>
+    </div>
+    <div class="tour-main">
+      <div class="shot-frame tour-frame" id="tour-panel" role="tabpanel" aria-labelledby="tour-tab-0">
+        <div class="shot-bar"><span class="dots" aria-hidden="true"><i class="dot dot-a"></i><i class="dot dot-b"></i><i class="dot dot-c"></i></span><span class="shot-title" id="tourTitle">mayoi — quick open</span></div>
+        <div class="tour-stage">
+          <img class="tour-shot is-active" src="assets/command-palette.png" alt="Mayoi's command palette listing commands with their shortcuts" width="1600" height="1000">
+          <img class="tour-shot" src="assets/search.png" alt="Search across the folder's files with each match in context" width="1600" height="1000">
+          <img class="tour-shot" src="assets/change-peek.png" alt="A change peeked from the gutter, with revert and stage actions" width="1600" height="1000">
+          <img class="tour-shot" src="assets/commits.png" alt="The commit graph with branches and tags beside a commit's diff" width="1600" height="1000">
+          <img class="tour-shot" src="assets/markdown-preview.png" alt="A Markdown file and its live preview side by side" width="1600" height="1000">
+          <img class="tour-shot" src="assets/project-tabs.png" alt="Several projects on a rail at the left of one Mayoi window" width="1600" height="1000">
+        </div>
+      </div>
+      <div class="tour-captions" id="tourCaptions">
+        <p class="tour-caption">Fuzzy files, <code>:42</code> to a line, <code>@</code> to a symbol, <code>&gt;</code> to every command with its shortcut.</p>
+        <p class="tour-caption" hidden>Case, whole-word and regex across the folder, with include and exclude globs and a preview of every replacement.</p>
+        <p class="tour-caption" hidden>Click a gutter mark to see the lines at HEAD, then revert or stage them without opening a diff.</p>
+        <p class="tour-caption" hidden>Branches, tags and merges in one graph; each commit's changes open in a tab of their own.</p>
+        <p class="tour-caption" hidden>Live beside the source, with the Markdown's Mermaid blocks drawn as diagrams and its LaTeX as formulas.</p>
+        <p class="tour-caption" hidden>Every folder in one window, on a rail whose rings show what your programs are working at.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section themes-section" id="themes">
+  <div class="container">
+    <p class="eyebrow">TWELVE THEMES · LIGHT &amp; DARK</p>
+    <h2>Dress it for the hour.</h2>
+    <p class="lead sec-lead">The quiet defaults, The Matrix with digital rain and the White Rabbit, Purple Gold, three Halloweens — and Claude, Qoder, Grok Bot and Cursor. Pick one; the window below wears it live.</p>
+    <div class="themes-split">
+      <div class="mock-wrap">
+        <div class="mock-window" id="mockWindow" data-mtheme="purplegold">
+          <div class="mock-bar">
+            <span class="dots" aria-hidden="true"><i class="dot dot-a"></i><i class="dot dot-b"></i><i class="dot dot-c"></i></span>
+            <span class="mock-tab">wrap.go</span>
+            <span class="mock-bar-right" id="mockThemeName">Purple Gold</span>
+          </div>
+          <div class="mock-body">
+            <canvas id="rainCanvas" aria-hidden="true"></canvas>
+            <pre class="mock-code"><code><span class="mk-dim"> 1</span>  <span class="mk-kw">package</span> editor
+<span class="mk-dim"> 2</span>
+<span class="mk-dim"> 3</span>  <span class="mk-kw">import</span> <span class="mk-str">"strings"</span>
+<span class="mk-dim"> 4</span>
+<span class="mk-dim"> 5</span>  <span class="mk-dim">// wraps reports whether an editor wraps its lines.</span>
+<span class="mk-dim"> 6</span>  <span class="mk-kw">func</span> (a *app) <span class="mk-fn">wraps</span>(d *editor) <span class="mk-kw">bool</span> {
+<span class="mk-dim"> 7</span>      <span class="mk-kw">if</span> d.wrap != <span class="mk-kw">nil</span> &amp;&amp; d.wrapGen == a.settings.WrapGen {
+<span class="mk-dim"> 8</span>          <span class="mk-kw">return</span> *d.wrap
+<span class="mk-dim"> 9</span>      }
+<span class="mk-dim">10</span>      <span class="mk-kw">return</span> a.settings.WordWrap
+<span class="mk-dim">11</span>  }</code></pre>
+          </div>
+          <div class="mock-status"><span>main</span><span>Ln 6, Col 12</span><span>UTF-8</span><span>Go</span></div>
+        </div>
+      </div>
+      <div class="themes-side">
+        <div class="theme-chips" role="group" aria-label="Editor themes">
+          <button class="chip" data-theme-name="light" aria-pressed="false" style="--sw: var(--th-light-bg); --swd: var(--th-light-kw); --swl: var(--th-light-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Light</button>
+          <button class="chip" data-theme-name="dark" aria-pressed="false" style="--sw: var(--th-dark-bg); --swd: var(--th-dark-kw); --swl: var(--th-dark-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Dark</button>
+          <button class="chip" data-theme-name="matrix" aria-pressed="false" style="--sw: var(--th-matrix-bg); --swd: var(--th-matrix-kw); --swl: var(--th-matrix-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>The Matrix</button>
+          <button class="chip" data-theme-name="rabbit" aria-pressed="false" style="--sw: var(--th-rabbit-bg); --swd: var(--th-rabbit-kw); --swl: var(--th-rabbit-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>White Rabbit</button>
+          <button class="chip" data-theme-name="purplegold" aria-pressed="true" style="--sw: var(--th-purplegold-bg); --swd: var(--th-purplegold-kw); --swl: var(--th-purplegold-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Purple Gold</button>
+          <button class="chip" data-theme-name="jack" aria-pressed="false" style="--sw: var(--th-jack-bg); --swd: var(--th-jack-kw); --swl: var(--th-jack-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Jack-o'-Lantern</button>
+          <button class="chip" data-theme-name="witch" aria-pressed="false" style="--sw: var(--th-witch-bg); --swd: var(--th-witch-kw); --swl: var(--th-witch-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Witch's Brew</button>
+          <button class="chip" data-theme-name="blood" aria-pressed="false" style="--sw: var(--th-blood-bg); --swd: var(--th-blood-kw); --swl: var(--th-blood-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Blood Moon</button>
+          <button class="chip" data-theme-name="claude" aria-pressed="false" style="--sw: var(--th-claude-bg); --swd: var(--th-claude-kw); --swl: var(--th-claude-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Claude</button>
+          <button class="chip" data-theme-name="qoder" aria-pressed="false" style="--sw: var(--th-qoder-bg); --swd: var(--th-qoder-kw); --swl: var(--th-qoder-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Qoder</button>
+          <button class="chip" data-theme-name="grok" aria-pressed="false" style="--sw: var(--th-grok-bg); --swd: var(--th-grok-kw); --swl: var(--th-grok-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Grok Bot</button>
+          <button class="chip" data-theme-name="cursor" aria-pressed="false" style="--sw: var(--th-cursor-bg); --swd: var(--th-cursor-kw); --swl: var(--th-cursor-line)"><span class="swatch" aria-hidden="true"><span class="swatch-dot"></span></span>Cursor</button>
+        </div>
+        <label class="check rain-check"><input type="checkbox" id="rainToggle"> Digital rain behind the code</label>
+        <p class="theme-blurb" id="themeBlurb">Purple Gold — indigo night, gold leaf. The house style.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="install">
+  <div class="container">
+    <div class="sec-head"><span class="sec-index">03</span><h2>One command, then open a folder.</h2></div>
+    <div class="tabs install-tabs" role="tablist" aria-label="Platform">
+      <button class="tab" role="tab" id="install-tab-mac" aria-selected="true" aria-controls="install-panel-mac">macOS</button>
+      <button class="tab" role="tab" id="install-tab-linux" aria-selected="false" aria-controls="install-panel-linux" tabindex="-1">Linux</button>
+      <button class="tab" role="tab" id="install-tab-win" aria-selected="false" aria-controls="install-panel-win" tabindex="-1">Windows</button>
+      <button class="tab" role="tab" id="install-tab-src" aria-selected="false" aria-controls="install-panel-src" tabindex="-1">From source</button>
+    </div>
+    <div class="install-panel" role="tabpanel" id="install-panel-mac" aria-labelledby="install-tab-mac">
+      <div class="code-row">
+        <pre><code>brew tap --custom-remote sorrycc/mayoi https://github.com/sorrycc/Mayoi.git
+brew trust sorrycc/mayoi
+brew install --cask mayoi</code></pre>
+        <button class="btn copy-btn" data-copy="brew tap --custom-remote sorrycc/mayoi https://github.com/sorrycc/Mayoi.git&#10;brew trust sorrycc/mayoi&#10;brew install --cask mayoi" aria-label="Copy the macOS install command">
+          <svg class="icon-copy" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-3h-8v8h3"/></svg>
+          <svg class="icon-check" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 8.5 3.5 3.5L13 5"/></svg>
+        </button>
+      </div>
+      <ul class="note-list">
+        <li>macOS 13 or later, Apple Silicon or Intel. Signed and notarized.</li>
+        <li>Recent Homebrew asks for <code>brew trust</code> once; on older Homebrew, skip that line.</li>
+        <li>Prefer a DMG? <a href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Releases</a> has it — drag Mayoi to Applications.</li>
+      </ul>
+    </div>
+    <div class="install-panel" role="tabpanel" id="install-panel-linux" aria-labelledby="install-tab-linux" hidden>
+      <div class="code-row">
+        <pre><code>curl -fsSL https://github.com/sorrycc/Mayoi/releases/latest/download/install.sh | sh</code></pre>
+        <button class="btn copy-btn" data-copy="curl -fsSL https://github.com/sorrycc/Mayoi/releases/latest/download/install.sh | sh" aria-label="Copy the Linux install command">
+          <svg class="icon-copy" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-3h-8v8h3"/></svg>
+          <svg class="icon-check" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 8.5 3.5 3.5L13 5"/></svg>
+        </button>
+      </div>
+      <ul class="note-list">
+        <li>Needs GTK 3 — Ubuntu 22.04 or later is fine.</li>
+        <li>Installs to <code>~/.local</code>, with the <code>mayoi</code> command and a menu entry.</li>
+      </ul>
+    </div>
+    <div class="install-panel" role="tabpanel" id="install-panel-win" aria-labelledby="install-tab-win" hidden>
+      <div class="code-row code-row-link">
+        <p>Download the installer for your architecture — x64 or ARM64 — from Releases, and run it.</p>
+        <a class="btn" href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Open Releases</a>
+      </div>
+      <ul class="note-list">
+        <li>Then add <code>mayoi.cmd</code> from <strong>File → Install 'mayoi' Command</strong>, including user PATH setup.</li>
+        <li>Mayoi checks for updates automatically, on every platform.</li>
+      </ul>
+    </div>
+    <div class="install-panel" role="tabpanel" id="install-panel-src" aria-labelledby="install-tab-src" hidden>
+      <div class="code-row">
+        <pre><code>go run ./cmd/mayoi ~/some/project
+go tool mygo build</code></pre>
+        <button class="btn copy-btn" data-copy="go run ./cmd/mayoi ~/some/project&#10;go tool mygo build" aria-label="Copy the build commands">
+          <svg class="icon-copy" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 5.5v-3h-8v8h3"/></svg>
+          <svg class="icon-check" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 8.5 3.5 3.5L13 5"/></svg>
+        </button>
+      </div>
+      <ul class="note-list">
+        <li>Go 1.27 or later; Linux also needs GTK 3.</li>
+        <li><code>go tool mygo build</code> builds the .app and a .dmg on macOS.</li>
+      </ul>
+    </div>
+    <div class="panel shell-strip">
+      <h3>The <code>mayoi</code> shell command</h3>
+      <ul class="shell-list">
+        <li><code>mayoi .</code><span>open a folder, starting the app if needed</span></li>
+        <li><code>mayoi -g editor.go:42</code><span>open a file at a line and column</span></li>
+        <li><code>mayoi -d a.go b.go</code><span>compare two files</span></li>
+        <li><code>mayoi -w note.md</code><span>wait until the file is closed</span></li>
+        <li><code>mayoi --remote host:/src</code><span>open a folder on an SSH host</span></li>
+        <li><code>mayoi run go.line=42</code><span>run any command by its identifier</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section keys-section" id="shortcuts">
+  <div class="container">
+    <div class="sec-head"><span class="sec-index">04</span><h2>Your hands stay on the home row.</h2></div>
+    <div class="keys-grid">
+      <div class="key-item"><kbd>⌘P</kbd><span>Quick open</span></div>
+      <div class="key-item"><kbd>⇧⌘P</kbd><span>Command palette</span></div>
+      <div class="key-item"><kbd>⇧⌘F</kbd><span>Find in files</span></div>
+      <div class="key-item"><kbd>⌘\</kbd><span>Split right</span></div>
+      <div class="key-item"><kbd>⌃`</kbd><span>Toggle terminal</span></div>
+      <div class="key-item"><kbd>⇧⌘V</kbd><span>Live preview</span></div>
+      <div class="key-item"><kbd>⌥Z</kbd><span>Word wrap</span></div>
+      <div class="key-item"><kbd>⇧⌘K</kbd><span>Delete line</span></div>
+    </div>
+    <p class="muted keys-note">Every shortcut rebindable in the settings window, in VS Code's format. <a href="https://github.com/sorrycc/Mayoi#keyboard-shortcuts" target="_blank" rel="noopener">The full table lives in the README.</a></p>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container cta-inner">
+    <div class="pixel-heart" aria-hidden="true">
+      <svg width="56" height="48" viewBox="0 0 7 6" shape-rendering="crispEdges">
+        <g fill="#ffb224">
+          <rect x="1" y="0" width="2" height="1"/><rect x="4" y="0" width="2" height="1"/>
+          <rect x="0" y="1" width="7" height="2"/><rect x="1" y="3" width="5" height="1"/>
+          <rect x="2" y="4" width="3" height="1"/><rect x="3" y="5" width="1" height="1"/>
+        </g>
+        <g fill="#ffe08a"><rect x="1" y="0" width="1" height="1"/><rect x="0" y="1" width="1" height="1"/></g>
+        <g fill="#c77800"><rect x="5" y="1" width="2" height="1"/><rect x="4" y="3" width="2" height="1"/><rect x="3" y="5" width="1" height="1"/></g>
+      </svg>
+    </div>
+    <h2>Stop waiting on your editor.</h2>
+    <p>Eighteen megabytes, one native window, every tool inside. Open your first folder tonight.</p>
+    <div class="cluster cta-actions">
+      <a class="btn btn-primary btn-lg" href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Download Mayoi</a>
+      <a class="btn btn-lg cta-ghost" href="https://github.com/sorrycc/Mayoi" target="_blank" rel="noopener">Read the source</a>
+    </div>
+    <p class="mono cta-brew">brew install --cask mayoi</p>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <img src="assets/icon.png" alt="" width="40" height="40">
+      <p><strong>Mayoi · 迷い</strong><br>A small, fast code editor in Go, native on the GPU.</p>
+    </div>
+    <nav aria-label="Project">
+      <p class="footer-head">Project</p>
+      <ul>
+        <li><a href="https://github.com/sorrycc/Mayoi" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://github.com/sorrycc/Mayoi/releases/latest" target="_blank" rel="noopener">Releases</a></li>
+        <li><a href="https://github.com/sorrycc/Mayoi/blob/HEAD/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a></li>
+        <li><a href="https://github.com/sorrycc/Mayoi#features" target="_blank" rel="noopener">Features</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Documentation">
+      <p class="footer-head">Docs</p>
+      <ul>
+        <li><a href="https://github.com/sorrycc/Mayoi/blob/HEAD/docs/SETTINGS.md" target="_blank" rel="noopener">Settings</a></li>
+        <li><a href="https://github.com/sorrycc/Mayoi/blob/HEAD/docs/ARCHITECTURE.md" target="_blank" rel="noopener">Architecture</a></li>
+        <li><a href="https://github.com/sorrycc/Mayoi/blob/HEAD/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a></li>
+        <li><a href="https://github.com/sorrycc/Mayoi/blob/HEAD/LICENSE" target="_blank" rel="noopener">MIT license</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="container footer-base">
+    <p>MIT licensed. Built with Go and <a href="https://github.com/egoist/mygo" target="_blank" rel="noopener">MyGo</a>.</p>
+    <p class="mono">迷い — happily lost in the code.</p>
+  </div>
+</footer>
+
+<div class="palette-scrim" id="paletteScrim" hidden>
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette" id="paletteDialog">
+    <div class="palette-input-row">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>
+      <input id="paletteInput" class="palette-input" placeholder="Type a command…" autocomplete="off" spellcheck="false" aria-label="Search commands" aria-controls="paletteList" aria-activedescendant="">
+      <kbd>esc</kbd>
+    </div>
+    <ul class="palette-list" id="paletteList" role="listbox" aria-label="Commands"></ul>
+    <div class="palette-foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> run</span>
+      <span class="mono">mayoi · ⌘P</span>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden>Copied to clipboard</div>
+</body>
+</html>

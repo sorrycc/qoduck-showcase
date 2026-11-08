@@ -1,0 +1,194 @@
+/* Theme: cold-tool, retuned for Mayoi — "indigo night, pixel gold".
+   Fonts — put this in <head> before tokens.css:
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Silkscreen:wght@400;700&display=swap">
+   Values retuned to the Mayoi icon: gold on deep indigo. Names kept. */
+:root {
+  color-scheme: light dark;
+
+  /* color roles — light: warm ivory paper, indigo ink, gold leaf */
+  --bg: #f5f1e8;
+  --surface: #fffcf5;
+  --surface-2: #ebe4d4;
+  --text: #201a3d;
+  --text-muted: #5b5470;
+  --border: #d8cfbc;
+  --accent: #f0a400;
+  --accent-hover: #d99400;
+  --accent-contrast: #201a3d;
+  --accent-subtle: #f7e8c8;
+  --link: #8a5800;
+  --success: #1a7f37;
+  --success-subtle: #dafbe1;
+  --warning: #9a6700;
+  --warning-subtle: #fff8c5;
+  --danger: #cf222e;
+  --danger-subtle: #ffebe9;
+  --info: #0969da;
+  --info-subtle: #ddf4ff;
+  --disabled-bg: #ebe4d4;
+  --disabled-text: #8c959f;
+  --focus: #8a5800;
+
+  /* brand */
+  --gold: #ffb224;
+  --gold-subtle: #f7e8c8;
+  --indigo: #241d5c;
+  --on-indigo: #f2eefc;
+  --on-indigo-muted: #b6afd4;
+  --violet: #6d4de0;
+  --teal: #0f7f8b;
+  --night: #100c26;
+  --field: #ece4d2;
+  --rain: #3fb950;
+
+  /* type */
+  --font-display: "IBM Plex Sans", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-pixel: "Silkscreen", "IBM Plex Mono", monospace;
+  --fs-xs: 0.75rem; /* 12px */
+  --fs-sm: 0.8125rem; /* 13px */
+  --fs-base: 0.875rem; /* 14px */
+  --fs-lg: 1rem; /* 16px */
+  --fs-xl: 1.125rem; /* 18px */
+  --fs-2xl: 1.375rem; /* 22px */
+  --fs-3xl: 1.75rem; /* 28px */
+  --fs-4xl: 2.25rem; /* 36px */
+  --fs-5xl: 3rem; /* 48px */
+  --fs-6xl: 4rem; /* 64px */
+  --weight-display: 700;
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-body: 1.5;
+  --measure: 72ch;
+
+  /* space */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-7: 2rem; /* 32px */
+  --space-8: 3rem; /* 48px */
+  --space-9: 4rem; /* 64px */
+  --space-10: 6rem; /* 96px */
+  --space-11: 8rem; /* 128px */
+
+  /* shape */
+  --control-h: 2.75rem; /* 44px */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 9999px;
+  --shadow-1: 0 1px 2px rgb(32 26 61 / 0.08);
+  --shadow-2: 0 12px 32px rgb(32 26 61 / 0.16);
+
+  /* motion */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-std: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* editor theme palettes — the live previewer in the Themes section.
+     Roles: bg, bar, ink, dim, kw, str, fn, line */
+  --th-light-bg: #fffcf5; --th-light-bar: #ebe4d4; --th-light-ink: #201a3d; --th-light-dim: #5b5470;
+  --th-light-kw: #6d4de0; --th-light-str: #1a7f37; --th-light-fn: #0969da; --th-light-line: #d8cfbc;
+  --th-dark-bg: #0d1117; --th-dark-bar: #151b23; --th-dark-ink: #e6edf3; --th-dark-dim: #9198a1;
+  --th-dark-kw: #ff7b72; --th-dark-str: #a5d6ff; --th-dark-fn: #d2a8ff; --th-dark-line: #30363d;
+  --th-matrix-bg: #000000; --th-matrix-bar: #001800; --th-matrix-ink: #3fb950; --th-matrix-dim: #2f9e40;
+  --th-matrix-kw: #7dffa0; --th-matrix-str: #3fb950; --th-matrix-fn: #baffcc; --th-matrix-line: #0f3f14;
+  --th-rabbit-bg: #fff7fa; --th-rabbit-bar: #ffe3ee; --th-rabbit-ink: #4a2b3a; --th-rabbit-dim: #856370;
+  --th-rabbit-kw: #c22572; --th-rabbit-str: #0c6b76; --th-rabbit-fn: #6d4de0; --th-rabbit-line: #f3cfdc;
+  --th-purplegold-bg: #1b1030; --th-purplegold-bar: #241d5c; --th-purplegold-ink: #f2eefc; --th-purplegold-dim: #a9a3c2;
+  --th-purplegold-kw: #ffb224; --th-purplegold-str: #c4b5fd; --th-purplegold-fn: #8b7bff; --th-purplegold-line: #372a6b;
+  --th-jack-bg: #160b02; --th-jack-bar: #241203; --th-jack-ink: #ffd166; --th-jack-dim: #b0763a;
+  --th-jack-kw: #ff7a1a; --th-jack-str: #ffe08a; --th-jack-fn: #ff9e3d; --th-jack-line: #4a2a08;
+  --th-witch-bg: #071207; --th-witch-bar: #0d1f0d; --th-witch-ink: #d8f3d0; --th-witch-dim: #7fa878;
+  --th-witch-kw: #8ce99a; --th-witch-str: #63e6be; --th-witch-fn: #b197fc; --th-witch-line: #1d3a1d;
+  --th-blood-bg: #12040a; --th-blood-bar: #1f0710; --th-blood-ink: #ffd7dd; --th-blood-dim: #b07684;
+  --th-blood-kw: #ff4d6d; --th-blood-str: #ff8fa3; --th-blood-fn: #ff758f; --th-blood-line: #3d0f1c;
+  --th-claude-bg: #faf9f5; --th-claude-bar: #efede5; --th-claude-ink: #3d3929; --th-claude-dim: #6b675c;
+  --th-claude-kw: #a8432a; --th-claude-str: #47744f; --th-claude-fn: #5f5e57; --th-claude-line: #ddd9ce;
+  --th-qoder-bg: #0f1411; --th-qoder-bar: #16211b; --th-qoder-ink: #e6f3ea; --th-qoder-dim: #8fa89a;
+  --th-qoder-kw: #4cd07d; --th-qoder-str: #9be3b4; --th-qoder-fn: #6fd3e0; --th-qoder-line: #24382c;
+  --th-grok-bg: #0a0a0a; --th-grok-bar: #141414; --th-grok-ink: #f5f5f5; --th-grok-dim: #a3a3a3;
+  --th-grok-kw: #e6edf3; --th-grok-str: #9ecbff; --th-grok-fn: #d2a8ff; --th-grok-line: #262626;
+  --th-cursor-bg: #101216; --th-cursor-bar: #181b21; --th-cursor-ink: #e8eaed; --th-cursor-dim: #9aa9a9;
+  --th-cursor-kw: #7fb4ff; --th-cursor-str: #98d8aa; --th-cursor-fn: #e2c08d; --th-cursor-line: #2a2e35;
+}
+
+@media (max-width: 600px) {
+  :root {
+    --fs-3xl: 1.5rem; /* 24px */
+    --fs-4xl: 1.75rem; /* 28px */
+    --fs-5xl: 2rem; /* 32px */
+    --fs-6xl: 2.5rem; /* 40px */
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #100c26;
+    --surface: #171233;
+    --surface-2: #201a45;
+    --text: #f2eefc;
+    --text-muted: #a9a3c2;
+    --border: #2e2757;
+    --accent: #ffb224;
+    --accent-hover: #ffc233;
+    --accent-contrast: #201a3d;
+    --accent-subtle: #33270f;
+    --link: #ffc233;
+    --success: #3fb950;
+    --success-subtle: #12261a;
+    --warning: #d29922;
+    --warning-subtle: #2b2111;
+    --danger: #f85149;
+    --danger-subtle: #2d1517;
+    --info: #58a6ff;
+    --info-subtle: #10233a;
+    --disabled-bg: #201a45;
+    --disabled-text: #59616b;
+    --focus: #ffb224;
+    --gold-subtle: #33270f;
+    --violet: #8b7bff;
+    --teal: #35c4cf;
+    --field: #141031;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 16px 40px rgb(0 0 0 / 0.5);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #100c26;
+  --surface: #171233;
+  --surface-2: #201a45;
+  --text: #f2eefc;
+  --text-muted: #a9a3c2;
+  --border: #2e2757;
+  --accent: #ffb224;
+  --accent-hover: #ffc233;
+  --accent-contrast: #201a3d;
+  --accent-subtle: #33270f;
+  --link: #ffc233;
+  --success: #3fb950;
+  --success-subtle: #12261a;
+  --warning: #d29922;
+  --warning-subtle: #2b2111;
+  --danger: #f85149;
+  --danger-subtle: #2d1517;
+  --info: #58a6ff;
+  --info-subtle: #10233a;
+  --disabled-bg: #201a45;
+  --disabled-text: #59616b;
+  --focus: #ffb224;
+  --gold-subtle: #33270f;
+  --violet: #8b7bff;
+  --teal: #35c4cf;
+  --field: #141031;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 16px 40px rgb(0 0 0 / 0.5);
+}

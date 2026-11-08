@@ -9,7 +9,7 @@ PAGES = "https://sorrycc.github.io/qoduck-showcase"
 cases = sorted(p.name for p in (ROOT / "cases").iterdir() if (p / "index.html").is_file())
 
 
-WORDS = {"3d": "3D", "svg": "SVG", "threejs": "three.js", "rubiks": "Rubik's"}
+WORDS = {"3d": "3D", "svg": "SVG", "threejs": "three.js", "rubiks": "Rubik's", "ai": "AI"}
 
 
 def title(name):
@@ -51,7 +51,7 @@ for c in cases:
 <body>
 <header>
   <h1>QoDuck Showcase</h1>
-  <p>Single-file HTML pages built by qodercli + QoDuck from one prompt, no follow-up. Click a card to open the live page.</p>
+  <p>HTML pages built by qodercli + QoDuck from one prompt, no follow-up. Click a card to open the live page.</p>
 </header>
 <main>
 {chr(10).join(cards)}
