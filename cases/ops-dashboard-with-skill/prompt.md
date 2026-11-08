@@ -26,18 +26,7 @@ Rules
 Layout, density, chart types and visual style are up to you. Optimize for an
 operator who looks at this screen all day.
 
-Before you start building, read and follow the frontend-rails skill at
-`<path-to>/frontend-rails/SKILL.md`. Treat
-`<path-to>/frontend-rails` as the SKILL_DIR it refers to:
-read the `app` archetype, pick a theme from `themes/INDEX.md`, use its tokens
-and `components/usage.md`, and run `node SKILL_DIR/gate/run.mjs index.html
---type app` until it reports no errors (its node_modules is already
-installed). Then look at the gate screenshots and fix what they show.
-
-Because the deliverable must be one self-contained file, inline the chosen
-theme tokens and `primitives.css` into a `<style>` block inside `index.html`
-instead of linking separate CSS files. Keep all colour, type, spacing,
-radius and duration values as `var(--…)` tokens.
+Use the github.com/sorrycc/frontend-rails skill for this.
 
 Write the result to `index.html` in the current working directory: a single
 self-contained HTML file with inline CSS and JS, no external resources.
