@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>时间的尽头 · The End of Time</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23ff9a3c' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23070312' stroke='%23ffd27a'/%3E%3Cpath d='M16 16L16 7M16 16L22 19' stroke='%23ffd27a' stroke-width='2'/%3E%3C/svg%3E">
+<style>
+:root{
+  --void:#070312;
+  --abyss:#0d0620;
+  --surface:rgba(19,10,38,.72);
+  --overlay:rgba(30,16,58,.55);
+  --ember:#ff9a3c;
+  --gold:#ffd27a;
+  --flare:#ff4d6d;
+  --cyan:#59e6ff;
+  --violet:#a86bff;
+  --text:#f2e9ff;
+  --dim:#9d8fc0;
+  --line:rgba(168,107,255,.28);
+  --ok:#7dff9b;
+  --warn:#ffc857;
+  --danger:#ff5470;
+  --info:#6fd7ff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--void)}
+body{
+  font-family:"Songti SC","Noto Serif SC","STSong",Georgia,serif;
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+#stage{position:fixed;inset:0;display:block;touch-action:none;cursor:grab}
+#stage:active{cursor:grabbing}
+#vignette{
+  position:fixed;inset:0;z-index:5;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 46%,transparent 52%,rgba(4,2,10,.62) 100%);
+}
+
+/* ---------- scrollbar in artifact language ---------- */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:rgba(13,6,32,.6);border-radius:3px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--violet),var(--ember));border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--cyan),var(--flare))}
+
+/* ---------- loading veil ---------- */
+#veil{
+  position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;
+  background:radial-gradient(ellipse at 50% 60%,#1b0b3a 0%,var(--void) 70%);
+  transition:opacity 1.2s ease,visibility 1.2s;
+}
+#veil.gone{opacity:0;visibility:hidden}
+#veil .ring{
+  width:64px;height:64px;border-radius:50%;
+  border:1px solid rgba(255,210,122,.25);border-top-color:var(--gold);
+  animation:spin 1.6s linear infinite;
+}
+#veil h2{font-size:20px;font-weight:400;letter-spacing:.6em;text-indent:.6em;color:var(--gold)}
+#veil p{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.3em;color:var(--dim)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- header ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:30;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  padding:22px 26px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(7,3,18,.85),rgba(7,3,18,0));
+}
+.brand{pointer-events:auto}
+.brand .kicker{
+  font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.42em;
+  color:var(--cyan);text-transform:uppercase;margin-bottom:8px;
+  text-shadow:0 0 12px rgba(89,230,255,.5);
+}
+.brand h1{
+  font-size:clamp(26px,3.4vw,44px);font-weight:600;letter-spacing:.18em;line-height:1.1;
+  background:linear-gradient(100deg,var(--gold) 10%,var(--ember) 45%,var(--flare) 80%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(255,154,60,.35));
+}
+.brand .sub{margin-top:8px;font-size:12px;letter-spacing:.24em;color:var(--dim)}
+.top-actions{display:flex;gap:10px;pointer-events:auto}
+.icon-btn{
+  width:42px;height:42px;border-radius:12px;border:1px solid var(--line);
+  background:var(--surface);backdrop-filter:blur(12px);color:var(--gold);
+  font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .25s;position:relative;
+}
+.icon-btn:hover{border-color:var(--ember);box-shadow:0 0 18px rgba(255,154,60,.35);transform:translateY(-1px)}
+.icon-btn.muted{color:var(--dim)}
+.icon-btn .state-dot{
+  position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;
+  background:var(--ok);box-shadow:0 0 8px var(--ok);
+}
+.icon-btn.muted .state-dot{background:var(--danger);box-shadow:0 0 8px var(--danger)}
+
+/* ---------- control panel ---------- */
+#panel{
+  position:fixed;top:96px;right:22px;z-index:25;width:264px;
+  max-height:calc(100vh - 200px);overflow-y:auto;
+  background:var(--surface);backdrop-filter:blur(16px);
+  border:1px solid var(--line);border-radius:16px;
+  padding:16px 16px 14px;
+  box-shadow:0 12px 48px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);
+}
+#panel::before{
+  content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,154,60,.07),transparent 35%,rgba(89,230,255,.05));
+}
+.panel-title{
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+  font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.34em;color:var(--cyan);
+}
+.panel-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.ctl{margin-bottom:13px}
+.ctl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.ctl-head label{font-size:12px;letter-spacing:.14em;color:var(--text)}
+.ctl-head output{
+  font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--gold);
+  min-width:44px;text-align:right;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:18px;background:transparent;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:4px;border-radius:2px;
+  background:linear-gradient(90deg,var(--violet),var(--ember) 60%,var(--gold));
+  box-shadow:0 0 8px rgba(255,154,60,.3);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;margin-top:-5px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#fff,var(--gold) 60%,var(--ember));
+  border:1px solid rgba(255,255,255,.5);box-shadow:0 0 10px rgba(255,210,122,.8);
+  transition:transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.25)}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--violet),var(--ember),var(--gold))}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--gold);border:1px solid rgba(255,255,255,.5)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px 10px;border:1px solid var(--line);border-radius:10px;cursor:pointer;
+  background:rgba(13,6,32,.4);transition:all .2s;font-size:12px;letter-spacing:.08em;
+}
+.toggle:hover{border-color:var(--violet)}
+.toggle input{display:none}
+.toggle .sw{
+  width:30px;height:16px;border-radius:8px;background:rgba(157,143,192,.25);
+  position:relative;transition:background .25s;flex:none;
+}
+.toggle .sw::after{
+  content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;
+  background:var(--dim);transition:all .25s;
+}
+.toggle input:checked + .sw{background:linear-gradient(90deg,var(--ember),var(--flare));box-shadow:0 0 10px rgba(255,77,109,.5)}
+.toggle input:checked + .sw::after{left:16px;background:#fff}
+select{
+  width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--line);
+  background:rgba(13,6,32,.7);color:var(--text);font-size:12px;letter-spacing:.1em;
+  font-family:inherit;cursor:pointer;outline:none;
+}
+select:focus{border-color:var(--cyan)}
+.btn-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px}
+.btn{
+  padding:9px 4px;border-radius:10px;border:1px solid var(--line);cursor:pointer;
+  background:rgba(13,6,32,.5);color:var(--text);font-family:inherit;font-size:12px;
+  letter-spacing:.1em;transition:all .2s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn.b-reset:hover{border-color:var(--info);box-shadow:0 0 14px rgba(111,215,255,.35);color:var(--info)}
+.btn.b-rand:hover{border-color:var(--violet);box-shadow:0 0 14px rgba(168,107,255,.4);color:var(--violet)}
+.btn.b-export{
+  background:linear-gradient(120deg,rgba(255,154,60,.2),rgba(255,77,109,.2));
+  border-color:rgba(255,154,60,.5);color:var(--gold);
+}
+.btn.b-export:hover{box-shadow:0 0 16px rgba(255,154,60,.5)}
+.btn:active{transform:scale(.96)}
+
+/* ---------- HUD ---------- */
+#hud{
+  position:fixed;left:26px;bottom:24px;z-index:25;pointer-events:none;
+  font-family:ui-monospace,Menlo,monospace;
+  padding:12px 16px 12px 12px;border-radius:12px;
+  background:linear-gradient(90deg,rgba(7,3,18,.62),rgba(7,3,18,0));
+}
+#hud .entropy-label{font-size:10px;letter-spacing:.4em;color:var(--dim);margin-bottom:6px}
+#hud .entropy-val{font-size:26px;color:var(--gold);text-shadow:0 0 16px rgba(255,210,122,.6);letter-spacing:.06em}
+#hud .entropy-val small{font-size:12px;color:var(--dim);margin-left:6px}
+#hud .bar{width:200px;height:3px;margin-top:8px;border-radius:2px;background:rgba(157,143,192,.18);overflow:hidden}
+#hud .bar i{display:block;height:100%;width:0%;border-radius:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet),var(--flare),var(--ember));
+  box-shadow:0 0 10px rgba(255,77,109,.7);transition:width .3s linear}
+#hud .epoch{margin-top:10px;font-size:10px;letter-spacing:.22em;color:var(--dim)}
+#hud .epoch b{color:var(--cyan);font-weight:400}
+#hint{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:24;
+  font-size:11px;letter-spacing:.28em;color:var(--dim);pointer-events:none;
+  text-shadow:0 1px 8px #000;white-space:nowrap;
+  animation:hintPulse 3.2s ease-in-out infinite;
+}
+@keyframes hintPulse{0%,100%{opacity:.55}50%{opacity:1}}
+#toast{
+  position:fixed;top:84px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:50;
+  padding:10px 22px;border-radius:12px;border:1px solid rgba(255,210,122,.4);
+  background:var(--surface);backdrop-filter:blur(12px);color:var(--gold);
+  font-size:13px;letter-spacing:.2em;opacity:0;pointer-events:none;transition:all .4s;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- mobile ---------- */
+@media (max-width:760px){
+  header{padding:14px 16px}
+  .brand h1{letter-spacing:.1em}
+  .brand .sub{display:none}
+  #panel{
+    top:auto;bottom:0;left:0;right:0;width:100%;max-height:38vh;
+    border-radius:16px 16px 0 0;border-left:none;border-right:none;border-bottom:none;
+    padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+  }
+  .panel-title{margin-bottom:10px}
+  .ctl{margin-bottom:10px}
+  #hud{left:16px;bottom:auto;top:84px;padding:8px 12px 8px 10px}
+  #hud .bar{width:140px}
+  #hud .entropy-val{font-size:20px}
+  #hint{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div id="vignette"></div>
+
+<div id="veil">
+  <div class="ring"></div>
+  <h2>时间的尽头</h2>
+  <p>INITIALIZING ENTROPY FIELD…</p>
+</div>
+
+<header>
+  <div class="brand">
+    <div class="kicker">Entropy · Ω-Point</div>
+    <h1>时间的尽头</h1>
+    <div class="sub">THE END OF TIME — 万物坠入永寂之钟</div>
+  </div>
+  <div class="top-actions">
+    <button class="icon-btn" id="soundBtn" title="声音开关" aria-label="声音开关">
+      <span id="soundIcon">♪</span><span class="state-dot"></span>
+    </button>
+  </div>
+</header>
+
+<aside id="panel">
+  <div class="panel-title">观测者控制台</div>
+
+  <div class="ctl">
+    <div class="ctl-head"><label for="cTime">时间流速</label><output id="oTime">1.00×</output></div>
+    <input type="range" id="cTime" min="0" max="3" step="0.01" value="1">
+  </div>
+  <div class="ctl">
+    <div class="ctl-head"><label for="cParticles">星尘密度</label><output id="oParticles">80%</output></div>
+    <input type="range" id="cParticles" min="0.05" max="1" step="0.01" value="0.8">
+  </div>
+  <div class="ctl">
+    <div class="ctl-head"><label for="cBloom">辉光强度</label><output id="oBloom">1.15</output></div>
+    <input type="range" id="cBloom" min="0" max="2.5" step="0.01" value="1.15">
+  </div>
+  <div class="ctl">
+    <div class="ctl-head"><label for="cNebula">星云浓度</label><output id="oNebula">65%</output></div>
+    <input type="range" id="cNebula" min="0" max="1" step="0.01" value="0.65">
+  </div>
+  <div class="ctl">
+    <div class="ctl-head"><label for="cHeat">吸积盘温度</label><output id="oHeat">50%</output></div>
+    <input type="range" id="cHeat" min="0" max="1" step="0.01" value="0.5">
+  </div>
+  <div class="ctl">
+    <div class="ctl-head"><label for="cDrift">相机漂移速度</label><output id="oDrift">0.4</output></div>
+    <input type="range" id="cDrift" min="0" max="2" step="0.01" value="0.4">
+  </div>
+
+  <div class="row2 ctl">
+    <label class="toggle"><span>自动巡航</span><input type="checkbox" id="cOrbit" checked><span class="sw"></span></label>
+    <label class="toggle"><span>幽灵线框</span><input type="checkbox" id="cGhost"><span class="sw"></span></label>
+  </div>
+
+  <div class="ctl">
+    <div class="ctl-head"><label for="cTheme">宇宙基调</label></div>
+    <select id="cTheme">
+      <option value="ember" selected>余烬 · 垂死恒星</option>
+      <option value="abyss">深渊 · 冷寂蓝移</option>
+      <option value="aurora">极光 · 量子残响</option>
+    </select>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn b-reset" id="bReset">重置</button>
+    <button class="btn b-rand" id="bRand">随机</button>
+    <button class="btn b-export" id="bExport">导出</button>
+  </div>
+</aside>
+
+<div id="hud">
+  <div class="entropy-label">宇宙熵值 / ENTROPY</div>
+  <div class="entropy-val"><span id="entropyVal">0.000</span><small>/ 1.000</small></div>
+  <div class="bar"><i id="entropyBar"></i></div>
+  <div class="epoch">纪元 <b id="epochVal">Ω-0001</b> · 双击空间引发时间涟漪</div>
+</div>
+
+<div id="hint">拖拽旋转 · 滚轮缩放 · 双击引发涟漪</div>
+<div id="toast"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+/* ================= state ================= */
+const state = {
+  timeSpeed: 1, particleDensity: 0.8, bloom: 1.15, nebula: 0.65,
+  heat: 0.5, drift: 0.4, autoOrbit: true, ghost: false, theme: 'ember',
+  entropy: 0, epoch: 1, simTime: 0, pulse: 0, muted: false,
+};
+const THEMES = {
+  ember:  { disk: 0xff9a3c, hot: 0xffd27a, rim: 0xff4d6d, nebA: 0x2a0f4e, nebB: 0x52123a, star: 0xffe9c9, key: 0xffb066 },
+  abyss:  { disk: 0x59e6ff, hot: 0xb7f4ff, rim: 0x4d7bff, nebA: 0x061a3a, nebB: 0x0b2f55, star: 0xcfeaff, key: 0x7fd4ff },
+  aurora: { disk: 0x7dff9b, hot: 0xeaffb0, rim: 0xa86bff, nebA: 0x0b2a24, nebB: 0x271052, star: 0xd9ffe6, key: 0x9dffb8 },
+};
+
+const canvas = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0a0418, 0.011);
+
+const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 900);
+const narrow = () => window.innerWidth / window.innerHeight < 0.9;
+camera.position.set(0, narrow() ? 2 : 9, narrow() ? 64 : 34);
+camera.fov = narrow() ? 60 : 52;
+camera.updateProjectionMatrix();
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.055;
+controls.minDistance = 12;
+controls.maxDistance = 90;
+controls.maxPolarAngle = Math.PI * 0.86;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.4;
+controls.target.set(0, narrow() ? -11.5 : 0.5, 0);
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.15, 0.45, 0.5);
+composer.addPass(bloomPass);
+composer.addPass(new OutputPass());
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.fov = narrow() ? 60 : 52;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const clock = new THREE.Clock();
+const tmpColor = new THREE.Color();
+/* ================= nebula sky ================= */
+const skyUniforms = {
+  uTime: { value: 0 },
+  uIntensity: { value: state.nebula },
+  uColA: { value: new THREE.Color(THEMES.ember.nebA) },
+  uColB: { value: new THREE.Color(THEMES.ember.nebB) },
+};
+const skyMat = new THREE.ShaderMaterial({
+  uniforms: skyUniforms,
+  side: THREE.BackSide,
+  depthWrite: false,
+  fog: false,
+  vertexShader: /* glsl */`
+    varying vec3 vDir;
+    void main(){
+      vDir = normalize(position);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+    }`,
+  fragmentShader: /* glsl */`
+    uniform float uTime, uIntensity;
+    uniform vec3 uColA, uColB;
+    varying vec3 vDir;
+    float hash(vec3 p){ p = fract(p*0.3183099 + vec3(0.1,0.2,0.3)); p *= 17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }
+    float noise(vec3 x){
+      vec3 i = floor(x), f = fract(x); f = f*f*(3.0-2.0*f);
+      return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),
+                     mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),
+                 mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),
+                     mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);
+    }
+    float fbm(vec3 p){
+      float v = 0.0, a = 0.5;
+      for(int i=0;i<5;i++){ v += a*noise(p); p = p*2.03 + vec3(1.7); a *= 0.5; }
+      return v;
+    }
+    void main(){
+      vec3 d = normalize(vDir);
+      float t = uTime * 0.008;
+      float n1 = fbm(d*3.0 + vec3(t, -t*0.6, t*0.3));
+      float n2 = fbm(d*6.5 - vec3(t*0.5, t, -t));
+      float band = smoothstep(0.15, 0.85, n1*0.65 + n2*0.45);
+      vec3 col = mix(uColA * 0.6, uColB, band);
+      col += uColB * pow(n2, 3.0) * 2.2;
+      float horizonGlow = pow(1.0 - abs(d.y), 3.0);
+      col += uColA * horizonGlow * 0.5;
+      col *= uIntensity * 1.0;
+      col += vec3(0.006, 0.003, 0.016);
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+});
+const sky = new THREE.Mesh(new THREE.SphereGeometry(420, 48, 32), skyMat);
+scene.add(sky);
+
+/* ================= starfield ================= */
+const STAR_COUNT = 2600;
+{
+  const pos = new Float32Array(STAR_COUNT * 3);
+  const col = new Float32Array(STAR_COUNT * 3);
+  const phase = new Float32Array(STAR_COUNT);
+  const size = new Float32Array(STAR_COUNT);
+  const c = new THREE.Color();
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const r = 160 + Math.random() * 230;
+    const th = Math.random() * Math.PI * 2;
+    const ph = Math.acos(2 * Math.random() - 1);
+    pos[i*3]   = r * Math.sin(ph) * Math.cos(th);
+    pos[i*3+1] = r * Math.cos(ph);
+    pos[i*3+2] = r * Math.sin(ph) * Math.sin(th);
+    const warm = Math.random();
+    c.setHSL(warm < 0.7 ? 0.08 + Math.random()*0.05 : 0.55 + Math.random()*0.12, 0.6, 0.65 + Math.random()*0.3);
+    col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+    phase[i] = Math.random() * Math.PI * 2;
+    size[i] = 0.8 + Math.pow(Math.random(), 3) * 3.4;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  g.setAttribute('aPhase', new THREE.BufferAttribute(phase, 1));
+  g.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+  const m = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+    vertexShader: /* glsl */`
+      attribute float aPhase, aSize;
+      attribute vec3 color;
+      uniform float uTime;
+      varying vec3 vColor;
+      varying float vTw;
+      void main(){
+        vColor = color;
+        vTw = 0.55 + 0.45 * sin(uTime * (0.6 + fract(aPhase)*1.4) + aPhase);
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = min(aSize * (300.0 / -mv.z) * (0.8 + 0.4*vTw), 14.0);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: /* glsl */`
+      varying vec3 vColor;
+      varying float vTw;
+      void main(){
+        float d = length(gl_PointCoord - 0.5);
+        float a = smoothstep(0.5, 0.0, d);
+        a *= a;
+        gl_FragColor = vec4(vColor * (0.7 + vTw), a * vTw);
+      }`,
+  });
+  const stars = new THREE.Points(g, m);
+  stars.userData.mat = m;
+  scene.add(stars);
+  window.__stars = stars;
+}
+/* ================= the devouring singularity ================= */
+const holeGroup = new THREE.Group();
+scene.add(holeGroup);
+
+const holeUniforms = {
+  uTime: { value: 0 },
+  uRim: { value: new THREE.Color(THEMES.ember.rim) },
+  uHot: { value: new THREE.Color(THEMES.ember.hot) },
+  uPulse: { value: 0 },
+};
+const hole = new THREE.Mesh(
+  new THREE.SphereGeometry(2.3, 64, 48),
+  new THREE.ShaderMaterial({
+    uniforms: holeUniforms,
+    vertexShader: /* glsl */`
+      varying vec3 vNormal, vView;
+      void main(){
+        vNormal = normalize(normalMatrix * normal);
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        vView = normalize(-mv.xyz);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: /* glsl */`
+      uniform vec3 uRim, uHot;
+      uniform float uTime, uPulse;
+      varying vec3 vNormal, vView;
+      void main(){
+        float fres = pow(1.0 - abs(dot(vNormal, vView)), 4.5);
+        vec3 rim = mix(uRim, uHot, 0.5 + 0.5*sin(uTime*0.7));
+        vec3 col = rim * fres * (1.0 + uPulse*1.2);
+        col += uHot * pow(fres, 9.0) * 1.2;
+        gl_FragColor = vec4(col, 1.0);
+      }`,
+  })
+);
+holeGroup.add(hole);
+
+/* photon ring */
+const photonRing = new THREE.Mesh(
+  new THREE.TorusGeometry(2.62, 0.045, 16, 128),
+  new THREE.MeshBasicMaterial({ color: 0xffd27a })
+);
+photonRing.rotation.x = Math.PI / 2;
+holeGroup.add(photonRing);
+
+/* accretion disk */
+const diskUniforms = {
+  uTime: { value: 0 },
+  uHeat: { value: state.heat },
+  uDisk: { value: new THREE.Color(THEMES.ember.disk) },
+  uHot: { value: new THREE.Color(THEMES.ember.hot) },
+  uPulse: { value: 0 },
+};
+const diskMat = new THREE.ShaderMaterial({
+  uniforms: diskUniforms,
+  transparent: true, depthWrite: false, side: THREE.DoubleSide,
+  blending: THREE.AdditiveBlending,
+  vertexShader: /* glsl */`
+    varying vec2 vP;
+    void main(){
+      vP = position.xy;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }`,
+  fragmentShader: /* glsl */`
+    uniform float uTime, uHeat, uPulse;
+    uniform vec3 uDisk, uHot;
+    varying vec2 vP;
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float noise(vec2 x){
+      vec2 i = floor(x), f = fract(x); f = f*f*(3.0-2.0*f);
+      return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),
+                 mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
+    }
+    float fbm(vec2 p){
+      float v = 0.0, a = 0.5;
+      for(int i=0;i<4;i++){ v += a*noise(p); p = p*2.1 + vec2(3.1); a *= 0.5; }
+      return v;
+    }
+    void main(){
+      float r = length(vP);
+      float ang = atan(vP.y, vP.x);
+      float inner = 2.7, outer = 10.5;
+      float rn = (r - inner) / (outer - inner);
+      if (rn < 0.0 || rn > 1.0) discard;
+      /* differential rotation: inner rings orbit faster */
+      float spin = uTime * (1.6 / (0.35 + rn));
+      vec2 sp = vec2(ang*2.2 + spin, r*1.4 - uTime*0.35);
+      float turb = fbm(sp) * 0.7 + fbm(sp*3.1) * 0.3;
+      float streaks = pow(turb, 1.6);
+      /* radial falloff, hot inner edge */
+      float fall = smoothstep(0.0, 0.12, rn) * pow(1.0 - rn, 1.7);
+      float innerHeat = pow(1.0 - rn, 3.0);
+      /* doppler beaming: one limb brighter */
+      float doppler = 1.0 + 0.85 * sin(ang + 1.2);
+      vec3 cold = uDisk * 0.55;
+      vec3 col = mix(cold, uDisk, streaks);
+      col = mix(col, uHot, innerHeat * (0.35 + uHeat*0.65));
+      col = mix(col, vec3(0.85, 0.92, 1.0), uHeat * innerHeat * 0.35);
+      float a = fall * (0.28 + streaks*0.9) * doppler;
+      a *= 1.0 + uPulse * 0.7;
+      gl_FragColor = vec4(col * (0.45 + uHeat*0.25) * doppler, a * 0.7);
+    }`,
+});
+const disk = new THREE.Mesh(new THREE.RingGeometry(2.7, 10.5, 160, 4), diskMat);
+disk.rotation.x = -Math.PI / 2 + 0.10;
+holeGroup.add(disk);
+
+/* vertical lensed arc — light bent over the hole */
+const lensArc = new THREE.Mesh(
+  new THREE.TorusGeometry(3.1, 0.06, 12, 96, Math.PI),
+  new THREE.MeshBasicMaterial({ color: 0xffb066, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false })
+);
+lensArc.rotation.z = 0;
+lensArc.position.y = 0.1;
+holeGroup.add(lensArc);
+
+/* core glow sprite (code-generated radial texture) */
+function makeGlowTexture(inner, outer) {
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  g.addColorStop(0, inner);
+  g.addColorStop(0.25, outer);
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 256, 256);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+const coreGlow = new THREE.Sprite(new THREE.SpriteMaterial({
+  map: makeGlowTexture('rgba(255,235,200,0.9)', 'rgba(255,120,60,0.35)'),
+  blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.9,
+}));
+coreGlow.scale.setScalar(12);
+holeGroup.add(coreGlow);
+
+/* anamorphic lens streaks */
+const flareH = new THREE.Sprite(new THREE.SpriteMaterial({
+  map: makeGlowTexture('rgba(255,240,210,0.8)', 'rgba(255,140,70,0.25)'),
+  blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.22,
+}));
+flareH.scale.set(38, 1.5, 1);
+holeGroup.add(flareH);
+const flareV = new THREE.Sprite(new THREE.SpriteMaterial({
+  map: makeGlowTexture('rgba(255,240,210,0.7)', 'rgba(255,140,70,0.2)'),
+  blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.12,
+}));
+flareV.scale.set(1.4, 12, 1);
+holeGroup.add(flareV);
+/* ================= the last clock ================= */
+const clockRig = new THREE.Group();
+clockRig.rotation.x = -0.42;
+clockRig.position.y = 0.5;
+scene.add(clockRig);
+
+const metalMat = new THREE.MeshStandardMaterial({
+  color: 0x3a2a55, metalness: 0.92, roughness: 0.32,
+  emissive: 0x1a0f33, emissiveIntensity: 0.6,
+});
+const goldMat = new THREE.MeshStandardMaterial({
+  color: 0x8a6a2f, metalness: 1.0, roughness: 0.28,
+  emissive: 0xff9a3c, emissiveIntensity: 0.22,
+});
+const ghostables = [metalMat, goldMat];
+
+const ringMain = new THREE.Mesh(new THREE.TorusGeometry(14, 0.22, 24, 180), metalMat);
+const ringOuter = new THREE.Mesh(new THREE.TorusGeometry(15.3, 0.07, 12, 180), goldMat);
+const ringInner = new THREE.Mesh(new THREE.TorusGeometry(11.2, 0.09, 12, 160), goldMat);
+clockRig.add(ringMain, ringOuter, ringInner);
+
+/* 60 tick marks, instanced */
+{
+  const tickGeo = new THREE.BoxGeometry(0.14, 1, 0.14);
+  const ticks = new THREE.InstancedMesh(tickGeo, goldMat, 60);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3();
+  for (let i = 0; i < 60; i++) {
+    const a = (i / 60) * Math.PI * 2;
+    const major = i % 5 === 0;
+    const len = major ? 1.5 : 0.65;
+    const r = 13.1;
+    p.set(Math.sin(a) * r, Math.cos(a) * r, 0);
+    q.setFromAxisAngle(new THREE.Vector3(0, 0, 1), -a);
+    s.set(major ? 1.7 : 1, len, 1);
+    m4.compose(p, q, s);
+    ticks.setMatrixAt(i, m4);
+  }
+  clockRig.add(ticks);
+}
+
+/* Roman numerals — canvas-generated glyphs */
+const numeralMeshes = [];
+{
+  const romans = ['XII','I','II','III','IV','V','VI','VII','VIII','IX','X','XI'];
+  for (let i = 0; i < 12; i++) {
+    const c = document.createElement('canvas');
+    c.width = 256; c.height = 128;
+    const ctx = c.getContext('2d');
+    ctx.font = '600 76px Georgia, "Times New Roman", serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(255,190,90,0.95)'; ctx.shadowBlur = 22;
+    ctx.fillStyle = '#ffd9a0';
+    ctx.fillText(romans[i], 128, 68);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, side: THREE.DoubleSide });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 1.5), mat);
+    const a = (i / 12) * Math.PI * 2;
+    mesh.position.set(Math.sin(a) * 12.1, Math.cos(a) * 12.1, 0.15);
+    mesh.rotation.z = -a;
+    numeralMeshes.push(mesh);
+    clockRig.add(mesh);
+  }
+}
+
+/* hands — tapered extruded shapes */
+function makeHand(length, width, tail, mat) {
+  const sh = new THREE.Shape();
+  sh.moveTo(-width * 0.5, -tail);
+  sh.lineTo(width * 0.5, -tail);
+  sh.lineTo(width * 0.22, length * 0.82);
+  sh.lineTo(0, length);
+  sh.lineTo(-width * 0.22, length * 0.82);
+  sh.closePath();
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: 0.12, bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.03, bevelSegments: 2 });
+  geo.translate(0, 0, -0.06);
+  return new THREE.Mesh(geo, mat);
+}
+const hourHandMat = new THREE.MeshStandardMaterial({ color: 0xc9a24d, metalness: 1, roughness: 0.25, emissive: 0xff9a3c, emissiveIntensity: 0.35 });
+const minuteHandMat = new THREE.MeshStandardMaterial({ color: 0xb8b0d8, metalness: 1, roughness: 0.2, emissive: 0x59e6ff, emissiveIntensity: 0.25 });
+const secondHandMat = new THREE.MeshBasicMaterial({ color: 0xff4d6d });
+ghostables.push(hourHandMat, minuteHandMat);
+const hourHand = makeHand(6.4, 0.85, 1.4, hourHandMat);
+const minuteHand = makeHand(9.4, 0.55, 1.7, minuteHandMat);
+const secondHand = makeHand(10.6, 0.16, 2.2, secondHandMat);
+hourHand.position.z = 0.4;
+minuteHand.position.z = 0.62;
+secondHand.position.z = 0.84;
+clockRig.add(hourHand, minuteHand, secondHand);
+
+const hub = new THREE.Mesh(new THREE.SphereGeometry(0.55, 32, 24), goldMat);
+hub.position.z = 0.9;
+clockRig.add(hub);
+
+/* hand angles driven by simulation time */
+let handAngles = { h: -Math.PI * 0.35, m: Math.PI * 0.8, s: Math.PI * 1.62 };
+/* ================= stardust falling into the end ================= */
+const DUST_COUNT = 9000;
+const dustUniforms = {
+  uTime: { value: 0 },
+  uPulse: { value: 0 },
+  uScale: { value: 1 },
+  uColA: { value: new THREE.Color(THEMES.ember.hot) },
+  uColB: { value: new THREE.Color(THEMES.ember.rim) },
+};
+let dust;
+{
+  const radius = new Float32Array(DUST_COUNT);
+  const angle = new Float32Array(DUST_COUNT);
+  const speed = new Float32Array(DUST_COUNT);
+  const seed = new Float32Array(DUST_COUNT);
+  const size = new Float32Array(DUST_COUNT);
+  const pos = new Float32Array(DUST_COUNT * 3); /* dummy, computed in shader */
+  for (let i = 0; i < DUST_COUNT; i++) {
+    radius[i] = 6 + Math.pow(Math.random(), 0.7) * 30;
+    angle[i] = Math.random() * Math.PI * 2;
+    speed[i] = 0.35 + Math.random() * 1.1;
+    seed[i] = Math.random();
+    size[i] = 0.7 + Math.pow(Math.random(), 2.5) * 2.6;
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setAttribute('aRadius', new THREE.BufferAttribute(radius, 1));
+  g.setAttribute('aAngle', new THREE.BufferAttribute(angle, 1));
+  g.setAttribute('aSpeed', new THREE.BufferAttribute(speed, 1));
+  g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+  g.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+  g.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 60);
+  const m = new THREE.ShaderMaterial({
+    uniforms: dustUniforms,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: /* glsl */`
+      attribute float aRadius, aAngle, aSpeed, aSeed, aSize;
+      uniform float uTime, uPulse, uScale;
+      varying float vLife, vSeed, vNear, vHorizon, vCone;
+      void main(){
+        float life = fract(uTime * aSpeed * 0.022 + aSeed);
+        vLife = life; vSeed = aSeed;
+        float fall = pow(life, 1.6);
+        float r = mix(aRadius, 2.5, fall) + uPulse * 5.0 * (1.0 - fall);
+        float ang = aAngle + fall * (5.0 + 9.0*(1.0-fall)) + uTime * 0.03;
+        float spread = (aSeed - 0.5) * 17.0 * (1.0 - fall*0.7);
+        float wob = sin(uTime*0.6 + aSeed*40.0) * 0.35;
+        vec3 p = vec3(cos(ang)*r, spread + wob + 0.5, sin(ang)*r);
+        vec4 mv = modelViewMatrix * vec4(p, 1.0);
+        float nearFade = smoothstep(3.0, 10.0, -mv.z);
+        /* matter vanishes at the event horizon */
+        vHorizon = smoothstep(2.9, 6.0, r);
+        /* keep the silhouette clean: dust avoids the sight-cone to the hole */
+        vec3 center = vec3(0.0, 0.5, 0.0);
+        vec3 axis = normalize(cameraPosition - center);
+        vec3 rel = p - center;
+        float along = dot(rel, axis);
+        float perp = length(rel - axis * along);
+        float camDist = length(cameraPosition - center);
+        float silR = 2.45 * max(camDist - along, 1.0) / camDist;
+        vCone = along > 0.0 ? smoothstep(silR * 0.85, silR * 1.6, perp) : 1.0;
+        gl_PointSize = min(aSize * (1.0 + fall*1.6) * (260.0 / -mv.z), 18.0) * nearFade * uScale;
+        vNear = nearFade;
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: /* glsl */`
+      uniform vec3 uColA, uColB;
+      varying float vLife, vSeed, vNear, vHorizon, vCone;
+      void main(){
+        float d = length(gl_PointCoord - 0.5);
+        float a = smoothstep(0.5, 0.05, d);
+        float fade = smoothstep(0.0, 0.08, vLife) * (1.0 - smoothstep(0.86, 1.0, vLife));
+        vec3 col = mix(uColB, uColA, pow(vLife, 2.0) + vSeed*0.15);
+        float sparkle = vSeed > 0.965 ? 3.5 : 1.0;
+        gl_FragColor = vec4(col * (0.3 + vLife*0.5) * sparkle, a * fade * vNear * vHorizon * vCone * 0.09 * sparkle);
+      }`,
+  });
+  dust = new THREE.Points(g, m);
+  scene.add(dust);
+}
+
+/* ================= debris of dead hours ================= */
+const DEBRIS_COUNT = 130;
+const debrisData = [];
+let debris;
+{
+  const geo = new THREE.IcosahedronGeometry(0.5, 0);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x241638, metalness: 0.85, roughness: 0.45,
+    emissive: 0xff7a3c, emissiveIntensity: 0.08, flatShading: true,
+  });
+  ghostables.push(mat);
+  debris = new THREE.InstancedMesh(geo, mat, DEBRIS_COUNT);
+  for (let i = 0; i < DEBRIS_COUNT; i++) {
+    debrisData.push({
+      r: 17 + Math.random() * 16,
+      a: Math.random() * Math.PI * 2,
+      speed: (0.02 + Math.random() * 0.06) * (Math.random() < 0.5 ? 1 : -1),
+      tilt: (Math.random() - 0.5) * 1.1,
+      y: (Math.random() - 0.5) * 8,
+      scale: 0.2 + Math.pow(Math.random(), 2) * 0.85,
+      spin: Math.random() * Math.PI * 2,
+      spinSpeed: (Math.random() - 0.5) * 1.4,
+    });
+  }
+  debris.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  scene.add(debris);
+}
+const _dm = new THREE.Matrix4(), _dq = new THREE.Quaternion(), _de = new THREE.Euler(), _ds = new THREE.Vector3(), _dp = new THREE.Vector3();
+function updateDebris(t) {
+  for (let i = 0; i < DEBRIS_COUNT; i++) {
+    const d = debrisData[i];
+    const a = d.a + t * d.speed;
+    _dp.set(Math.cos(a) * d.r, d.y + Math.sin(a * 2 + d.tilt * 6) * 1.6, Math.sin(a) * d.r);
+    _de.set(d.spin + t * d.spinSpeed, d.spin * 1.7 + t * d.spinSpeed * 0.6, d.tilt);
+    _dq.setFromEuler(_de);
+    _ds.setScalar(d.scale);
+    _dm.compose(_dp, _dq, _ds);
+    debris.setMatrixAt(i, _dm);
+  }
+  debris.instanceMatrix.needsUpdate = true;
+}
+/* ================= light for the end of everything ================= */
+scene.add(new THREE.AmbientLight(0x241638, 1.4));
+const coreLight = new THREE.PointLight(0xffb066, 550, 160, 1.9);
+coreLight.position.set(0, 1.5, 0);
+scene.add(coreLight);
+const rimLight = new THREE.DirectionalLight(0x59e6ff, 1.6);
+rimLight.position.set(-24, 18, -30);
+scene.add(rimLight);
+const fillLight = new THREE.PointLight(0xa86bff, 260, 120, 2);
+fillLight.position.set(18, -10, 20);
+scene.add(fillLight);
+
+/* ================= time ripple ================= */
+const rippleMat = new THREE.MeshBasicMaterial({
+  color: 0xffd27a, transparent: true, opacity: 0,
+  blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
+});
+const ripple = new THREE.Mesh(new THREE.RingGeometry(0.94, 1.0, 96), rippleMat);
+ripple.rotation.x = -Math.PI / 2;
+ripple.position.y = 0.5;
+scene.add(ripple);
+let rippleAge = 10;
+function triggerPulse() {
+  state.pulse = 1;
+  rippleAge = 0;
+  playPulseSound();
+}
+
+/* ================= theme ================= */
+function applyTheme(name) {
+  const t = THEMES[name];
+  state.theme = name;
+  diskUniforms.uDisk.value.setHex(t.disk);
+  diskUniforms.uHot.value.setHex(t.hot);
+  holeUniforms.uRim.value.setHex(t.rim);
+  holeUniforms.uHot.value.setHex(t.hot);
+  dustUniforms.uColA.value.setHex(t.hot);
+  dustUniforms.uColB.value.setHex(t.rim);
+  skyUniforms.uColA.value.setHex(t.nebA);
+  skyUniforms.uColB.value.setHex(t.nebB);
+  photonRing.material.color.setHex(t.hot);
+  lensArc.material.color.setHex(t.disk);
+  rippleMat.color.setHex(t.hot);
+  coreLight.color.setHex(t.key);
+  coreGlow.material.color.setHex(t.hot);
+  scene.fog.color.setHex(t.nebA).multiplyScalar(0.35);
+}
+applyTheme('ember');
+/* ================= generative audio ================= */
+let audioCtx = null, masterGain = null, audioReady = false;
+function initAudio() {
+  if (audioReady) return;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = state.muted ? 0 : 0.16;
+    masterGain.connect(audioCtx.destination);
+    /* low cosmic drone */
+    const lp = audioCtx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 240; lp.Q.value = 0.8;
+    lp.connect(masterGain);
+    [55, 82.41, 110.5].forEach((f, i) => {
+      const o = audioCtx.createOscillator();
+      o.type = i === 2 ? 'triangle' : 'sine';
+      o.frequency.value = f;
+      const g = audioCtx.createGain();
+      g.gain.value = i === 0 ? 0.5 : 0.22;
+      o.connect(g); g.connect(lp); o.start();
+    });
+    /* slow breathing LFO on filter */
+    const lfo = audioCtx.createOscillator();
+    lfo.frequency.value = 0.06;
+    const lfoG = audioCtx.createGain(); lfoG.gain.value = 110;
+    lfo.connect(lfoG); lfoG.connect(lp.frequency); lfo.start();
+    /* stellar wind: filtered noise */
+    const len = audioCtx.sampleRate * 2;
+    const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * 0.4;
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buf; noise.loop = true;
+    const bp = audioCtx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 420; bp.Q.value = 0.5;
+    const ng = audioCtx.createGain(); ng.gain.value = 0.05;
+    noise.connect(bp); bp.connect(ng); ng.connect(masterGain);
+    noise.start();
+    audioReady = true;
+  } catch (e) { /* audio unavailable — silent fallback */ }
+}
+function playPulseSound() {
+  if (!audioReady || state.muted) return;
+  const t0 = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  o.type = 'sine';
+  o.frequency.setValueAtTime(880, t0);
+  o.frequency.exponentialRampToValueAtTime(40, t0 + 1.6);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.5, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + 1.8);
+  o.connect(g); g.connect(masterGain);
+  o.start(t0); o.stop(t0 + 1.9);
+}
+window.addEventListener('pointerdown', () => {
+  initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}, { once: false });
+
+const soundBtn = document.getElementById('soundBtn');
+soundBtn.addEventListener('click', () => {
+  state.muted = !state.muted;
+  soundBtn.classList.toggle('muted', state.muted);
+  document.getElementById('soundIcon').textContent = state.muted ? '✕' : '♪';
+  if (masterGain) masterGain.gain.linearRampToValueAtTime(state.muted ? 0 : 0.16, (audioCtx ? audioCtx.currentTime : 0) + 0.3);
+});
+
+/* ================= UI bindings ================= */
+const $ = id => document.getElementById(id);
+const toastEl = $('toast');
+let toastTimer = 0;
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+function fmt(v, d = 2) { return Number(v).toFixed(d); }
+
+function bindSlider(id, outId, key, format, apply) {
+  const el = $(id), out = $(outId);
+  el.addEventListener('input', () => {
+    state[key] = parseFloat(el.value);
+    out.textContent = format(state[key]);
+    apply(state[key]);
+  });
+  return { el, out, format };
+}
+const sliders = {
+  timeSpeed: bindSlider('cTime', 'oTime', 'timeSpeed', v => fmt(v) + '×', () => {}),
+  particleDensity: bindSlider('cParticles', 'oParticles', 'particleDensity', v => Math.round(v * 100) + '%', v => {
+    dust.geometry.setDrawRange(0, Math.floor(DUST_COUNT * v));
+  }),
+  bloom: bindSlider('cBloom', 'oBloom', 'bloom', v => fmt(v), v => { bloomPass.strength = v; }),
+  nebula: bindSlider('cNebula', 'oNebula', 'nebula', v => Math.round(v * 100) + '%', v => {
+    skyUniforms.uIntensity.value = v;
+    scene.fog.density = 0.004 + v * 0.011;
+  }),
+  heat: bindSlider('cHeat', 'oHeat', 'heat', v => Math.round(v * 100) + '%', v => { diskUniforms.uHeat.value = v; }),
+  drift: bindSlider('cDrift', 'oDrift', 'drift', v => fmt(v, 1), v => { controls.autoRotateSpeed = v; }),
+};
+function syncSlider(key) {
+  const s = sliders[key];
+  s.el.value = state[key];
+  s.out.textContent = s.format(state[key]);
+}
+function setAndApply(key, value) {
+  state[key] = value;
+  syncSlider(key);
+  s_apply(key);
+}
+function s_apply(key) {
+  const v = state[key];
+  if (key === 'particleDensity') dust.geometry.setDrawRange(0, Math.floor(DUST_COUNT * v));
+  if (key === 'bloom') bloomPass.strength = v;
+  if (key === 'nebula') { skyUniforms.uIntensity.value = v; scene.fog.density = 0.004 + v * 0.011; }
+  if (key === 'heat') diskUniforms.uHeat.value = v;
+  if (key === 'drift') controls.autoRotateSpeed = v;
+}
+
+$('cOrbit').addEventListener('change', e => { state.autoOrbit = e.target.checked; controls.autoRotate = state.autoOrbit; });
+$('cGhost').addEventListener('change', e => {
+  state.ghost = e.target.checked;
+  ghostables.forEach(m => {
+    m.wireframe = state.ghost;
+    if (m.emissive) {
+      if (state.ghost) { m.userData.ei = m.emissiveIntensity; m.emissiveIntensity = 0.9; }
+      else if (m.userData.ei !== undefined) m.emissiveIntensity = m.userData.ei;
+    }
+  });
+  toast(state.ghost ? '幽灵线框 · 观测结构' : '实体渲染 · 恢复物质');
+});
+$('cTheme').addEventListener('change', e => { applyTheme(e.target.value); toast('宇宙基调已切换'); });
+
+const DEFAULTS = { timeSpeed: 1, particleDensity: 0.8, bloom: 1.15, nebula: 0.65, heat: 0.5, drift: 0.4 };
+$('bReset').addEventListener('click', () => {
+  Object.entries(DEFAULTS).forEach(([k, v]) => setAndApply(k, v));
+  state.autoOrbit = true; controls.autoRotate = true; $('cOrbit').checked = true;
+  state.ghost = false; ghostables.forEach(m => { m.wireframe = false; if (m.userData.ei !== undefined) m.emissiveIntensity = m.userData.ei; }); $('cGhost').checked = false;
+  applyTheme('ember'); $('cTheme').value = 'ember';
+  camera.position.set(0, narrow() ? 2 : 9, narrow() ? 64 : 34); controls.target.set(0, narrow() ? -11.5 : 0.5, 0);
+  toast('已重置至初始观测态');
+});
+$('bRand').addEventListener('click', () => {
+  setAndApply('timeSpeed', +(Math.random() * 2.6 + 0.2).toFixed(2));
+  setAndApply('particleDensity', +(0.3 + Math.random() * 0.7).toFixed(2));
+  setAndApply('bloom', +(0.5 + Math.random() * 1.8).toFixed(2));
+  setAndApply('nebula', +(0.2 + Math.random() * 0.8).toFixed(2));
+  setAndApply('heat', +Math.random().toFixed(2));
+  setAndApply('drift', +(Math.random() * 1.6).toFixed(2));
+  const names = Object.keys(THEMES);
+  const pick = names[Math.floor(Math.random() * names.length)];
+  applyTheme(pick); $('cTheme').value = pick;
+  triggerPulse();
+  toast('随机宇宙已生成');
+});
+$('bExport').addEventListener('click', () => {
+  composer.render();
+  const url = renderer.domElement.toDataURL('image/png');
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'end-of-time-' + Date.now() + '.png';
+  a.click();
+  toast('当前时刻已导出为 PNG');
+});
+
+/* double click / double tap → time ripple (pointerup pair covers mouse and touch) */
+let lastTap = 0, lastTapX = 0, lastTapY = 0;
+canvas.addEventListener('pointerup', e => {
+  const now = performance.now();
+  if (now - lastTap < 320 && Math.hypot(e.clientX - lastTapX, e.clientY - lastTapY) < 32) {
+    triggerPulse();
+    lastTap = 0;
+  } else {
+    lastTap = now; lastTapX = e.clientX; lastTapY = e.clientY;
+  }
+});
+
+/* initial draw range */
+dust.geometry.setDrawRange(0, Math.floor(DUST_COUNT * state.particleDensity));
+/* ================= the last loop ================= */
+const entropyVal = $('entropyVal'), entropyBar = $('entropyBar'), epochVal = $('epochVal');
+let frame = 0;
+const SEC_RATE = (Math.PI * 2) / 12;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const rawDt = clock.getDelta();
+  const dt = Math.min(rawDt, 0.05);
+  const realT = clock.elapsedTime;
+  state.simTime += dt * state.timeSpeed;
+  const t = state.simTime;
+
+  /* pulse decay */
+  state.pulse = Math.max(0, state.pulse - dt * 0.7);
+  const p = state.pulse;
+
+  /* uniforms */
+  skyUniforms.uTime.value = realT;
+  window.__stars.userData.mat.uniforms.uTime.value = realT;
+  diskUniforms.uTime.value = t;
+  diskUniforms.uPulse.value = p;
+  dustUniforms.uTime.value = t;
+  dustUniforms.uPulse.value = p;
+  dustUniforms.uScale.value = THREE.MathUtils.clamp(renderer.domElement.width / 1440, 0.45, 1.2);
+  holeUniforms.uTime.value = t;
+  holeUniforms.uPulse.value = p;
+
+  /* hands of the final hour */
+  hourHand.rotation.z = handAngles.h - t * SEC_RATE / 144;
+  minuteHand.rotation.z = handAngles.m - t * SEC_RATE / 12;
+  /* second hand stutters as entropy rises — time itself is failing */
+  const stutter = state.entropy > 0.75 ? Math.floor(t * 8) / 8 : t;
+  secondHand.rotation.z = handAngles.s - stutter * SEC_RATE;
+
+  /* monumental drift */
+  clockRig.rotation.z = Math.sin(t * 0.07) * 0.03;
+  holeGroup.rotation.y = t * 0.02;
+  lensArc.quaternion.copy(camera.quaternion);
+  coreGlow.scale.setScalar(12 + Math.sin(realT * 0.9) * 0.7 + p * 5);
+  coreGlow.material.opacity = 0.3 + Math.sin(realT * 1.3) * 0.06 + p * 0.1;
+  flareH.material.opacity = 0.2 + Math.sin(realT * 0.8) * 0.05 + p * 0.16;
+  flareV.material.opacity = 0.1 + Math.cos(realT * 0.6) * 0.03 + p * 0.1;
+  flareH.material.color.copy(coreGlow.material.color);
+  flareV.material.color.copy(coreGlow.material.color);
+  coreLight.intensity = 550 * (1 + p * 1.6) + Math.sin(realT * 7.3) * 25;
+
+  updateDebris(t);
+
+  /* ripple shockwave */
+  rippleAge += dt;
+  if (rippleAge < 1.7) {
+    const s = 1 + rippleAge * 30;
+    ripple.scale.setScalar(s);
+    rippleMat.opacity = 0.85 * (1 - rippleAge / 1.7);
+  } else {
+    rippleMat.opacity = 0;
+  }
+
+  /* entropy → collapse → new epoch */
+  state.entropy += dt * state.timeSpeed * 0.012;
+  if (state.entropy >= 1) {
+    state.entropy = 0;
+    state.epoch++;
+    triggerPulse();
+    toast('熵寂降临 · 纪元 Ω-' + String(state.epoch).padStart(4, '0') + ' 开启');
+  }
+  if (frame++ % 5 === 0) {
+    entropyVal.textContent = state.entropy.toFixed(3);
+    entropyBar.style.width = (state.entropy * 100).toFixed(1) + '%';
+    epochVal.textContent = 'Ω-' + String(state.epoch).padStart(4, '0');
+  }
+
+  controls.update();
+  composer.render();
+  /* one-way quality fallback for weak GPUs, never while dragging */
+  if (!downgraded && !dragging) {
+    perfAcc += rawDt; perfN++;
+    if (perfN >= 150) {
+      if (perfAcc / perfN > 0.045 && renderer.getPixelRatio() > 1) {
+        renderer.setPixelRatio(1);
+        composer.setPixelRatio(1);
+        composer.setSize(window.innerWidth, window.innerHeight);
+        downgraded = true;
+      }
+      perfAcc = 0; perfN = 0;
+    }
+  }
+  if (!booted) {
+    booted = true;
+    document.getElementById('veil').classList.add('gone');
+  }
+}
+let booted = false;
+let downgraded = false, dragging = false, perfAcc = 0, perfN = 0;
+controls.addEventListener('start', () => { dragging = true; });
+controls.addEventListener('end', () => { dragging = false; });
+animate();
+window.__EOT = { scene, hole, disk, dust, debris, coreGlow, hub, clockRig, holeGroup, state, camera, controls };
+</script>
+</body>
+</html>
