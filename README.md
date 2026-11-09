@@ -26,6 +26,7 @@ HTML pages built by [qodercli](https://qoder.com) + QoDuck, each from one prompt
 | Rubik's cube 3D | [live](https://sorrycc.github.io/qoduck-showcase/cases/rubiks-cube-3d/) | [source](cases/rubiks-cube-3d/index.html) | [prompt](cases/rubiks-cube-3d/prompt.md) |
 | Sakura valley 3D | [live](https://sorrycc.github.io/qoduck-showcase/cases/sakura-valley-3d/) | [source](cases/sakura-valley-3d/index.html) | [prompt](cases/sakura-valley-3d/prompt.md) |
 | Ship in bottle voxel | [live](https://sorrycc.github.io/qoduck-showcase/cases/ship-in-bottle-voxel/) | [source](cases/ship-in-bottle-voxel/index.html) | [prompt](cases/ship-in-bottle-voxel/prompt.md) |
+| Tidepool caustics | [live](https://sorrycc.github.io/qoduck-showcase/cases/tidepool-caustics/) | [source](cases/tidepool-caustics/index.html) | [prompt](cases/tidepool-caustics/prompt.md) |
 | Tired AI | [live](https://sorrycc.github.io/qoduck-showcase/cases/tired-ai/) | [source](cases/tired-ai/index.html) | [prompt](cases/tired-ai/prompt.md) |
 <!-- /cases -->
 
