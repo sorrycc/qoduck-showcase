@@ -5,6 +5,7 @@ HTML pages built by [qodercli](https://qoder.com) + QoDuck, each from one prompt
 <!-- cases -->
 | Case | Page | HTML | Prompt |
 |---|---|---|---|
+| Black hole lensing | [live](https://sorrycc.github.io/qoduck-showcase/cases/black-hole-lensing/) | [source](cases/black-hole-lensing/index.html) | [prompt](cases/black-hole-lensing/prompt.md) |
 | Boarding pass with skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/boarding-pass-with-skill/) | [source](cases/boarding-pass-with-skill/index.html) | [prompt](cases/boarding-pass-with-skill/prompt.md) |
 | Boarding pass without skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/boarding-pass-without-skill/) | [source](cases/boarding-pass-without-skill/index.html) | [prompt](cases/boarding-pass-without-skill/prompt.md) |
 | Citrus pose | [live](https://sorrycc.github.io/qoduck-showcase/cases/citrus-pose/) | [source](cases/citrus-pose/index.html) | [prompt](cases/citrus-pose/prompt.md) |
