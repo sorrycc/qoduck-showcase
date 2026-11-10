@@ -20,10 +20,14 @@ CARD_W, CARD_H = 960, 600
 cases = sorted(p.name for p in (ROOT / "cases").iterdir() if (p / "index.html").is_file())
 
 WORDS = {"3d": "3D", "svg": "SVG", "threejs": "three.js", "rubiks": "Rubik's", "ai": "AI"}
+TITLES = {"mario-1-1": "Mario 1-1"}
+GAMES = {"mario-1-1", "mario-kart-snow", "subway-runner"}
 SCENE = re.compile(r"""three(\.module)?(\.min)?\.js|from ['"]three['"]|getContext\(['"]webgl|WebGLRenderer""", re.I)
 
 
 def title(name):
+    if name in TITLES:
+        return TITLES[name]
     words = [WORDS.get(w, w) for w in name.split("-")]
     return " ".join([words[0][:1].upper() + words[0][1:], *words[1:]])
 
@@ -86,7 +90,8 @@ def prompt_extra(a, b):
 
 pairs = sorted({c[: -len("-with-skill")] for c in cases if c.endswith("-with-skill") and f"{c[:-len('-with-skill')]}-without-skill" in cases})
 paired = {f"{p}-{s}" for p in pairs for s in ("with-skill", "without-skill")}
-singles = [c for c in cases if c not in paired]
+games = [c for c in cases if c in GAMES]
+singles = [c for c in cases if c not in paired and c not in GAMES]
 scenes = [c for c in singles if SCENE.search((ROOT / "cases" / c / "index.html").read_text(errors="ignore"))]
 flat = [c for c in singles if c not in scenes]
 
@@ -141,7 +146,7 @@ compare = f"""    <section class="section rule" id="compare" aria-labelledby="co
     </section>""" if pairs else ""
 
 nav = "".join(f'<li><a href="#{sid}">{label}</a></li>' for sid, label, items in
-              (("compare", "Comparisons", pairs), ("scenes", "3D scenes", scenes), ("pages", "2D pages", flat)) if items)
+              (("compare", "Comparisons", pairs), ("games", "Games", games), ("scenes", "3D scenes", scenes), ("pages", "2D pages", flat)) if items)
 
 (ROOT / "index.html").write_text(f"""<!doctype html>
 <html lang="en">
@@ -169,12 +174,14 @@ nav = "".join(f'<li><a href="#{sid}">{label}</a></li>' for sid, label, items in
         <dl class="stats">
           <div><dt>Pages</dt><dd>{len(cases)}</dd></div>
           <div><dt>Skill comparisons</dt><dd>{len(pairs)}</dd></div>
+          <div><dt>Games</dt><dd>{len(games)}</dd></div>
           <div><dt>3D scenes</dt><dd>{len(scenes)}</dd></div>
           <div><dt>2D pages</dt><dd>{len(flat)}</dd></div>
         </dl>
       </div>
     </section>
 {compare}
+{case_section("games", "Games", "Playable games, keyboard first. Click into the page, then use the arrow keys or WASD.", games)}
 {case_section("scenes", "3D scenes", "Three.js and WebGL worlds you can orbit, scrub and poke at. Drag to look around once a page has loaded.", scenes)}
 {case_section("pages", "Illustration, SVG and pages", "Vector drawings, canvas animation and plain HTML and CSS pages.", flat)}
   </main>
@@ -195,4 +202,4 @@ _, tail = rest.split("<!-- /cases -->", 1)
 rows = "\n".join(f"| {title(c)} | [live]({PAGES}/cases/{c}/) | [source](cases/{c}/index.html) | [prompt](cases/{c}/prompt.md) |" for c in cases)
 table = f"\n| Case | Page | HTML | Prompt |\n|---|---|---|---|\n{rows}\n"
 readme.write_text(f"{head}<!-- cases -->{table}<!-- /cases -->{tail}")
-print(f"index: {len(cases)} cases ({len(pairs)} pairs, {len(scenes)} scenes, {len(flat)} pages)")
+print(f"index: {len(cases)} cases ({len(pairs)} pairs, {len(games)} games, {len(scenes)} scenes, {len(flat)} pages)")

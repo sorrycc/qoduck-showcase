@@ -9,7 +9,7 @@
 .hero h1 { font-size: var(--fs-4xl); }
 .accent { color: var(--accent); }
 
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 56rem; }
+.stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); max-width: 70rem; }
 .stats > div { display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-2); padding: var(--space-4); border-top: 1px solid var(--border); }
 .stats > div:first-child { padding-left: 0; }
 .stats > div + div { border-left: 1px solid var(--border); }

@@ -17,6 +17,8 @@ HTML pages built by [qodercli](https://qoder.com) + QoDuck, each from one prompt
 | Fable kingdom voxel siege | [live](https://sorrycc.github.io/qoduck-showcase/cases/fable-kingdom-voxel-siege/) | [source](cases/fable-kingdom-voxel-siege/index.html) | [prompt](cases/fable-kingdom-voxel-siege/prompt.md) |
 | Lighthouse storm diorama | [live](https://sorrycc.github.io/qoduck-showcase/cases/lighthouse-storm-diorama/) | [source](cases/lighthouse-storm-diorama/index.html) | [prompt](cases/lighthouse-storm-diorama/prompt.md) |
 | Marble run 3D | [live](https://sorrycc.github.io/qoduck-showcase/cases/marble-run-3d/) | [source](cases/marble-run-3d/index.html) | [prompt](cases/marble-run-3d/prompt.md) |
+| Mario 1-1 | [live](https://sorrycc.github.io/qoduck-showcase/cases/mario-1-1/) | [source](cases/mario-1-1/index.html) | [prompt](cases/mario-1-1/prompt.md) |
+| Mario kart snow | [live](https://sorrycc.github.io/qoduck-showcase/cases/mario-kart-snow/) | [source](cases/mario-kart-snow/index.html) | [prompt](cases/mario-kart-snow/prompt.md) |
 | Mayoi landing with skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/mayoi-landing-with-skill/) | [source](cases/mayoi-landing-with-skill/index.html) | [prompt](cases/mayoi-landing-with-skill/prompt.md) |
 | Mayoi landing without skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/mayoi-landing-without-skill/) | [source](cases/mayoi-landing-without-skill/index.html) | [prompt](cases/mayoi-landing-without-skill/prompt.md) |
 | Ops dashboard with skill | [live](https://sorrycc.github.io/qoduck-showcase/cases/ops-dashboard-with-skill/) | [source](cases/ops-dashboard-with-skill/index.html) | [prompt](cases/ops-dashboard-with-skill/prompt.md) |
@@ -28,6 +30,7 @@ HTML pages built by [qodercli](https://qoder.com) + QoDuck, each from one prompt
 | Rubik's cube 3D | [live](https://sorrycc.github.io/qoduck-showcase/cases/rubiks-cube-3d/) | [source](cases/rubiks-cube-3d/index.html) | [prompt](cases/rubiks-cube-3d/prompt.md) |
 | Sakura valley 3D | [live](https://sorrycc.github.io/qoduck-showcase/cases/sakura-valley-3d/) | [source](cases/sakura-valley-3d/index.html) | [prompt](cases/sakura-valley-3d/prompt.md) |
 | Ship in bottle voxel | [live](https://sorrycc.github.io/qoduck-showcase/cases/ship-in-bottle-voxel/) | [source](cases/ship-in-bottle-voxel/index.html) | [prompt](cases/ship-in-bottle-voxel/prompt.md) |
+| Subway runner | [live](https://sorrycc.github.io/qoduck-showcase/cases/subway-runner/) | [source](cases/subway-runner/index.html) | [prompt](cases/subway-runner/prompt.md) |
 | Tidepool caustics | [live](https://sorrycc.github.io/qoduck-showcase/cases/tidepool-caustics/) | [source](cases/tidepool-caustics/index.html) | [prompt](cases/tidepool-caustics/prompt.md) |
 | Tired AI | [live](https://sorrycc.github.io/qoduck-showcase/cases/tired-ai/) | [source](cases/tired-ai/index.html) | [prompt](cases/tired-ai/prompt.md) |
 <!-- /cases -->
